@@ -53,11 +53,11 @@ function HomePage() {
                 </NavRight>
             </Header>
 
-            <ImageContainer_1>
+            <ImageContainer1>
                 <GameButton href="#">게임하러 가기</GameButton>
-            </ImageContainer_1>
+            </ImageContainer1>
 
-            <ImageContainer_2 backgroundImage={images[currentImageIndex]}>
+            <ImageContainer2 backgroundImage={images[currentImageIndex]}>
                 <NavButtons>
                     <NavButton onClick={goToPreviousImage}>
                         <FontAwesomeIcon icon={faChevronLeft} />
@@ -76,7 +76,7 @@ function HomePage() {
                         />
                     ))}
                 </Pagination>
-            </ImageContainer_2>
+            </ImageContainer2>
 
             {/* Footer Section */}
             <Footer>
@@ -148,7 +148,7 @@ const NavItem = styled.li`
     transition: 0.7s ease;
 `;
 
-const ImageContainer_1 = styled.div`
+const ImageContainer1 = styled.div`
     position: relative;
     width: 100%;
     height: 500px;
@@ -158,7 +158,7 @@ const ImageContainer_1 = styled.div`
     background-repeat: no-repeat;
 `;
 
-const ImageContainer_2 = styled.div`
+const ImageContainer2 = styled.div`
     position: relative;
     width: 100%;
     height: 450px;
