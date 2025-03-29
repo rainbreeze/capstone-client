@@ -97,8 +97,8 @@ export default HomePage;
 const FloatingImage = styled.img`
     position: absolute;
     z-index: 10;
-    bottom: -20%;
-    left: 20%;
+    bottom: -15%;
+    left: 18%;
     transform: translateY(-50%);
     width: 100px;  /* 이미지 크기는 조정 가능합니다 */
     animation: float 3s ease-in-out infinite;
@@ -126,7 +126,7 @@ const FloatingImage02 = styled.img`
     position: absolute;
     z-index: 10;
     bottom: 5%; /* 위치는 동일하게 설정 */
-    left: 5%;  /* 동일한 위치 */
+    left: 0%;  /* 동일한 위치 */
     transform: translateY(-50%);
     width: 80px;  /* 크기는 다르게 설정 */
     animation: float02 4s ease-in-out infinite;  /* 다른 애니메이션 설정 */
