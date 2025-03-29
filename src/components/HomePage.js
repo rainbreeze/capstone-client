@@ -56,7 +56,10 @@ function HomePage() {
             </Header>
 
             <ImageContainer1>
-                <GameButton href="#">게임하러 가기</GameButton>
+                <GameButton as={Link} to="/game">게임하러 가기</GameButton>
+                <FloatingImage src="/images/homepage/float_01.png" alt="떠다니는 이미지" />
+                <FloatingImage02 src="/images/homepage/float_02.png" alt="떠다니는 이미지" />
+
             </ImageContainer1>
 
             <ImageContainer2 backgroundImage={images[currentImageIndex]}>
@@ -89,6 +92,64 @@ function HomePage() {
 }
 
 export default HomePage;
+
+// 떠다니는 이미지 스타일링
+const FloatingImage = styled.img`
+    position: absolute;
+    z-index: 10;
+    bottom: -20%;
+    left: 20%;
+    transform: translateY(-50%);
+    width: 100px;  /* 이미지 크기는 조정 가능합니다 */
+    animation: float 3s ease-in-out infinite;
+
+    @keyframes float {
+        0% {
+            transform: translateY(-50%) translateX(0);
+        }
+        25% {
+            transform: translateY(-70%) translateX(20px); /* 더 넓은 범위로 이동 */
+        }
+        50% {
+            transform: translateY(-90%) translateX(-20px); /* 더 넓은 범위로 이동 */
+        }
+        75% {
+            transform: translateY(-70%) translateX(20px); /* 반대 방향으로 이동 */
+        }
+        100% {
+            transform: translateY(-50%) translateX(0);
+        }
+    }
+`;
+
+const FloatingImage02 = styled.img`
+    position: absolute;
+    z-index: 10;
+    bottom: 5%; /* 위치는 동일하게 설정 */
+    left: 5%;  /* 동일한 위치 */
+    transform: translateY(-50%);
+    width: 80px;  /* 크기는 다르게 설정 */
+    animation: float02 4s ease-in-out infinite;  /* 다른 애니메이션 설정 */
+
+    @keyframes float02 {
+        0% {
+            transform: translateY(-50%) translateX(0) rotate(0deg);
+        }
+        25% {
+            transform: translateY(-50%) translateX(30px) rotate(45deg); /* 이동하면서 회전 */
+        }
+        50% {
+            transform: translateY(-50%) translateX(-30px) rotate(90deg); /* 반대 방향으로 이동하며 회전 */
+        }
+        75% {
+            transform: translateY(-50%) translateX(30px) rotate(135deg); /* 다시 돌아오면서 회전 */
+        }
+        100% {
+            transform: translateY(-50%) translateX(0) rotate(180deg); /* 마지막 회전 */
+        }
+    }
+`;
+
 
 const Logo = styled.img`
     height: 50px;
