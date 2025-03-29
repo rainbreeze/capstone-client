@@ -1,12 +1,11 @@
-import logo from './logo.svg';
+// App.js
+import React from 'react';
 import './App.css';
+import HomePage from './components/HomePage'; // HomePage 컴포넌트 임포트
 
 function App() {
   return (
-    <div>
-      안녕하세요.
-        캡스톤 8조입니다.
-    </div>
+    <HomePage /> // HomePage 컴포넌트만 렌더링
   );
 }
 
