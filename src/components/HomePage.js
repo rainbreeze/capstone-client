@@ -40,26 +40,24 @@ function HomePage() {
                 <Logo src="/images/logo.png" alt="Logo" />
                 <NavLeft>
                     <NavList>
-                        <NavItem><NavLink as={Link} to="/game">게임</NavLink></NavItem>  {/* 링크 수정 */}
-                        <NavItem><NavLink as={Link} to="/reviews">감상평</NavLink></NavItem>  {/* 링크 수정 */}
-                        <NavItem><NavLink as={Link} to="/ranking">랭킹</NavLink></NavItem>  {/* 링크 수정 */}
+                        <NavItem><NavLink as={Link} to="/game">게임</NavLink></NavItem>
+                        <NavItem><NavLink as={Link} to="/reviews">감상평</NavLink></NavItem>
+                        <NavItem><NavLink as={Link} to="/ranking">랭킹</NavLink></NavItem>
                     </NavList>
                 </NavLeft>
                 <NavRight>
                     <NavList>
                         <NavItem><NavLink as={Link} to="/playlist">Play List</NavLink></NavItem>
-                        <NavItem><NavLink as={Link} to="/myinfo">내 정보</NavLink></NavItem>  {/* 링크 수정 */}
-                        <NavItem><NavLink as={Link} to="/login">로그인/회원가입</NavLink></NavItem>  {/* 링크 수정 */}
+                        <NavItem><NavLink as={Link} to="/myinfo">내 정보</NavLink></NavItem>
+                        <NavItem><NavLink as={Link} to="/login">로그인/회원가입</NavLink></NavItem>
                     </NavList>
                 </NavRight>
-
             </Header>
 
             <ImageContainer1>
                 <GameButton as={Link} to="/game">게임하러 가기</GameButton>
                 <FloatingImage src="/images/homepage/float_01.png" alt="떠다니는 이미지" />
                 <FloatingImage02 src="/images/homepage/float_02.png" alt="떠다니는 이미지" />
-
             </ImageContainer1>
 
             <ImageContainer2 backgroundImage={images[currentImageIndex]}>
@@ -100,7 +98,7 @@ const FloatingImage = styled.img`
     bottom: -15%;
     left: 18%;
     transform: translateY(-50%);
-    width: 100px;  /* 이미지 크기는 조정 가능합니다 */
+    width: 5%;  /* 비율로 설정 */
     animation: float 3s ease-in-out infinite;
 
     @keyframes float {
@@ -108,13 +106,13 @@ const FloatingImage = styled.img`
             transform: translateY(-50%) translateX(0);
         }
         25% {
-            transform: translateY(-70%) translateX(20px); /* 더 넓은 범위로 이동 */
+            transform: translateY(-70%) translateX(20px);
         }
         50% {
-            transform: translateY(-90%) translateX(-20px); /* 더 넓은 범위로 이동 */
+            transform: translateY(-90%) translateX(-20px);
         }
         75% {
-            transform: translateY(-70%) translateX(20px); /* 반대 방향으로 이동 */
+            transform: translateY(-70%) translateX(20px);
         }
         100% {
             transform: translateY(-50%) translateX(0);
@@ -125,37 +123,36 @@ const FloatingImage = styled.img`
 const FloatingImage02 = styled.img`
     position: absolute;
     z-index: 10;
-    bottom: 5%; /* 위치는 동일하게 설정 */
-    left: 0%;  /* 동일한 위치 */
+    bottom: 5%;
+    left: 0%;
     transform: translateY(-50%);
-    width: 80px;  /* 크기는 다르게 설정 */
-    animation: float02 4s ease-in-out infinite;  /* 다른 애니메이션 설정 */
+    width: 5%;  /* 비율로 설정 */
+    animation: float02 4s ease-in-out infinite;
 
     @keyframes float02 {
         0% {
             transform: translateY(-50%) translateX(0) rotate(0deg);
         }
         25% {
-            transform: translateY(-50%) translateX(30px) rotate(45deg); /* 이동하면서 회전 */
+            transform: translateY(-50%) translateX(30px) rotate(45deg);
         }
         50% {
-            transform: translateY(-50%) translateX(-30px) rotate(90deg); /* 반대 방향으로 이동하며 회전 */
+            transform: translateY(-50%) translateX(-30px) rotate(90deg);
         }
         75% {
-            transform: translateY(-50%) translateX(30px) rotate(135deg); /* 다시 돌아오면서 회전 */
+            transform: translateY(-50%) translateX(30px) rotate(135deg);
         }
         100% {
-            transform: translateY(-50%) translateX(0) rotate(180deg); /* 마지막 회전 */
+            transform: translateY(-50%) translateX(0) rotate(180deg);
         }
     }
 `;
-
 
 const Logo = styled.img`
     height: 50px;
     width: auto;
     display: flex;
-    margin-left: 10px;
+    margin-left: 5%;  /* 비율로 설정 */
 `;
 
 const Header = styled.header`
@@ -170,14 +167,14 @@ const Header = styled.header`
 const NavLeft = styled.nav`
     display: flex;
     justify-content: flex-start;
-    margin-left: 30px;
+    margin-left: 5%;  /* 비율로 설정 */
 `;
 
 const NavRight = styled.nav`
     display: flex;
     justify-content: flex-end;
     margin-left: auto;
-    margin-right: 30px;
+    margin-right: 5%;  /* 비율로 설정 */
 `;
 
 const NavList = styled.ul`
@@ -185,13 +182,12 @@ const NavList = styled.ul`
     display: flex;
     height: 80px;
     padding: 0;
-    margin: 0;
 `;
 
 const NavLink = styled.a`
     text-decoration: none;
     color: #FFFFFF;
-    font-size: 22px;
+    font-size: 1.5vw;  /* 비율로 설정 */
     font-family: 'Jua', sans-serif;
     transition: 0.7s ease;
     &:hover {
@@ -200,7 +196,7 @@ const NavLink = styled.a`
 `;
 
 const NavItem = styled.li`
-    padding: 0 30px;
+    padding: 0 2vw;  /* 비율로 설정 */
     height: 100%;
     display: flex;
     align-items: center;
@@ -213,7 +209,7 @@ const NavItem = styled.li`
 
 const ImageContainer1 = styled.div`
     position: relative;
-    width: 100%;
+    width: 100%;  /* 비율로 설정 */
     height: 500px;
     background-image: url('/images/homepage/homepage_nav01.png');
     background-size: 100% 100%;
@@ -223,7 +219,7 @@ const ImageContainer1 = styled.div`
 
 const ImageContainer2 = styled.div`
     position: relative;
-    width: 100%;
+    width: 100%;  /* 비율로 설정 */
     height: 450px;
     background-image: url(${(props) => props.backgroundImage});
     background-size: 100% 100%;
@@ -233,15 +229,15 @@ const ImageContainer2 = styled.div`
 
 const GameButton = styled.a`
     position: absolute;
-    bottom: 150px;
-    left: 90px;
+    bottom: 20%;
+    left: 6%;
     text-decoration: none;
     background-color: transparent;
     border: 2px solid white;
     color: white;
-    font-size: 32px;
+    font-size: 2vw;  /* 비율로 설정 */
     font-family: 'Jua', sans-serif;
-    padding: 15px 30px;
+    padding: 1.5% 4%;
     border-radius: 10px;
     transition: background-color 0.3s ease, color 0.3s ease;
 
@@ -257,17 +253,18 @@ const NavButtons = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
-    justify-content: space-between;
-    width: 80%;
-    padding: 0 20px;
+    justify-content: space-between;  /* 양쪽 끝에 배치 */
+    width: 100%;  /* 비율로 설정 */
+    padding: 0 10%;
+    align-items: center;  /* 수직 중앙 정렬 */
 `;
 
 const NavButton = styled.button`
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
-    font-size: 32px;
+    font-size: 3vw;  /* 비율로 설정 */
     border: none;
-    padding: 10px;
+    padding: 2%;
     border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -275,24 +272,25 @@ const NavButton = styled.button`
     &:hover {
         background-color: rgba(0, 0, 0, 0.8);
     }
-        /* FontAwesomeIcon 사이즈 조정 */
-        .fa-chevron-left, .fa-chevron-right {
-        font-size: 32px;
+
+    .fa-chevron-left, .fa-chevron-right {
+        font-size: 2.5vw;  /* 비율로 설정 */
     }
 `;
 
+
 const Pagination = styled.div`
     position: absolute;
-    bottom: 20px;
+    bottom: 5%;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 10px;
+    gap: 2%;
 `;
 
 const Dot = styled.div`
-    width: 15px;
-    height: 15px;
+    width: 2vw;  /* 비율로 설정 */
+    height: 1.5vw;  /* 비율로 설정 */
     background-color: ${(props) => (props.isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)')};
     border-radius: 50%;
     cursor: pointer;
@@ -305,16 +303,16 @@ const Dot = styled.div`
 
 // Footer Section for Copyright
 const Footer = styled.footer`
-    background-color: #1d1d1d;  /* Dark color for footer */
+    background-color: #1d1d1d;
     color: #ffffff;
     text-align: center;
-    padding: 20px 0;
+    padding: 3% 0;
     position: relative;
     bottom: 0;
     width: 100%;
 `;
 
 const CopyrightText = styled.p`
-    font-size: 14px;
+    font-size: 1vw;  /* 비율로 설정 */
     margin: 0;
 `;
