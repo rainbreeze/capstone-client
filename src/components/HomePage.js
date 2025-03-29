@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -39,18 +40,19 @@ function HomePage() {
                 <Logo src="/images/logo.png" alt="Logo" />
                 <NavLeft>
                     <NavList>
-                        <NavItem><NavLink href="#">게임</NavLink></NavItem>
-                        <NavItem><NavLink href="#">감상평</NavLink></NavItem>
-                        <NavItem><NavLink href="#">랭킹</NavLink></NavItem>
+                        <NavItem><NavLink as={Link} to="/game">게임</NavLink></NavItem>  {/* 링크 수정 */}
+                        <NavItem><NavLink as={Link} to="/reviews">감상평</NavLink></NavItem>  {/* 링크 수정 */}
+                        <NavItem><NavLink as={Link} to="/ranking">랭킹</NavLink></NavItem>  {/* 링크 수정 */}
                     </NavList>
                 </NavLeft>
                 <NavRight>
                     <NavList>
-                        <NavItem><NavLink href="#">Play List</NavLink></NavItem>
-                        <NavItem><NavLink href="#">내 정보</NavLink></NavItem>
-                        <NavItem><NavLink href="#">로그인/회원가입</NavLink></NavItem>
+                        <NavItem><NavLink as={Link} to="/playlist">Play List</NavLink></NavItem>
+                        <NavItem><NavLink as={Link} to="/myinfo">내 정보</NavLink></NavItem>  {/* 링크 수정 */}
+                        <NavItem><NavLink as={Link} to="/login">로그인/회원가입</NavLink></NavItem>  {/* 링크 수정 */}
                     </NavList>
                 </NavRight>
+
             </Header>
 
             <ImageContainer1>
@@ -211,6 +213,10 @@ const NavButton = styled.button`
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.8);
+    }
+        /* FontAwesomeIcon 사이즈 조정 */
+        .fa-chevron-left, .fa-chevron-right {
+        font-size: 32px;
     }
 `;
 
