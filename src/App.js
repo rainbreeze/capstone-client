@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  // Switch 대신 Routes 사용
-import HomePage from './components/HomePage';
+import HomePage from './components/homepage/HomePage';
 import PlayListPage from './components/PlayListPage';
 import RankingPage from './components/RankingPage';
 import LoginPage from './components/LoginPage';
