@@ -5,7 +5,7 @@ import PlayListPage from './components/PlayListPage';
 import RankingPage from './components/RankingPage';
 import LoginPage from './components/LoginPage';
 import MyInfoPage from './components/MyInfoPage';
-import GamePage from './components/GamePage';
+import GamePage from './components/GamePage/GamePage';
 import ReviewsPage from './components/ReviewsPage';
 
 function App() {
