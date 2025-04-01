@@ -37,7 +37,7 @@ const GamePage = () => {
         <div>
             <Header />  {/* 새로운 Header 컴포넌트 추가 */}
             <div style={styles.container}>
-                <h1>Game Data Submit</h1>
+                <h1 style={styles.h1}>Game Data Submit</h1>
                 <form onSubmit={handleSubmit}>
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>User ID:</label>
@@ -100,6 +100,10 @@ const GamePage = () => {
 };
 
 const styles = {
+    h1: {
+        fontSize: '4vw',
+        fontFamily: 'Jua',
+    },
     container: {
         padding: '20px',
         textAlign: 'center',

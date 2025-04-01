@@ -53,7 +53,7 @@ const styles = {
         color: '#fff',
         border: 'none',
         fontSize: '1.5vw', // 글자 크기를 화면 너비의 3%로 설정
-        padding: '2vh 3vw', // 버튼의 패딩을 vh와 vw로 설정
+        padding: '1.7vh 1.7vw', // 버튼의 패딩을 vh와 vw로 설정
         marginLeft: '2vw',  // 버튼들 간의 간격을 vw로 설정
         cursor: 'pointer',
         borderRadius: '5px',
