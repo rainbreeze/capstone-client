@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../common/Header';  // 새로 만든 Header
-import Footer from '../common/Footer'; // 기존 Footer
+import Footer from '../common/Footer';
 
 const GamePage = () => {
     // 상태 설정
@@ -123,7 +123,7 @@ const styles = {
         border: '1px solid #ccc',
     },
     submitButton: {
-        backgroundColor: '#f8b400',
+        backgroundColor: '#1ED760',
         color: '#fff',
         border: 'none',
         padding: '10px 20px',

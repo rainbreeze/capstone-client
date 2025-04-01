@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Footer = () => (
+// Footer 컴포넌트에는 props가 없으므로 특별한 타입을 정의할 필요는 없습니다.
+const Footer: React.FC = () => (
     <FooterWrapper>
         <CopyrightText>© 2025 Capstone Group 6 All rights reserved.</CopyrightText>
     </FooterWrapper>
@@ -9,6 +10,7 @@ const Footer = () => (
 
 export default Footer;
 
+// styled-components를 사용한 스타일링
 const FooterWrapper = styled.footer`
     background-color: #1d1d1d;
     color: #ffffff;
