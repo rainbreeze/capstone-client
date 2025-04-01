@@ -26,7 +26,7 @@ const GamePage = () => {
         };
 
         try {
-            const response = await axios.post('https://capstone-server-production.up.railway.app/saveGameData', gameData);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/saveGameData`, gameData);
             alert(response.data.message); // 성공 시 메시지 표시
         } catch (error) {
             alert('데이터 저장에 실패했습니다.');

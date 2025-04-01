@@ -3,12 +3,19 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa'; // 햄버거 아이콘
 
+
 const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 상태 관리
-    const handleSidebarItemClick = () => {
-        setIsSidebarOpen(false);
-    };
+    const [user, setUser] = useState(null); // 로그인된 사용자 정보
+
+    // 로그인된 사용자 정보(localStorage에서 userId 가져오기)
+    useEffect(() => {
+        const loggedUserId = localStorage.getItem('userId');  // localStorage에서 userId 가져오기
+        if (loggedUserId) {
+            setUser({ userId: loggedUserId });  // 상태에 userId 설정
+        }
+    }, []);
 
     // 스크롤 이벤트 리스너 추가
     useEffect(() => {
@@ -28,8 +35,15 @@ const Header = () => {
         };
     }, []);
 
+    // 사이드바 토글
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen); // 사이드바 열고 닫기
+    };
+
+    // 로그아웃 처리
+    const handleLogout = () => {
+        localStorage.removeItem('userId'); // localStorage에서 userId 삭제
+        setUser(null); // 상태에서 사용자 정보 삭제
     };
 
     return (
@@ -54,7 +68,15 @@ const Header = () => {
                 <NavList>
                     <NavItem scrolled={scrolled}><NavLink as={Link} to="/playlist">Play List</NavLink></NavItem>
                     <NavItem scrolled={scrolled}><NavLink as={Link} to="/myinfo">내 정보</NavLink></NavItem>
-                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/login">로그인/회원가입</NavLink></NavItem>
+                    {user ? (
+                        <NavItem scrolled={scrolled} onClick={handleLogout}>
+                            <NavLink as={Link} to="/" isLogout={true}>로그아웃</NavLink> {/* 로그인된 경우 로그아웃 버튼 */}
+                        </NavItem>
+                    ) : (
+                        <NavItem scrolled={scrolled}>
+                            <NavLink as={Link} to="/login">로그인/회원가입</NavLink> {/* 로그인 안된 경우 로그인/회원가입 링크 */}
+                        </NavItem>
+                    )}
                 </NavList>
             </NavRight>
 
@@ -62,24 +84,31 @@ const Header = () => {
             {isSidebarOpen && (
                 <Sidebar>
                     <SidebarList>
-                        <SidebarItem onClick={handleSidebarItemClick}>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                             <NavLink as={Link} to="/game">게임</NavLink>
                         </SidebarItem>
-                        <SidebarItem onClick={handleSidebarItemClick}>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                             <NavLink as={Link} to="/reviews">감상평</NavLink>
                         </SidebarItem>
-                        <SidebarItem onClick={handleSidebarItemClick}>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                             <NavLink as={Link} to="/ranking">랭킹</NavLink>
                         </SidebarItem>
-                        <SidebarItem onClick={handleSidebarItemClick}>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                             <NavLink as={Link} to="/playlist">Play List</NavLink>
                         </SidebarItem>
-                        <SidebarItem onClick={handleSidebarItemClick}>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                             <NavLink as={Link} to="/myinfo">내 정보</NavLink>
                         </SidebarItem>
-                        <SidebarItem onClick={handleSidebarItemClick}>
-                            <NavLink as={Link} to="/login">로그인/회원가입</NavLink>
-                        </SidebarItem>                    </SidebarList>
+                        {user ? (
+                            <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                               <NavLink as={Link} to="/" isLogout={true} onClick={handleLogout}>로그아웃</NavLink> {/* 로그인된 경우 로그아웃 버튼 */}
+                            </SidebarItem>
+                        ) : (
+                            <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                                <NavLink as={Link} to="/login">로그인/회원가입</NavLink>
+                            </SidebarItem>
+                        )}
+                    </SidebarList>
                 </Sidebar>
             )}
         </HeaderWrapper>
@@ -88,6 +117,7 @@ const Header = () => {
 
 export default Header;
 
+// 스타일 컴포넌트 정의
 const HeaderWrapper = styled.header`
     background-color: hsl(0, 0.00%, 7.10%);
     position: fixed;
@@ -102,13 +132,7 @@ const HeaderWrapper = styled.header`
     padding: 0 2%;
 
     /* 스크롤 시 border-bottom 추가 */
-    ${props => props.scrolled && `
-        border-bottom: 1px solid #808080;
-    `}
-
-    @media (max-width: 768px) {
-        justify-content: space-between; /* 모바일에서는 좌측 메뉴를 숨김 */
-    }
+    ${props => props.scrolled && `border-bottom: 1px solid #808080;`}
 `;
 
 const Logo = styled.img`
@@ -170,9 +194,14 @@ const NavLink = styled.a`
         color: #1ED760;
     }
 
-    @media (max-width: 768px) {
-        font-size: 3vw;
-    }
+    /* 로그아웃 버튼에 대한 색상 변경 */
+    ${props => props.isLogout && `
+        color: #FF0000; /* 빨간색 */
+        
+        &:hover {
+            color: #FF4D4D; /* 빨간색 hover 효과 */
+        }
+    `}
 `;
 
 const NavItem = styled.li`
@@ -187,14 +216,8 @@ const NavItem = styled.li`
     &:hover {
         background-color: #FFFFFF;
     }
-
-    @media (max-width: 768px) {
-        padding: 0 5vw;
-    }
 `;
 
-
-// 사이드바 스타일
 const Sidebar = styled.div`
     position: fixed;
     top: 0;
