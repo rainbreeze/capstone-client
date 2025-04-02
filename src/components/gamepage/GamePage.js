@@ -26,7 +26,7 @@ const GamePage = () => {
         };
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/saveGameData`, gameData);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
             alert(response.data.message); // 성공 시 메시지 표시
         } catch (error) {
             alert('데이터 저장에 실패했습니다.');
