@@ -6,8 +6,10 @@ import RankingPage from './components/RankingPage';
 import LoginPage from './components/loginpage/LoginPage';
 import MyInfoPage from './components/MyInfoPage';
 import GamePage from './components/gamepage/GamePage';
+import GameResultPage from './components/gamepage/GameResultPage';  // GameResultPage 추가
 import ReviewsPage from './components/ReviewsPage';
 import RegisterPage from './components/registerpage/RegisterPage'
+
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />  {/* 로그인/회원가입 페이지 */}
         <Route path="/myinfo" element={<MyInfoPage />} />  {/* 내 정보 페이지 */}
         <Route path="/game" element={<GamePage />} />  {/* 게임 페이지 */}
+        <Route path="/gameresult" element={<GameResultPage />} />  {/* 게임 결과 페이지 추가 */}
         <Route path="/reviews" element={<ReviewsPage />} />  {/* 감상평 페이지 */}
         <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
       </Routes>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../common/Header';  // 새로 만든 Header
 import Footer from '../common/Footer';
+import { useNavigate } from 'react-router-dom';  // useNavigate를 import
 
 const GamePage = () => {
     // 상태 설정
@@ -11,6 +12,7 @@ const GamePage = () => {
     const [year, setYear] = useState('');
     const [artist, setArtist] = useState('');
     const [hipster, setHipster] = useState('no');
+    const navigate = useNavigate();  // navigate 함수 사용
 
     // 폼 제출 함수
     const handleSubmit = async (e) => {
@@ -27,7 +29,9 @@ const GamePage = () => {
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
-            alert(response.data.message); // 성공 시 메시지 표시
+
+            // 추천된 곡을 GameResultPage로 전달
+            navigate('/gameresult', { state: { musicRecommendation: response.data.musicRecommendation } });
         } catch (error) {
             alert('데이터 저장에 실패했습니다.');
         }
