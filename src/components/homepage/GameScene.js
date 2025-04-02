@@ -72,7 +72,7 @@ export default class GameScene extends Phaser.Scene {
         const zoomY = this.scale.height / mapHeight;
 
         // 더 작은 쪽으로 줌해서 여백 없이 꽉 채우기
-        const zoom = Math.max(zoomX, zoomY)
+        const zoom = Math.min(zoomX, zoomY)
 
         this.cameras.main.setZoom(zoom);
         this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
@@ -83,7 +83,36 @@ export default class GameScene extends Phaser.Scene {
 
         this.physics.world.createDebugGraphic();
 
+        const centerX = this.scale.width / 2;
+        const centerY = this.scale.height / 2;
 
+        const buttonStyle = {
+            font: "12px Arial",
+            fill: "#ffffff",
+            backgroundColor: "#333",
+            padding: { x: 20, y: 10 },
+            align: "center"
+        };
+        const warriorBtn = this.add.text(centerX, centerY - 40, "선택지 1", buttonStyle)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => this.chooseClass("choice 1"));
+
+        // 선택지 2
+        const mageBtn = this.add.text(centerX, centerY + 40, "선택지 2", buttonStyle)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true })
+            .on("pointerdown", () => this.chooseClass("choice 2"));
+
+
+    }
+
+    chooseClass(choice) {
+        this.playerClass = choice;
+        console.log("선택된 클래스:", this.playerClass);
+
+        // TODO: 이후 게임 로직 시작하거나 다음 씬으로 이동
+        // 예: this.scene.start("MainGameScene", { playerClass: this.playerClass });
     }
 
     update() {
