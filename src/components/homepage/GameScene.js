@@ -29,23 +29,31 @@ export default class GameScene extends Phaser.Scene {
 
 
         // 레이어 생성
-        map.createLayer("Tiles", tileset, 0, 0);
-        map.createLayer("Animated_objects", animated, 0, 0);
-        map.createLayer("Objects1", objects, 0, 0);
-        map.createLayer("Objects2", objects, 0, 0);
-        map.createLayer("Objects3", objects, 0, 0);
-        map.createLayer("Small_objects1", details, 0, 0);
-        map.createLayer("Small_objects2", details, 0, 0);
-        map.createLayer("Small_objects3", details, 0, 0);
-        map.createLayer("Small_objects4", details, 0, 0);
+        map.createLayer("Tiles", tileset, 0, 0).setScrollFactor(1);
+        map.createLayer("Animated_objects", animated, 0, 0).setScrollFactor(1);
+        map.createLayer("Objects1", objects, 0, 0).setScrollFactor(1);
+        map.createLayer("Objects2", objects, 0, 0).setScrollFactor(1);
+        map.createLayer("Objects3", objects, 0, 0).setScrollFactor(1);
+        map.createLayer("Small_objects1", details, 0, 0).setScrollFactor(1);
+        map.createLayer("Small_objects2", details, 0, 0).setScrollFactor(1);
+        map.createLayer("Small_objects3", details, 0, 0).setScrollFactor(1);
+        map.createLayer("Small_objects4", details, 0, 0).setScrollFactor(1);
 
 
         // 플레이어 생성
-        this.player = this.physics.add.sprite(100, 100, "player", 0);
+        this.player = this.physics.add.sprite(100, 100, "player", 13);
         this.add.rectangle(100, 100, 4, 4, 0xff0000); // 빨간 점 찍기
 
         this.player.setDepth(10);
-        this.player.setScale(1 / 2);
+        this.player.setScale(0.5);
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 10 }),
+            frameRate: 6,
+            repeat: -1,
+        });
+        this.player.anims.play('idle');
 
         // 충돌 설정 예시
         const groundLayer = map.getLayer("Tiles").tilemapLayer;
@@ -73,6 +81,7 @@ export default class GameScene extends Phaser.Scene {
         // 배경만 보여주려면 centerOn으로 맵 중심 정렬
         this.cameras.main.centerOn(mapWidth / 2, mapHeight / 2);
 
+        this.physics.world.createDebugGraphic();
 
 
     }
@@ -94,6 +103,8 @@ export default class GameScene extends Phaser.Scene {
         } else if (this.cursors.down.isDown) {
             this.player.setVelocityY(speed);
         }
+
+        console.log("position:", this.player.x, this.player.y); // 매 프레임 위치 확인
     }
 
 }
