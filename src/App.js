@@ -9,10 +9,11 @@ import GamePage from './components/gamepage/GamePage';
 import GameResultPage from './components/gamepage/GameResultPage';  // GameResultPage 추가
 import ReviewsPage from './components/ReviewsPage';
 import RegisterPage from './components/registerpage/RegisterPage'
+import GameContainer from './components/homepage/GameContainer';
 
 
 function App() {
-  return (
+  return ( 
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />  {/* 홈 페이지 */}
@@ -24,6 +25,7 @@ function App() {
         <Route path="/gameresult" element={<GameResultPage />} />  {/* 게임 결과 페이지 추가 */}
         <Route path="/reviews" element={<ReviewsPage />} />  {/* 감상평 페이지 */}
         <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
+        <Route path="/gamePage" element={<GameContainer />} /> { /*게임 페이지 */}
       </Routes>
     </Router>
   );
