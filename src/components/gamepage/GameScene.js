@@ -21,7 +21,7 @@ export default class GameScene extends Phaser.Scene {
 
         // 타일셋을 사용하여 맵의 레이어 생성
         const tileset = map.addTilesetImage('forestTown');
-        const layer = map.createLayer('Tile Layer 1', tileset, 0, 0);
+        // layer는 나중에 사용 시 다시 추가
     }
 
     update() {
