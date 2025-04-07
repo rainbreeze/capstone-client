@@ -37,7 +37,7 @@ const LoginPage = () => {
                 alert(response.data.message);  // 로그인 성공 시 메시지 표시
 
                 // 로그인 후 홈 페이지로 리디렉션
-                navigate('/');  // 또는 다른 리디렉션 경로로 이동
+                navigate(-1);  // 또는 다른 리디렉션 경로로 이동
             } else {
                 alert('로그인 실패: 아이디나 비밀번호를 확인하세요.');
             }

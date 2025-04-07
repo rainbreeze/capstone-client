@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../common/Header';  // 새로 만든 Header
 import Footer from '../common/Footer';
@@ -6,24 +6,30 @@ import { useNavigate } from 'react-router-dom';  // useNavigate를 import
 
 const TestPage = () => {
     // 상태 설정
-    const [userId, setUserId] = useState('');
+    const [userId, setUserId] = useState('');  // userId는 로컬 스토리지에서 가져올 것
     const [score, setScore] = useState('');
     const [genre, setGenre] = useState('');
     const [year, setYear] = useState('');
-    const [artist, setArtist] = useState('');
     const [hipster, setHipster] = useState('no');
     const navigate = useNavigate();  // navigate 함수 사용
+
+    // 컴포넌트가 마운트될 때 로컬 스토리지에서 userId 가져오기
+    useEffect(() => {
+        const storedUserId = localStorage.getItem('userId');
+        if (storedUserId) {
+            setUserId(storedUserId);  // 로컬 스토리지에서 userId를 가져와 상태에 설정
+        }
+    }, []);  // 컴포넌트 마운트 시 한 번만 실행
 
     // 폼 제출 함수
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const gameData = {
-            userId,
+            userId,  // 로컬 스토리지에서 가져온 userId 사용
             score,
             genre,
             year,
-            artist,
             hipster
         };
 
@@ -43,15 +49,6 @@ const TestPage = () => {
             <div style={styles.container}>
                 <h1 style={styles.h1}>Game Data Submit</h1>
                 <form onSubmit={handleSubmit}>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>User ID:</label>
-                        <input
-                            type="text"
-                            value={userId}
-                            onChange={(e) => setUserId(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>Score:</label>
                         <input
@@ -76,15 +73,6 @@ const TestPage = () => {
                             type="number"
                             value={year}
                             onChange={(e) => setYear(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Artist:</label>
-                        <input
-                            type="text"
-                            value={artist}
-                            onChange={(e) => setArtist(e.target.value)}
                             style={styles.input}
                         />
                     </div>

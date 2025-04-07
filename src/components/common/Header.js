@@ -1,4 +1,3 @@
-// common/Header.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -8,15 +7,15 @@ const Header = () => {
 
     // 로그인 상태 확인
     useEffect(() => {
-        const userData = localStorage.getItem('user');  // 로그인 정보가 localStorage에 저장되어 있다고 가정
-        if (userData) {
+        const userId = localStorage.getItem('userId');  // userId로 변경
+        if (userId) {
             setIsLoggedIn(true);  // 로그인된 상태로 설정
         }
     }, []);
 
     // 로그아웃 처리 함수
     const handleLogout = () => {
-        localStorage.removeItem('user');  // localStorage에서 사용자 정보 삭제
+        localStorage.removeItem('userId');  // userId를 localStorage에서 삭제
         setIsLoggedIn(false);  // 로그인 상태를 false로 설정
         navigate('/login');  // 로그인 페이지로 이동
     };
@@ -83,7 +82,7 @@ const styles = {
         marginLeft: '2vw',
         cursor: 'pointer',
         borderRadius: '5px',
-        fontFamily: 'Jua'
+        fontFamily: 'Jua',
     },
     logoutButton: {
         background: '#FF4F4F',  // 빨간색으로 변경
@@ -94,8 +93,8 @@ const styles = {
         cursor: 'pointer',
         borderRadius: '5px',
         fontFamily: 'Jua',
-        marginLeft: '2vw'
-    }
+        marginLeft: '2vw',
+    },
 };
 
 export default Header;
