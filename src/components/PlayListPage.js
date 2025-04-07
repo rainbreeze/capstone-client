@@ -6,6 +6,7 @@ import Footer from './common/Footer';  // Footer 컴포넌트 추가
 
 const PlayListPage = () => {
     const [playlistIds, setPlaylistIds] = useState([]);  // 플레이리스트 ID들을 담을 상태
+    const [playlistMusicIds, setPlaylistMusicIds] = useState({});  // 플레이리스트별 music_id 상태
     const navigate = useNavigate();  // 페이지 리디렉션을 위한 navigate
 
     // 컴포넌트가 마운트될 때 실행되는 useEffect 훅
@@ -25,6 +26,15 @@ const PlayListPage = () => {
                 
                 // 응답 받은 데이터로 플레이리스트 ID 상태 업데이트
                 setPlaylistIds(response.data.playlistIds);
+
+                // 각 플레이리스트 ID에 대해 musicId를 가져옴
+                for (const playlistId of response.data.playlistIds) {
+                    const musicResponse = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/music/${playlistId}`);
+                    setPlaylistMusicIds(prevMusicIds => ({
+                        ...prevMusicIds,
+                        [playlistId]: musicResponse.data.playlist_music_ids
+                    }));
+                }
             } catch (error) {
                 console.error('플레이리스트 조회 실패:', error);
                 alert('플레이리스트를 가져오는 데 실패했습니다.');
@@ -45,7 +55,19 @@ const PlayListPage = () => {
                         <ul>
                             {playlistIds.map((playlistId) => (
                                 <li key={playlistId} style={styles.playlistItem}>
-                                    {playlistId}
+                                    <h3>Playlist ID: {playlistId}</h3>
+                                    <ul>
+                                        {/* 해당 플레이리스트의 음악 ID들이 존재하는지 확인 */}
+                                        {playlistMusicIds[playlistId] && playlistMusicIds[playlistId].length > 0 ? (
+                                            playlistMusicIds[playlistId].map((musicId) => (
+                                                <li key={musicId}>
+                                                    <p>Music ID: {musicId}</p>
+                                                </li>
+                                            ))
+                                        ) : (
+                                            <p>이 플레이리스트에 음악이 없습니다.</p>
+                                        )}
+                                    </ul>
                                 </li>
                             ))}
                         </ul>
