@@ -5,10 +5,11 @@ import PlayListPage from './components/PlayListPage';
 import RankingPage from './components/RankingPage';
 import LoginPage from './components/loginpage/LoginPage';
 import MyInfoPage from './components/MyInfoPage';
-import GamePage from './components/gamepage/GamePage';
-import GameResultPage from './components/gamepage/GameResultPage';  // GameResultPage 추가
+import TestPage from './components/testpage/TestPage';
+import TestResultPage from './components/testpage/TestResultPage';  
 import ReviewsPage from './components/ReviewsPage';
 import RegisterPage from './components/registerpage/RegisterPage'
+// import gamePage from './components/gamepage/'
 
 
 function App() {
@@ -20,8 +21,9 @@ function App() {
         <Route path="/ranking" element={<RankingPage />} />  {/* 랭킹 페이지 */}
         <Route path="/login" element={<LoginPage />} />  {/* 로그인/회원가입 페이지 */}
         <Route path="/myinfo" element={<MyInfoPage />} />  {/* 내 정보 페이지 */}
-        <Route path="/game" element={<GamePage />} />  {/* 게임 페이지 */}
-        <Route path="/gameresult" element={<GameResultPage />} />  {/* 게임 결과 페이지 추가 */}
+        <Route path="/test" element={<TestPage />} />  {/* 테스트 페이지 */}
+        <Route path="/testresult" element={<TestResultPage />} />  {/* 테스트 결과 페이지 추가 */}
+        // import gamePage from './components/gamepage/'
         <Route path="/reviews" element={<ReviewsPage />} />  {/* 감상평 페이지 */}
         <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
       </Routes>

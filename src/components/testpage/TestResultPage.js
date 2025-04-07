@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Header from '../common/Header';  // GamePage와 동일한 Header 사용
 import Footer from '../common/Footer';  // GamePage와 동일한 Footer 사용
 
-const GameResultPage = () => {
+const TestResultPage = () => {
     const location = useLocation();
     const { musicRecommendation } = location.state || {};  // resultPage로 전달된 음악 추천 데이터
 
@@ -81,4 +81,4 @@ const styles = {
     },
 };
 
-export default GameResultPage;
+export default TestResultPage;

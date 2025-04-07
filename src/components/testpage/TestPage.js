@@ -4,7 +4,7 @@ import Header from '../common/Header';  // 새로 만든 Header
 import Footer from '../common/Footer';
 import { useNavigate } from 'react-router-dom';  // useNavigate를 import
 
-const GamePage = () => {
+const TestPage = () => {
     // 상태 설정
     const [userId, setUserId] = useState('');
     const [score, setScore] = useState('');
@@ -31,7 +31,7 @@ const GamePage = () => {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
 
             // 추천된 곡을 GameResultPage로 전달
-            navigate('/gameresult', { state: { musicRecommendation: response.data.musicRecommendation } });
+            navigate('/testResult', { state: { musicRecommendation: response.data.musicRecommendation } });
         } catch (error) {
             alert('데이터 저장에 실패했습니다.');
         }
@@ -142,4 +142,4 @@ const styles = {
     },
 };
 
-export default GamePage;
+export default TestPage;
