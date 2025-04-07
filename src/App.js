@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  // Switch 대신 Routes 사용
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';  
 import HomePage from './components/homepage/HomePage';
 import PlayListPage from './components/PlayListPage';
 import RankingPage from './components/RankingPage';
@@ -25,7 +25,7 @@ function App() {
         <Route path="/testresult" element={<TestResultPage />} />  {/* 테스트 결과 페이지 추가 */}
         <Route path="/reviews" element={<ReviewsPage />} />  {/* 감상평 페이지 */}
         <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
-        <Route path="/gamePage" element={<GameContainer />} /> { /*게임 페이지 */}
+        <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
       </Routes>
     </Router>
   );
