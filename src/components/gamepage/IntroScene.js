@@ -30,7 +30,7 @@ class IntroScene extends Phaser.Scene {
                     ease: 'Power2',
                     onComplete: () => {
                         this.time.delayedCall(300, () => {
-                            this.scene.start('MainScene');
+                            this.scene.start('GameScene');
                         });
                     }
                 });
