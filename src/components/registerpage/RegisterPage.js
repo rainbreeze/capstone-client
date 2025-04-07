@@ -31,7 +31,7 @@ const RegisterPage = () => {
             alert(response.data.message);  // 회원가입 성공 시 메시지 표시
 
             // 회원가입 성공 후 로그인 페이지로 리디렉션
-            navigate('/');  // 홈 페이지로 이동
+            navigate('/login');  // 홈 페이지로 이동
         } catch (error) {
             alert('회원가입 실패: 입력 정보를 확인해주세요.');
         }
