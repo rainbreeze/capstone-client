@@ -1,0 +1,9 @@
+#gameContainer {
+    width: 800px;
+    height: 800px;
+    text-align: center;
+}
+
+#gameContainer canvas {
+    display: inline;
+}
