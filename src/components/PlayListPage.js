@@ -30,7 +30,7 @@ const PlayListPage = () => {
 
                 // 각 플레이리스트 ID에 대해 musicId를 가져옴
                 for (const playlistId of response.data.playlistIds) {
-                    const musicResponse = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/music/${playlistId}`);
+                    const musicResponse = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/playlistmusic/${playlistId}`);
                     setPlaylistMusicIds(prevMusicIds => ({
                         ...prevMusicIds,
                         [playlistId]: musicResponse.data.playlist_music_ids
