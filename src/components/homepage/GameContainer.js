@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import Phaser from "phaser";
 import IntroScene from "../gamepage/IntroScene"
+import MainScene from "../gamepage/MainScene";
 import GameScene from "../gamepage/GameScene"
 
 const GameContainer = () => {
@@ -16,7 +17,7 @@ const GameContainer = () => {
                 default: "arcade",
                 arcade: { debug: false }
             },
-            scene: [IntroScene, GameScene]
+            scene: [IntroScene, MainScene, GameScene]
         };
 
         const game = new Phaser.Game(config);
