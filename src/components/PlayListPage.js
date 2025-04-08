@@ -38,7 +38,7 @@ const PlayListPage = () => {
 
                     // 각 플레이리스트에 속한 음악들의 이미지 URL을 가져옴
                     musicResponse.data.playlist_music_ids.forEach(async (musicId) => {
-                        const imageResponse = await axios.get(`${process.env.REACT_APP_API_URL}/music/image/${musicId}`);
+                        const imageResponse = await axios.get(`${process.env.REACT_APP_API_URL}/playlistmusic/image/${musicId}`);
                         setMusicImageUrls(prevImageUrls => ({
                             ...prevImageUrls,
                             [musicId]: imageResponse.data.album_image_url  // 음악의 이미지 URL만 저장
