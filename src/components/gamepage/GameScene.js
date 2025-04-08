@@ -19,7 +19,8 @@ export default class GameScene extends Phaser.Scene {
         const tileset = map.addTilesetImage('ForestTownMap', 'forestTown');
         const bridge = map.addTilesetImage('SnowTown', 'snowExpansion');
         map.createLayer('Tile Layer 1', tileset, 0, 0).setScrollFactor(1);
-        map.createLayer('Bridge', bridge, 0, 0).setScrollFactor(1);
+        map.createLayer('Bridge', [tileset, bridge], 0, 0).setScrollFactor(1);
+        map.createLayer('Object', [tileset, bridge], 0, 0).setScrollFactor(1);
 
 
         console.log("tilesets: ", map.tilesets);
@@ -28,6 +29,9 @@ export default class GameScene extends Phaser.Scene {
         this.physics.add.existing(this.player);
         this.player.body.setCollideWorldBounds(true);
 
+
+
+
         this.cursors = this.input.keyboard.createCursorKeys();
 
         //맵 줌 설정
@@ -35,22 +39,12 @@ export default class GameScene extends Phaser.Scene {
         const mapHeight = map.heightInPixels;
 
         console.log(mapWidth, mapHeight)
-
-        const zoomX = this.scale.width / mapWidth;
-        const zoomY = this.scale.height / mapHeight;
-
         const zoom = 2
         this.cameras.main.setZoom(zoom);
         this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(
-            0,
-            0,
-            mapWidth - (this.scale.width / zoom) + 1,
-            mapHeight - (this.scale.height / zoom) + 1
-        );
 
-        console.log("Camera bounds:", this.cameras.main._bounds);
 
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
 
 
@@ -65,7 +59,6 @@ export default class GameScene extends Phaser.Scene {
 
         if (this.cursors.left.isDown) {
             body.setVelocityX(-speed);
-            console.log("position: ", this.player.x, this.player.y);
         } else if (this.cursors.right.isDown) {
             body.setVelocityX(speed);
             console.log("position: ", this.player.x, this.player.y);
@@ -73,10 +66,10 @@ export default class GameScene extends Phaser.Scene {
 
         if (this.cursors.up.isDown) {
             body.setVelocityY(-speed);
-            console.log("position: ", this.player.x, this.player.y);
+
         } else if (this.cursors.down.isDown) {
             body.setVelocityY(speed);
-            console.log("position: ", this.player.x, this.player.y);
+
         }
     }
 }
