@@ -7,6 +7,7 @@ import Footer from './common/Footer';  // Footer 컴포넌트 추가
 const PlayListPage = () => {
     const [playlistIds, setPlaylistIds] = useState([]);  // 플레이리스트 ID들을 담을 상태
     const [playlistMusicIds, setPlaylistMusicIds] = useState({});  // 플레이리스트별 music_id 상태
+    const [musicImageUrls, setMusicImageUrls] = useState({});  // 음악의 이미지 URL 상태
     const navigate = useNavigate();  // 페이지 리디렉션을 위한 navigate
 
     // 컴포넌트가 마운트될 때 실행되는 useEffect 훅
@@ -34,6 +35,15 @@ const PlayListPage = () => {
                         ...prevMusicIds,
                         [playlistId]: musicResponse.data.playlist_music_ids
                     }));
+
+                    // 각 플레이리스트에 속한 음악들의 이미지 URL을 가져옴
+                    musicResponse.data.playlist_music_ids.forEach(async (musicId) => {
+                        const imageResponse = await axios.get(`${process.env.REACT_APP_API_URL}/music/image/${musicId}`);
+                        setMusicImageUrls(prevImageUrls => ({
+                            ...prevImageUrls,
+                            [musicId]: imageResponse.data.album_image_url  // 음악의 이미지 URL만 저장
+                        }));
+                    });
                 }
             } catch (error) {
                 console.error('플레이리스트 조회 실패:', error);
@@ -62,6 +72,17 @@ const PlayListPage = () => {
                                             playlistMusicIds[playlistId].map((musicId) => (
                                                 <li key={musicId}>
                                                     <p>Music ID: {musicId}</p>
+
+                                                    {/* 음악 이미지 URL이 존재하면 표시 */}
+                                                    {musicImageUrls[musicId] && (
+                                                        <div style={styles.musicDetails}>
+                                                            <img 
+                                                                src={musicImageUrls[musicId]} 
+                                                                alt={`Album cover for music ID ${musicId}`} 
+                                                                style={styles.albumImage}
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </li>
                                             ))
                                         ) : (
@@ -99,6 +120,19 @@ const styles = {
         border: '1px solid #ccc',
         borderRadius: '5px',
         backgroundColor: '#f9f9f9',
+    },
+    musicDetails: {
+        marginTop: '10px',
+        padding: '10px',
+        border: '1px solid #ddd',
+        borderRadius: '5px',
+        backgroundColor: '#f0f0f0',
+    },
+    albumImage: {
+        width: '100px',
+        height: '100px',
+        objectFit: 'cover',
+        marginTop: '10px',
     },
 };
 
