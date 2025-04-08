@@ -62,38 +62,34 @@ const PlayListPage = () => {
                 <div style={styles.playlistContainer}>
                     {/* 플레이리스트 ID가 존재하는지 확인 후, 없으면 메시지 출력 */}
                     {playlistIds.length > 0 ? (
-                        <ul>
+                        <ul style={styles.playlistList}>
                             {playlistIds.map((playlistId) => (
                                 <li key={playlistId} style={styles.playlistItem}>
-                                    <h3>Playlist ID: {playlistId}</h3>
-                                    <ul>
+                                    <h3 style={styles.playlistTitle}>Playlist ID: {playlistId}</h3>
+                                    <div style={styles.musicImagesContainer}>
                                         {/* 해당 플레이리스트의 음악 ID들이 존재하는지 확인 */}
                                         {playlistMusicIds[playlistId] && playlistMusicIds[playlistId].length > 0 ? (
                                             playlistMusicIds[playlistId].map((musicId) => (
-                                                <li key={musicId}>
-                                                    <p>Music ID: {musicId}</p>
-
+                                                <div key={musicId} style={styles.musicImageWrapper}>
                                                     {/* 음악 이미지 URL이 존재하면 표시 */}
                                                     {musicImageUrls[musicId] && (
-                                                        <div style={styles.musicDetails}>
-                                                            <img 
-                                                                src={musicImageUrls[musicId]} 
-                                                                alt={`Album cover for music ID ${musicId}`} 
-                                                                style={styles.albumImage}
-                                                            />
-                                                        </div>
+                                                        <img 
+                                                            src={musicImageUrls[musicId]} 
+                                                            alt={`Album cover for music ID ${musicId}`} 
+                                                            style={styles.albumImage}
+                                                        />
                                                     )}
-                                                </li>
+                                                </div>
                                             ))
                                         ) : (
-                                            <p>이 플레이리스트에 음악이 없습니다.</p>
+                                            <p style={styles.noMusicText}>이 플레이리스트에 음악이 없습니다.</p>
                                         )}
-                                    </ul>
+                                    </div>
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <p>현재 플레이리스트가 없습니다. 새로운 플레이리스트를 생성하세요!</p>
+                        <p style={styles.noPlaylistText}>현재 플레이리스트가 없습니다. 새로운 플레이리스트를 생성하세요!</p>
                     )}
                 </div>
             </div>
@@ -104,35 +100,76 @@ const PlayListPage = () => {
 
 const styles = {
     h1: {
-        fontSize: '4vw',
+        fontSize: '3.5rem',
         fontFamily: 'Jua',
+        color: '#333',
+        marginBottom: '20px',
+        fontWeight: 'bold',
     },
     container: {
-        padding: '20px',
+        padding: '0 10vw',
         textAlign: 'center',
+        backgroundColor: 'transparent',
     },
     playlistContainer: {
         marginTop: '20px',
     },
-    playlistItem: {
-        marginBottom: '10px',
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '5px',
-        backgroundColor: '#f9f9f9',
+    playlistList: {
+        listStyleType: 'none',
+        padding: '0',
     },
-    musicDetails: {
-        marginTop: '10px',
-        padding: '10px',
-        border: '1px solid #ddd',
-        borderRadius: '5px',
-        backgroundColor: '#f0f0f0',
+    playlistItem: {
+        marginBottom: '30px',
+        padding: '20px',
+        border: '1px solid #e0e0e0',
+        borderRadius: '8px',
+        backgroundColor: '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    },
+    playlistItemHover: {
+        transform: 'scale(1.05)',
+        boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+    },
+    playlistTitle: {
+        fontSize: '1.5rem',
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: '10px',
+        fontFamily: 'Jua'
+    },
+    musicImagesContainer: {
+        display: 'flex',
+        flexDirection: 'row',  // 가로로 나열
+        flexWrap: 'wrap',  // 이미지가 넘치면 자동으로 줄바꿈
+        justifyContent: 'center',  // 중앙 정렬
+        gap: '15px',  // 이미지 간격
+        marginTop: '20px',
+    },
+    musicImageWrapper: {
+        textAlign: 'center',
+        transition: 'transform 0.3s ease',
     },
     albumImage: {
-        width: '100px',
-        height: '100px',
+        width: '12vw',
+        height: '18vh',
         objectFit: 'cover',
-        marginTop: '10px',
+        borderRadius: '8px',
+        transition: 'transform 0.3s ease',
+    },
+    albumImageHover: {
+        transform: 'scale(1.1)',
+    },
+    noMusicText: {
+        color: '#888',
+        fontSize: '1rem',
+        fontStyle: 'italic',
+    },
+    noPlaylistText: {
+        color: '#888',
+        fontSize: '1.2rem',
+        fontWeight: 'bold',
+        fontStyle: 'JUA',
     },
 };
 
