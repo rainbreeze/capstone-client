@@ -7,11 +7,18 @@ export default class GameScene extends Phaser.Scene {
         super("GameScene")
     }
 
+
+
     preload() {
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/map_test.json');
         this.load.image('forestTown', 'assets/tilesets/tiles_packed.png');
         this.load.image('snowExpansion', 'assets/tilesets/snow-expansion.png');
     }
+
+    init(data) {
+        this.selectedCharacter = data.selectedCharacter;
+    }
+
 
     create() {
         console.log('create start')
@@ -24,8 +31,20 @@ export default class GameScene extends Phaser.Scene {
 
 
         console.log("tilesets: ", map.tilesets);
+
+        console.log('selectedCharacter: ', this.selectedCharacter);
         // 임시 플레이어 역할
-        this.player = this.add.rectangle(100, 100, 16, 16, 0x00ff00);
+        let color = undefined;
+
+        if (this.selectedCharacter == 'char1') {
+            color = 0x00ff00;
+        } else if (this.selectedCharacter == 'char2') {
+            color = 0xffffff;
+        } else if (this.selectedCharacter == 'char3') {
+            color = 0x558BCF;
+        }
+
+        this.player = this.add.rectangle(100, 100, 16, 16, color);
         this.physics.add.existing(this.player);
         this.player.body.setCollideWorldBounds(true);
 
@@ -61,7 +80,6 @@ export default class GameScene extends Phaser.Scene {
             body.setVelocityX(-speed);
         } else if (this.cursors.right.isDown) {
             body.setVelocityX(speed);
-            console.log("position: ", this.player.x, this.player.y);
         }
 
         if (this.cursors.up.isDown) {
