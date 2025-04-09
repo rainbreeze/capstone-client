@@ -36,11 +36,11 @@ export default class GameScene extends Phaser.Scene {
         // 임시 플레이어 역할
         let color = undefined;
 
-        if (this.selectedCharacter == 'char1') {
+        if (this.selectedCharacter === 'char1') {
             color = 0x00ff00;
-        } else if (this.selectedCharacter == 'char2') {
+        } else if (this.selectedCharacter === 'char2') {
             color = 0xffffff;
-        } else if (this.selectedCharacter == 'char3') {
+        } else if (this.selectedCharacter === 'char3') {
             color = 0x558BCF;
         }
 
