@@ -1,4 +1,3 @@
-import React from "react";
 import Phaser from "phaser"
 
 export default class GameScene extends Phaser.Scene {
@@ -10,7 +9,7 @@ export default class GameScene extends Phaser.Scene {
 
 
     preload() {
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/map_test.json');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/map_tiled.json');
         this.load.image('forestTown', 'assets/tilesets/tiles_packed.png');
         this.load.image('snowExpansion', 'assets/tilesets/snow-expansion.png');
     }
@@ -30,23 +29,35 @@ export default class GameScene extends Phaser.Scene {
         map.createLayer('Object', [tileset, bridge], 0, 0).setScrollFactor(1);
 
 
+        //맵 충돌 셋팅 
+        const collisionObjects = map.getObjectLayer('Collision').objects;
+
         console.log("tilesets: ", map.tilesets);
 
         console.log('selectedCharacter: ', this.selectedCharacter);
         // 임시 플레이어 역할
         let color = undefined;
 
-        if (this.selectedCharacter == 'char1') {
+        if (this.selectedCharacter === 'char1') {
             color = 0x00ff00;
-        } else if (this.selectedCharacter == 'char2') {
+        } else if (this.selectedCharacter === 'char2') {
             color = 0xffffff;
-        } else if (this.selectedCharacter == 'char3') {
+        } else if (this.selectedCharacter === 'char3') {
             color = 0x558BCF;
         }
 
-        this.player = this.add.rectangle(100, 100, 16, 16, color);
+        this.player = this.add.rectangle(100, 100, 15, 15, color);
         this.physics.add.existing(this.player);
         this.player.body.setCollideWorldBounds(true);
+
+        collisionObjects.forEach(obj => {
+            const box = this.physics.add.staticImage(obj.x + obj.width / 2, obj.y + obj.height / 2)
+                .setSize(obj.width, obj.height)
+                .setOrigin(0.5)
+                .setVisible(false); //안보이도록 설정
+
+            this.physics.add.collider(this.player, box);
+        });
 
 
 
