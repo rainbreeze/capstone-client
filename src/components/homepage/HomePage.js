@@ -5,6 +5,7 @@ import Middle from './Middle';
 import StartGameContainer from './StartGameContainer';
 import ImageSlider from './ImageSlider';
 import ContainerWrapper from './ContainerWrapper';
+import NoticeSection from './NoticeSection'; // ← import 추가
 
 const HomePage = () => (
     <div>
@@ -12,6 +13,7 @@ const HomePage = () => (
         <Middle>
             <ContainerWrapper>
                 <StartGameContainer />
+                <NoticeSection /> {/* ← 여기 삽입 */}
                 <ImageSlider />
             </ContainerWrapper>
         </Middle>
