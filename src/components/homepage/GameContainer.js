@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import IntroScene from "../gamepage/IntroScene"
 import MainScene from "../gamepage/MainScene";
 import GameScene from "../gamepage/GameScene"
+import ChoiceScene from "../gamepage/ChoiceScene";
 
 const GameContainer = () => {
     const gameRef = useRef(null);
@@ -17,7 +18,7 @@ const GameContainer = () => {
                 default: "arcade",
                 arcade: { debug: false }
             },
-            scene: [IntroScene, MainScene, GameScene]
+            scene: [IntroScene, MainScene, ChoiceScene, GameScene]
         };
 
         const game = new Phaser.Game(config);

@@ -6,52 +6,66 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('playButton', 'assets/images/play-button.png');
+        this.load.image('playButton', 'assets/images/play_button.png');
+        this.load.image('characterButton', 'assets/images/character_btn.png');
+        this.load.image('settingButton', 'assets/images/setting_btn.png');
+
+    }
+
+    init(data) {
+        // 기본값 설정
+        this.selectedChar = 'char1';
+
+        // 만약 ChoiceScene에서 선택 값이 넘어왔다면 덮어쓰기
+        if (data.selectedChar) {
+            this.selectedChar = data.selectedChar;
+        }
+
+        console.log('[MainScene] 최종 캐릭터 선택:', this.selectedChar);
     }
 
     create() {
+
+        this.cameras.main.setBackgroundColor('#ffffff');
+
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
+        console.log('char: ', this.selectedChar)
 
-        //임시 캐릭터 역할 (캐릭터 이미지 찾으면 이미지로 변경)
-        const char1 = this.add.rectangle(150, 500, 50, 50, 0x00ff00);
-        const char2 = this.add.rectangle(400, 500, 50, 50, 0xffffff);
-        const char3 = this.add.rectangle(650, 500, 50, 50, 0x558BCF);
 
-        char1.setInteractive();
-        char2.setInteractive();
-        char3.setInteractive();
 
-        //기본값
-        let selectedChar = char1;
+        //캐릭터 선택창
 
-        char1.on('pointerdown', () => {
-            selectedChar = 'char1';
-            console.log('char1 selected');
+        const characterSceneBtn = this.add.image(100, centerY + 200, 'characterButton').setInteractive();
+        characterSceneBtn.setDisplaySize(100, 100)
+        characterSceneBtn.on('pointerdown', () => {
+            console.log('choice CharacterScene');
+            this.scene.start('ChoiceScene');
+            console.log('choice scene 실행됨..')
         })
 
-        char2.on('pointerdown', () => {
-            selectedChar = 'char2';
-            console.log('char2 selected');
-        })
-        char3.on('pointerdown', () => {
-            selectedChar = 'char3';
-            console.log('char3 selected');
-        })
+
+        //임시 설정창
+        const settingBtn = this.add.image(700, centerY + 200, 'settingButton').setInteractive();
+        settingBtn.setDisplaySize(100, 100)
 
 
         //임시 버튼 스타일
 
         const playBtn = this.add.image(centerX, centerY - 40, 'playButton').setInteractive();
+        this.add.text(centerX - 60, centerY + 40, 'PLAY BEATS!', {
+            fontSize: '20px',
+            fill: '#000000'
+        });
         playBtn.setDisplaySize(100, 100);
         playBtn.on('pointerdown', () => {
-            if (selectedChar) {
-                console.log(selectedChar);
-                this.scene.start('GameScene', { 'selectedCharacter': selectedChar });
+            if (this.selectedChar) {
+                console.log(this.selectedChar);
+                this.scene.start('GameScene', { 'selectedCharacter': this.selectedChar });
 
             } else {
-                console.log('캐릭터가 선택되지 않았습니다');
+                alert('error / 캐릭터 undefined');
             }
         })
     }
