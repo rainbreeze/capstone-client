@@ -132,11 +132,7 @@ const HeaderWrapper = styled.header`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    transition: border-bottom 0.3s ease;
     padding: 0 2%;
-
-    /* 스크롤 시 border-bottom 추가 */
-    ${props => props.scrolled && `border-bottom: 1px solid #808080;`}
 `;
 
 const Logo = styled.img`
@@ -194,17 +190,9 @@ const NavLink = styled.a`
     font-family: 'Jua', sans-serif;
     transition: 0.7s ease;
 
-    &:hover {
-        color: #1ED760;
-    }
-
     /* 로그아웃 버튼에 대한 색상 변경 */
     ${props => props.isLogout && `
-        color: #FF0000; /* 빨간색 */
-        
-        &:hover {
-            color: #FF4D4D; /* 빨간색 hover 효과 */
-        }
+        color: #FF0000 !important;/* 빨간색 */
     `}
 `;
 
@@ -219,6 +207,9 @@ const NavItem = styled.li`
 
     &:hover {
         background-color: #FFFFFF;
+        a {
+            color: #1ED760; /* hover 시 a 태그 색상 변경 */
+        }
     }
 `;
 
