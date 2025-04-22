@@ -3,28 +3,28 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const StartGameContainer = () => (
-  <ImageContainer1>
-    <LeftContainer>
-      <TextBoxWrapper>
-        <TextLine1>게임 속에서 새로운 음악을 발견하고,</TextLine1>
-        <TextLine2>그 리듬에 맞춰 여정을 떠나보세요!</TextLine2>
-        <GameButton as={Link} to="/game">게임하러 가기</GameButton>
-      </TextBoxWrapper>
-    </LeftContainer>
-    <RightContainer>
-      <YouTubeContainer>
-        <iframe
-          width="100%"
-          height="100%"
-          src="https://www.youtube.com/embed/oPLNNx8pp4s?start=80&autoplay=1&mute=1"
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
-      </YouTubeContainer>
-    </RightContainer>
-  </ImageContainer1>
+    <ImageContainer1>
+        <LeftContainer>
+            <TextBoxWrapper>
+                <TextLine1>게임 속에서 새로운 음악을 발견하고,</TextLine1>
+                <TextLine2>그 리듬에 맞춰 여정을 떠나보세요!</TextLine2>
+                <GameButton as={Link} to="/game">게임하러 가기</GameButton>
+            </TextBoxWrapper>
+        </LeftContainer>
+        <RightContainer>
+            <YouTubeContainer>
+                <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/oPLNNx8pp4s?start=80&autoplay=1&mute=1"
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe>
+            </YouTubeContainer>
+        </RightContainer>
+    </ImageContainer1>
 );
 
 export default StartGameContainer;
@@ -108,7 +108,7 @@ const GameButton = styled(Link)`
   margin-top: 1rem;
   text-decoration: none;
   background-color: transparent;
-  border: 1.5px solid white;
+  border: 2px solid white;
   color: white;
   font-size: 1.7vw;
   font-family: 'Jua', sans-serif;
@@ -162,5 +162,4 @@ const YouTubeContainer = styled.div`
   width: 100%;
   height: 100%;
   background-color: black;
-  border-radius: 10px;
 `;

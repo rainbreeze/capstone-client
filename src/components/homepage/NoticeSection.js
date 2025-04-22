@@ -28,7 +28,7 @@ const NoticeSection = () => {
         <Bar>
             <NoticeText>공지사항</NoticeText>
             <NoticeWrapper>
-                <NoticeContainer style={{ transform: `translateY(-${currentNoticeIndex * 35}px)` }}>
+                <NoticeContainer style={{ transform: `translateY(-${currentNoticeIndex * 45}px)` }}>
                     {notices.map((notice, index) => (
                         <NoticeItem key={index}>{notice}</NoticeItem>
                     ))}
@@ -42,13 +42,13 @@ export default NoticeSection;
 
 const Bar = styled.div`
   width: 100%;
-  height: 35px; /* 한 줄로 딱 맞는 높이 설정 */
+  height: 45px; /* 한 줄로 딱 맞는 높이 설정 */
   display: flex;
 `;
 
 const NoticeText = styled.div`
   width: 15%;
-  height: 35px; /* 한 줄로 딱 맞는 높이 설정 */
+  height: 45px; /* 한 줄로 딱 맞는 높이 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,7 +60,7 @@ const NoticeText = styled.div`
 // 공지사항 Wrapper
 const NoticeWrapper = styled.div`
   width: 35%;
-  height: 35px; /* 한 줄로 딱 맞는 높이 설정 */
+  height: 45px; /* 한 줄로 딱 맞는 높이 설정 */
   overflow: hidden; /* 슬라이딩 효과를 위해 숨김 처리 */
   position: relative;
   background-color: #000; /* 배경 색을 검정색으로 설정 */
@@ -75,7 +75,7 @@ const NoticeContainer = styled.div`
 
 // 개별 공지사항 아이템
 const NoticeItem = styled.div`
-  height: 35px; /* 고정 높이로 설정 */
+  height: 45px; /* 고정 높이로 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,6 +88,6 @@ const NoticeItem = styled.div`
   font-weight: bold;
   
   @media (max-width: 768px) {
-    font-size: calc(1rem + 2vw);  /* 모바일 화면에서는 글자 크기를 상대적으로 키움 */
+    font-size: calc(1.8vw);  /* 모바일 화면에서는 글자 크기를 상대적으로 키움 */
   }
 `;
