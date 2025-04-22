@@ -12,6 +12,11 @@ export default class GameScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/map_tiled.json');
         this.load.image('forestTown', 'assets/tilesets/tiles_packed.png');
         this.load.image('snowExpansion', 'assets/tilesets/snow-expansion.png');
+
+        //캐릭터 이미지셋
+        this.load.image('Char1', 'assets/images/Character1.png');
+        this.load.image('Char2', 'assets/images/Character2.png');
+        this.load.image('Char3', 'assets/images/Character3.png');
     }
 
     init(data) {
@@ -32,21 +37,21 @@ export default class GameScene extends Phaser.Scene {
         //맵 충돌 셋팅 
         const collisionObjects = map.getObjectLayer('Collision').objects;
 
-        console.log("tilesets: ", map.tilesets);
 
         console.log('selectedCharacter: ', this.selectedCharacter);
         // 임시 플레이어 역할
-        let color = undefined;
+        let imageName = undefined;
 
         if (this.selectedCharacter === 'char1') {
-            color = 0x00ff00;
+            imageName = 'Char1'
         } else if (this.selectedCharacter === 'char2') {
-            color = 0xffffff;
+            imageName = 'Char2'
         } else if (this.selectedCharacter === 'char3') {
-            color = 0x558BCF;
+            imageName = 'Char3'
         }
 
-        this.player = this.add.rectangle(100, 100, 15, 15, color);
+        this.player = this.physics.add.image(100, 100, imageName);
+        this.player.setDisplaySize(24, 24);
         this.physics.add.existing(this.player);
         this.player.body.setCollideWorldBounds(true);
 
@@ -76,14 +81,12 @@ export default class GameScene extends Phaser.Scene {
 
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-
-
         this.physics.world.createDebugGraphic();
 
     }
 
     update() {
-        const speed = 100;
+        const speed = 300;
         const body = this.player.body;
         body.setVelocity(0);
 

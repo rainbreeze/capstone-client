@@ -5,39 +5,45 @@ class ChoiceScene extends Phaser.Scene {
         super('ChoiceScene');
     }
 
-    preaload() {
-        this.load.image('Char1', 'assets/images/Character2.png');
+    preload() {
+        this.load.image('Char1', 'assets/images/Character1.png');
+        this.load.image('Char2', 'assets/images/Character2.png');
+        this.load.image('Char3', 'assets/images/Character3.png');
     }
 
 
     create() {
-        //임시 캐릭터 역할 (캐릭터 이미지 찾으면 이미지로 변경)
-        const char1 = this.add.image(150, 500, 'Char1').setInteractive();
-        const char2 = this.add.rectangle(400, 500, 50, 50, 0xffffff);
-        const char3 = this.add.rectangle(650, 500, 50, 50, 0x558BCF);
 
-        char1.setInteractive();
-        char2.setInteractive();
-        char3.setInteractive();
+        const centerY = this.cameras.main.height / 2;
+
+
+        const char1 = this.add.image(150, centerY, 'Char1').setInteractive();
+        const char2 = this.add.image(400, centerY, 'Char2').setInteractive();
+        const char3 = this.add.image(650, centerY, 'Char3').setInteractive();
+
+        char1.setDisplaySize(100, 100);
+        char2.setDisplaySize(100, 100);
+        char3.setDisplaySize(100, 100);
+
 
         //기본값
-        let selectedChar = char1;
+        let selectedChar;
 
         char1.on('pointerdown', () => {
             selectedChar = 'char1';
             console.log('char1 selected');
-            this.scene.start('MainScene', { 'selectedCharacter': selectedChar })
+            this.scene.start('MainScene', { 'selectedChar': selectedChar })
         })
 
         char2.on('pointerdown', () => {
             selectedChar = 'char2';
             console.log('char2 selected');
-            this.scene.start('MainScene', { 'selectedCharacter': selectedChar })
+            this.scene.start('MainScene', { 'selectedChar': selectedChar })
         })
         char3.on('pointerdown', () => {
             selectedChar = 'char3';
             console.log('char3 selected');
-            this.scene.start('MainScene', { 'selectedCharacter': selectedChar })
+            this.scene.start('MainScene', { 'selectedChar': selectedChar })
         })
     }
 
