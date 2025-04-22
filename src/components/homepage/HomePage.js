@@ -6,6 +6,7 @@ import StartGameContainer from './StartGameContainer';
 import ImageSlider from './ImageSlider';
 import ContainerWrapper from './ContainerWrapper';
 import NoticeSection from './NoticeSection'; // ← import 추가
+import RankingContainer from './RankingContainer';
 
 const HomePage = () => (
     <div>
@@ -15,6 +16,7 @@ const HomePage = () => (
                 <StartGameContainer />
                 <NoticeSection /> {/* ← 여기 삽입 */}
                 <ImageSlider />
+                <RankingContainer></RankingContainer>
             </ContainerWrapper>
         </Middle>
         <Footer />
