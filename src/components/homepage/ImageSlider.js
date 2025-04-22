@@ -4,10 +4,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const images = [
-    '/images/homepage/homepage_nav02.png',
-    '/images/homepage/homepage_nav03.png',
-    '/images/homepage/homepage_nav04.png',
-    '/images/homepage/homepage_nav05.png'
+  {
+    src: '/images/homepage/er1.png',
+  },
+  {
+    src: '/images/homepage/er2.png',
+  },
+  {
+    src: '/images/homepage/er3.png',
+  },
+  {
+    src: '/images/homepage/homepage_nav05.png',
+  },
+  {
+    src: '/images/homepage/er5.png',
+  },
+  {
+    src: '/images/homepage/er4.png',
+  },
 ];
 
 const ImageSlider = () => {
@@ -34,7 +48,21 @@ const ImageSlider = () => {
     };
 
     return (
-        <ImageContainer2 backgroundImage={images[currentImageIndex]}>
+        <SliderWrapper>
+            <ImageTrack>
+                <SlideImage
+                    image={images[(currentImageIndex - 1 + images.length) % images.length].src}
+                    faded
+                />
+                <SlideImage
+                    image={images[currentImageIndex].src}
+                    focused
+                />
+                <SlideImage
+                    image={images[(currentImageIndex + 1) % images.length].src}
+                    faded
+                />
+            </ImageTrack>
             <NavButtons>
                 <NavButton onClick={goToPreviousImage}>
                     <FontAwesomeIcon icon={faChevronLeft} />
@@ -43,7 +71,6 @@ const ImageSlider = () => {
                     <FontAwesomeIcon icon={faChevronRight} />
                 </NavButton>
             </NavButtons>
-
             <Pagination>
                 {images.map((_, index) => (
                     <Dot
@@ -53,87 +80,107 @@ const ImageSlider = () => {
                     />
                 ))}
             </Pagination>
-        </ImageContainer2>
+        </SliderWrapper>
     );
 };
 
 export default ImageSlider;
 
-const ImageContainer2 = styled.div`
+// Styled Components
+const SliderWrapper = styled.div`
     position: relative;
+    display: flex;
     width: 100%;
-    height: 30vw;
-    background-image: url(${(props) => props.backgroundImage});
-    background-size: 100% 100%;
+    margin: 0 auto;
+    overflow: hidden;
+`;
+
+const ImageTrack = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;  /* 전체 너비 100% */
+    gap: 2%;
+`;
+
+const SlideImage = styled.div`
+    flex: ${(props) => (props.focused ? 3 : 1)};  /* focused일 때 3배 크기 */
+    width: 40vw;  /* 이미지 크기를 뷰포트 기준으로 설정 */
+    height: 25vw;  /* 동일하게 높이도 설정 */
+    background-image: url(${(props) => props.image});
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border-radius: 8px;
+    transition: all 0.5s ease-in-out;
+    opacity: ${(props) => (props.focused ? 1 : 0.5)};
+    transform: ${(props) => (props.focused ? 'scale(1.05)' : 'scale(0.9)')};
+    z-index: ${(props) => (props.focused ? 2 : 1)};
+    position: relative;
 
     @media (max-width: 768px) {
-        height: 25vw;
+        width: 60vw;  /* 작은 화면에서 비율을 더 키울 수 있음 */
+        height: 60vw;  /* 작은 화면에서 높이도 비율 맞추기 */
     }
 `;
 
 const NavButtons = styled.div`
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    padding: 0 5%;
-    align-items: center;
-
-    @media (max-width: 768px) {
-        padding: 0 5%;
-    }
+    padding: 0 1rem;
+    pointer-events: none;
+    z-index: 3;  /* 버튼을 이미지 위로 올리기 위해 z-index 조정 */
 `;
 
 const NavButton = styled.button`
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     color: white;
-    font-size: 1vw; /* 폰트 크기를 뷰포트 크기로 설정 */
     border: none;
-    width: 3vw; /* 버튼 너비를 뷰포트 너비 기준으로 설정 */
-    height: 3vw; /* 버튼 높이를 뷰포트 너비 기준으로 설정 */
-    border-radius: 50%; /* 동그라미 모양 */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    pointer-events: auto;
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: rgba(0, 0, 0, 0.8);
+        background-color: rgba(0, 0, 0, 0.7);
     }
 
-    .fa-chevron-left, .fa-chevron-right {
-        font-size: 2vw; /* 아이콘 크기 조정 */
+    svg {
+        font-size: 1.2rem;
     }
 `;
 
 const Pagination = styled.div`
     position: absolute;
-    bottom: 5%;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 2%;
-
-    @media (max-width: 768px) {
-        gap: 5%;
-    }
+    gap: 10px;
+    z-index: 3;  /* Pagination을 이미지 위로 올리기 위해 z-index 조정 */
 `;
 
 const Dot = styled.div`
-    width: 1.5vw;
-    height: 1vw;
-    background-color: ${(props) => (props.isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)')};
+    width: 12px;
+    height: 12px;
+    background-color: ${(props) =>
+        props.isActive ? '#fff' : 'rgba(255, 255, 255, 0.5)'};
     border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 
     &:hover {
-        background-color: #FFFFFF;
+        transform: scale(1.2);
+        background-color: #fff;
     }
 `;
