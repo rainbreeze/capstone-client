@@ -3,8 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
-import { RIGHT } from 'phaser';
-
 const PlayListPage = () => {
     const [playlists, setPlaylists] = useState([]);  // playlistId + createdAt 담는 배열
     const [playlistMusicIds, setPlaylistMusicIds] = useState({});
