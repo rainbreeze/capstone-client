@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Header from './common/Header';
-import Footer from './common/Footer';
+import Header from '../common/Header';
+import Footer from '../common/Footer';
+import { RIGHT } from 'phaser';
 
 const PlayListPage = () => {
     const [playlists, setPlaylists] = useState([]);  // playlistId + createdAt 담는 배열
@@ -49,6 +50,18 @@ const PlayListPage = () => {
         fetchPlaylists();
     }, [navigate]);
 
+    const handleDeletePlaylist = async (playlistId) => {
+
+        try {
+            const response = await axios.delete(`${process.env.REACT_APP_API_URL}/playlist/${playlistId}`);
+            alert(response.data.message);
+            setPlaylists(prevPlaylists => prevPlaylists.filter(playlist => playlist.playlistId !== playlistId));
+        } catch (error) {
+            console.error('플레이리스트 삭제 실패:', error);
+            alert('플레이리스트를 삭제하는 데 실패했습니다.');
+        }
+    }
+
     return (
         <div>
             <Header />
@@ -63,6 +76,9 @@ const PlayListPage = () => {
                                     <p style={styles.creationDate}>
                                         생성일: {new Date(createdAt).toLocaleDateString('ko-KR')}
                                     </p>
+                                    <button onClick={() => handleDeletePlaylist(playlistId)} style={styles.deleteButton}>
+                                        삭제
+                                    </button>
                                     <div style={styles.musicImagesContainer}>
                                         {playlistMusicIds[playlistId] && playlistMusicIds[playlistId].length > 0 ? (
                                             playlistMusicIds[playlistId].map((musicId) => (
@@ -94,6 +110,20 @@ const PlayListPage = () => {
 };
 
 const styles = {
+    deleteButton: {
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        padding: '8px 16px',
+        backgroundColor: '#f44336',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '1rem',
+        fontWeight: '600',
+        transition: 'background-color 0.3s ease',
+    },
     h1: {
         fontSize: '3.5rem',
         fontFamily: 'Jua',
@@ -114,6 +144,7 @@ const styles = {
         padding: '0',
     },
     playlistItem: {
+        position: 'relative',
         marginBottom: '30px',
         padding: '20px',
         border: '1px solid #e0e0e0',
