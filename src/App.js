@@ -10,6 +10,7 @@ import TestResultPage from './components/testpage/TestResultPage';
 import ReviewsPage from './components/ReviewsPage';
 import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
+import WriteReviewsPage from './components/WriteReviewPage';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/reviews" element={<ReviewsPage />} />  {/* 감상평 페이지 */}
         <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
         <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
+        <Route path="/write" element={<WriteReviewsPage />} />
       </Routes>
     </Router>
   );

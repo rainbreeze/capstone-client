@@ -45,7 +45,7 @@ const PlayListPage = () => {
             }
         };
 
-        fetchPlaylists();
+        fetchPlaylists('/login');
     }, [navigate]);
 
     const handleDeletePlaylist = async (playlistId) => {
@@ -59,6 +59,12 @@ const PlayListPage = () => {
             alert('플레이리스트를 삭제하는 데 실패했습니다.');
         }
     }
+
+    const handleImageClick = (musicId) => {
+        const imageUrl = musicImageUrls[musicId];
+        navigate('/write', { state: { musicId, imageUrl } });
+    };
+    
 
     return (
         <div>
@@ -86,6 +92,7 @@ const PlayListPage = () => {
                                                             src={musicImageUrls[musicId]}
                                                             alt={`Album cover for music ID ${musicId}`}
                                                             style={styles.albumImage}
+                                                            onClick={() => handleImageClick(musicId)}
                                                         />
                                                     )}
                                                 </div>
