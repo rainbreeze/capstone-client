@@ -7,7 +7,6 @@ import LoginPage from './components/loginpage/LoginPage';
 import MyInfoPage from './components/MyInfoPage';
 import TestPage from './components/testpage/TestPage';
 import TestResultPage from './components/testpage/TestResultPage';  
-import ReviewsPage from './components/ReviewsPage';
 import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
 import WriteReviewsPage from './components/reviewpage/WriteReviewPage';
@@ -24,10 +23,9 @@ function App() {
         <Route path="/myinfo" element={<MyInfoPage />} />  {/* 내 정보 페이지 */}
         <Route path="/test" element={<TestPage />} />  {/* 테스트 페이지 */}
         <Route path="/testresult" element={<TestResultPage />} />  {/* 테스트 결과 페이지 추가 */}
-        <Route path="/reviews" element={<ReviewsPage />} />  {/* 감상평 페이지 */}
         <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
         <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
-        <Route path="/write" element={<WriteReviewsPage />} />
+        <Route path="/write" element={<WriteReviewsPage />} /> { /*감상평 쓰기 페이지 */}
       </Routes>
     </Router>
   );
