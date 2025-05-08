@@ -10,7 +10,7 @@ import TestResultPage from './components/testpage/TestResultPage';
 import ReviewsPage from './components/ReviewsPage';
 import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
-import WriteReviewsPage from './components/WriteReviewPage';
+import WriteReviewsPage from './components/reviewpage/WriteReviewPage';
 
 
 function App() {
