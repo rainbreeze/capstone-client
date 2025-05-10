@@ -59,7 +59,7 @@ const Header = () => {
             <NavLeft>
                 <NavList>
                     <NavItem scrolled={scrolled}><NavLink as={Link} to="/game">게임</NavLink></NavItem>
-                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/reviews">감상평</NavLink></NavItem>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/viewreview">감상평</NavLink></NavItem>
                     <NavItem scrolled={scrolled}><NavLink as={Link} to="/ranking">랭킹</NavLink></NavItem>
                     <NavItem scrolled={scrolled}><NavLink as={Link} to="/test">테스트</NavLink></NavItem>
                 </NavList>
@@ -89,7 +89,7 @@ const Header = () => {
                             <NavLink as={Link} to="/game">게임</NavLink>
                         </SidebarItem>
                         <SidebarItem onClick={() => setIsSidebarOpen(false)}>
-                            <NavLink as={Link} to="/reviews">감상평</NavLink>
+                            <NavLink as={Link} to="/viewreview">감상평</NavLink>
                         </SidebarItem>
                         <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                             <NavLink as={Link} to="/ranking">랭킹</NavLink>

@@ -3,9 +3,11 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
+import { useNavigate } from 'react-router-dom';
 
 function WriteReviewPage() {
     const location = useLocation();
+    const navigate = useNavigate();
     const { musicId, imageUrl } = location.state || {};
 
     const [genre, setGenre] = useState(null);
@@ -58,6 +60,7 @@ function WriteReviewPage() {
             alert('리뷰가 성공적으로 제출되었습니다!');
             setRating(0);
             setComment('');
+            navigate('/viewreview');
         } catch (error) {
             console.error('리뷰 등록 실패:', error);
             alert('리뷰 제출에 실패했습니다. 다시 시도해주세요.');

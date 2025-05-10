@@ -10,6 +10,7 @@ import TestResultPage from './components/testpage/TestResultPage';
 import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
 import WriteReviewsPage from './components/reviewpage/WriteReviewPage';
+import ViewReviewPage from './components/reviewpage/ViewReviewPage';
 
 
 function App() {
@@ -23,9 +24,10 @@ function App() {
         <Route path="/myinfo" element={<MyInfoPage />} />  {/* 내 정보 페이지 */}
         <Route path="/test" element={<TestPage />} />  {/* 테스트 페이지 */}
         <Route path="/testresult" element={<TestResultPage />} />  {/* 테스트 결과 페이지 추가 */}
-        <Route path="/signup" element={<RegisterPage />} />  {/* 감상평 페이지 */}
+        <Route path="/signup" element={<RegisterPage />} />  {/* ??? 페이지 */}
         <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
         <Route path="/write" element={<WriteReviewsPage />} /> { /*감상평 쓰기 페이지 */}
+        <Route path="/viewreview" element={<ViewReviewPage/>} /> { /*감상평 보기 페이지 */}
       </Routes>
     </Router>
   );
