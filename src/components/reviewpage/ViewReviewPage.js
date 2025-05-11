@@ -2,11 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
+import { useNavigate } from 'react-router-dom';
 
 function ViewReviewPage() {
     const [reviews, setReviews] = useState([]);  // 리뷰 상태를 빈 배열로 초기화
     const [error, setError] = useState(null);  // 에러 상태
     const [likedReviews, setLikedReviews] = useState([]);
+    const navigate = useNavigate();
+
+    const handleCommentClick = (reviewId) => {
+        navigate('/writereviewcomment', { state: { reviewId } });
+    };
 
     const handleLike = async (reviewId) => {
         const alreadyLiked = likedReviews.includes(reviewId);
@@ -94,6 +100,7 @@ function ViewReviewPage() {
                                     {/* 공통 하단 섹션 */}
                                     <div style={styles.bottomSection}>
                                         <div style={styles.bottomLeftSection}>
+                                            {/* 좋아요 버튼 */}
                                             <button
                                                 style={
                                                     likedReviews.includes(review.review_id)
@@ -103,6 +110,14 @@ function ViewReviewPage() {
                                                 onClick={() => handleLike(review.review_id)}
                                             >
                                                 <span className="material-icons-outlined">thumb_up</span>
+                                            </button>
+
+                                            {/* 댓글 버튼 */}
+                                            <button
+                                                style={styles.likeButton}
+                                                onClick={() => handleCommentClick(review.review_id)}
+                                            >
+                                                <span className="material-icons-outlined">chat</span>
                                             </button>
                                         </div>
                                         <div style={styles.bottomRight}>
