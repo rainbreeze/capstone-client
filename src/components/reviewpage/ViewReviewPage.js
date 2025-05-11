@@ -9,22 +9,26 @@ function ViewReviewPage() {
     const [likedReviews, setLikedReviews] = useState([]);
 
     const handleLike = async (reviewId) => {
+        const alreadyLiked = likedReviews.includes(reviewId);
+
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/like`);
-            // 성공 후 다시 리뷰 목록 새로고침
+            const endpoint = alreadyLiked ? 'unLike' : 'like';
+
+            await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/${endpoint}`);
+
+            // 응답 후 리뷰 목록 업데이트
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
             setReviews(response.data);
 
-            // 클릭된 리뷰를 liked 목록에 추가하거나 제거
+            // 좋아요 상태 토글
             setLikedReviews((prev) =>
-                prev.includes(reviewId)
+                alreadyLiked
                     ? prev.filter((id) => id !== reviewId)
                     : [...prev, reviewId]
             );
-
         } catch (err) {
-            console.error('좋아요 증가 실패:', err);
-            setError('좋아요를 반영하는 데 실패했습니다.');
+            console.error('좋아요 처리 실패:', err);
+            setError('좋아요 처리 중 문제가 발생했습니다.');
         }
     };
 
@@ -245,6 +249,7 @@ const styles = {
         padding: '6px 12px',
         borderRadius: '10px',
         cursor: 'pointer',
+        border: '3px solid black',
         transition: 'all 0.3s ease',
         display: 'flex', // Flexbox 활성화
         justifyContent: 'center', // 가로 중앙 정렬
@@ -259,7 +264,8 @@ const styles = {
         fontFamily: 'Jua',
         fontSize: '1.2rem',
         padding: '6px 12px',
-        borderRadius: '5px',
+        border: '1px solid white',
+        borderRadius: '10px',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
         display: 'flex', // Flexbox 활성화
