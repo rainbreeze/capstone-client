@@ -6,6 +6,27 @@ import Footer from '../common/Footer';
 function ViewReviewPage() {
     const [reviews, setReviews] = useState([]);  // 리뷰 상태를 빈 배열로 초기화
     const [error, setError] = useState(null);  // 에러 상태
+    const [likedReviews, setLikedReviews] = useState([]);
+
+    const handleLike = async (reviewId) => {
+        try {
+            await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/like`);
+            // 성공 후 다시 리뷰 목록 새로고침
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
+            setReviews(response.data);
+
+            // 클릭된 리뷰를 liked 목록에 추가하거나 제거
+            setLikedReviews((prev) =>
+                prev.includes(reviewId)
+                    ? prev.filter((id) => id !== reviewId)
+                    : [...prev, reviewId]
+            );
+
+        } catch (err) {
+            console.error('좋아요 증가 실패:', err);
+            setError('좋아요를 반영하는 데 실패했습니다.');
+        }
+    };
 
     useEffect(() => {
         const fetchAllReviews = async () => {
@@ -66,10 +87,24 @@ function ViewReviewPage() {
                                         <p style={styles.text}><strong></strong> {review.comment}</p>
                                     </div>
 
-                                    {/* 좋아요 수 / 댓글 수 우측 하단 */}
-                                    <div style={styles.bottomRight}>
-                                        <p style={styles.text}>👍 {review.like_count}</p>
-                                        <p style={styles.text}>💬 {review.comment_count}</p>
+                                    {/* 공통 하단 섹션 */}
+                                    <div style={styles.bottomSection}>
+                                        <div style={styles.bottomLeftSection}>
+                                            <button
+                                                style={
+                                                    likedReviews.includes(review.review_id)
+                                                        ? styles.likeButtonActive
+                                                        : styles.likeButton
+                                                }
+                                                onClick={() => handleLike(review.review_id)}
+                                            >
+                                                <span className="material-icons-outlined">thumb_up</span>
+                                            </button>
+                                        </div>
+                                        <div style={styles.bottomRight}>
+                                            <p style={styles.text}>👍 {review.like_count}</p>
+                                            <p style={styles.text}>💬 {review.comment_count}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -124,7 +159,7 @@ const styles = {
         boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
         justifyContent: 'space-between',
     },
-    
+
     leftSection: {
         display: 'flex',
         flexDirection: 'column',
@@ -132,7 +167,7 @@ const styles = {
         width: '200px',
         justifyContent: 'space-between',
     },
-    
+
     albumImage: {
         width: '180px',
         height: '180px',
@@ -140,16 +175,16 @@ const styles = {
         borderRadius: '10px',
         marginBottom: '10px',
     },
-    
+
     bottomLeft: {
         textAlign: 'center',
     },
-    
+
     dateText: {
         fontSize: '0.8rem',
         color: '#888',
     },
-    
+
     rightSection: {
         display: 'flex',
         flexDirection: 'column',
@@ -158,7 +193,7 @@ const styles = {
         marginLeft: '20px',
         position: 'relative',
     },
-    
+
     userId: {
         position: 'absolute',
         top: 0,
@@ -166,29 +201,72 @@ const styles = {
         marginTop: '10px',
         marginRight: '10px',
     },
-    
+
     topLeft: {
         position: 'absolute',
         top: '0',
         left: '0',
     },
-    
+
     rating: {
         fontSize: '1.5rem',
         color: '#f39c12',  // 노란색으로 변경
         fontFamily: 'Jua',
     },
-    
+
     middleRight: {
         textAlign: 'left',
         marginTop: '50px', // 별점 아래로 공간 확보
     },
-    
+
+    bottomSection: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        marginTop: 'auto',
+        width: '100%',
+    },
+    bottomLeftSection: {
+        display: 'flex',
+        alignItems: 'flex-end',
+        gap: '10px',
+    },
     bottomRight: {
         display: 'flex',
-        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
         gap: '15px',
-        marginTop: 'auto',
+    },
+
+    likeButton: {
+        backgroundColor: 'white',
+        color: 'black',
+        fontFamily: 'Jua',
+        fontSize: '1.2rem',
+        padding: '6px 12px',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        display: 'flex', // Flexbox 활성화
+        justifyContent: 'center', // 가로 중앙 정렬
+        alignItems: 'center', // 세로 중앙 정렬
+        height: '40px', // 버튼 높이를 지정
+        width: '40px', // 버튼 너비를 지정
+    },
+
+    likeButtonActive: {
+        backgroundColor: '#f1c40f',
+        color: 'white',
+        fontFamily: 'Jua',
+        fontSize: '1.2rem',
+        padding: '6px 12px',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease',
+        display: 'flex', // Flexbox 활성화
+        justifyContent: 'center', // 가로 중앙 정렬
+        alignItems: 'center', // 세로 중앙 정렬
+        height: '40px', // 버튼 높이를 지정
+        width: '40px', // 버튼 너비를 지정
     },
 };
 
