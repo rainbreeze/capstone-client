@@ -17,6 +17,26 @@ function ViewReviewCommentPage() {
         navigate('/writereviewcomment', { state: { reviewId } });
     };
 
+    const handleDeleteComment = async (commentId) => {
+        const userId = localStorage.getItem('userId'); // 예시로 localStorage에서 가져오는 경우
+
+        if (!userId) {
+            setError('로그인된 사용자 정보가 없습니다.');
+            return;
+        }
+
+        try {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/comment/${commentId}`, {
+                data: { user_id: userId } // 삭제 요청시 user_id 포함
+            });
+
+            setComments((prevComments) => prevComments.filter((comment) => comment.comment_id !== commentId));
+        } catch (err) {
+            console.error('댓글 삭제 실패:', err);
+            setError('댓글 삭제 중 오류가 발생했습니다.');
+        }
+    };
+
     useEffect(() => {
         if (!reviewId) {
             setError('리뷰 ID가 없습니다.');
@@ -65,7 +85,16 @@ function ViewReviewCommentPage() {
                     <ul style={styles.commentList}>
                         {comments.map((comment) => (
                             <li key={comment.comment_id} style={styles.commentItem}>
-                                <p><strong>작성자:</strong> {comment.user_id}</p>
+                                <div style={styles.commentHeader}>
+                                    <p style={styles.commentAuthor}><strong>작성자:</strong> {comment.user_id}</p>
+                                    {/* 삭제 버튼 */}
+                                    <button
+                                        style={styles.deleteButton}
+                                        onClick={() => handleDeleteComment(comment.comment_id)}
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
                                 <p style={styles.commentContent}>{comment.content}</p>
                                 <p style={styles.timestamp}>{new Date(comment.created_at).toLocaleString()}</p>
                             </li>
@@ -109,6 +138,16 @@ const styles = {
         cursor: 'pointer',
         fontFamily: 'Jua',
     },
+    deleteButton: {
+        backgroundColor: '#e74c3c',
+        color: 'white',
+        fontSize: '1rem',
+        border: 'none',
+        borderRadius: '5px',
+        padding: '5px 10px',
+        cursor: 'pointer',
+        fontFamily: 'Jua',
+    },
     error: {
         color: 'red',
         fontSize: '1.1rem',
@@ -123,6 +162,15 @@ const styles = {
         borderRadius: '8px',
         marginBottom: '15px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    },
+    commentHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between', // 좌우 공간을 균등하게 배치
+    },
+    commentAuthor: {
+        fontSize: '1rem',
+        fontWeight: 'bold',
     },
     commentContent: {
         fontSize: '1.2rem',
