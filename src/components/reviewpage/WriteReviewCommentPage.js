@@ -6,6 +6,7 @@ import Header from '../common/Header';
 import Footer from '../common/Footer';
 
 function WriteReviewComment() {
+    const user_id = localStorage.getItem('userId');
     const location = useLocation();
     const navigate = useNavigate();
     const { reviewId } = location.state || {};
@@ -16,12 +17,14 @@ function WriteReviewComment() {
         e.preventDefault();
 
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/comments`, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`, {
                 comment,
+                user_id,
             });
 
             // 작성 후 리뷰 목록 페이지로 이동
-            navigate('/viewreviews');
+            navigate('/viewreviewcomment', { state: { reviewId } });
+
         } catch (err) {
             console.error('댓글 작성 실패:', err);
             setError('댓글 작성 중 오류가 발생했습니다.');
@@ -80,7 +83,7 @@ const styles = {
     submitButton: {
         fontSize: '1.2rem',
         padding: '10px',
-        backgroundColor: '#f1c40f',
+        backgroundColor: '#1ed760',
         color: '#fff',
         border: 'none',
         borderRadius: '8px',
