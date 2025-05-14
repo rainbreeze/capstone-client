@@ -10,7 +10,8 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    
+    const [userName, setUserName] = useState('');
+
     // useNavigate 훅을 사용해 리디렉션 기능 설정
     const navigate = useNavigate();
 
@@ -24,7 +25,7 @@ const RegisterPage = () => {
             return;
         }
 
-        const registerData = { userId, email, password };
+        const registerData = { userId, email, password, userName };
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/register`, registerData);
@@ -40,9 +41,19 @@ const RegisterPage = () => {
     return (
         <div>
             <Header />  {/* Header 컴포넌트 추가 */}
+
             <div style={styles.container}>
                 <h1 style={styles.h1}>Register</h1>
                 <form onSubmit={handleRegisterSubmit}>
+                    <div style={styles.inputGroup}>
+                        <label style={styles.label}>User Name:</label>
+                        <input
+                            type="text"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                            style={styles.input}
+                        />
+                    </div>
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>User ID:</label>
                         <input
