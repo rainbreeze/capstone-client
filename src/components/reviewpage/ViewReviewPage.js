@@ -11,7 +11,7 @@ function ViewReviewPage() {
     const navigate = useNavigate();
 
     const handleCommentClick = (reviewId) => {
-        navigate('/writereviewcomment', { state: { reviewId } });
+        navigate('/viewreviewcomment', { state: { reviewId } });
     };
 
     const handleLike = async (reviewId) => {
