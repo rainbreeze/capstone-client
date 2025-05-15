@@ -1,27 +1,53 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // useNavigate 추가
-import Header from '../common/Header';  // Header 컴포넌트 추가
-import Footer from '../common/Footer';  // Footer 컴포넌트 추가
+import { useNavigate } from 'react-router-dom';
+import Header from '../common/Header';
+import Footer from '../common/Footer';
 
 const RegisterPage = () => {
-    // 상태 설정
     const [userId, setUserId] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [userName, setUserName] = useState('');
 
-    // useNavigate 훅을 사용해 리디렉션 기능 설정
     const navigate = useNavigate();
 
-    // 회원가입 폼 제출 함수
+    // Basic validation for any field
+    const isValid = (value) => value.trim() !== '';
+
+    // Email validation with regular expression
+    const isValidEmail = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+
+    // Check if password matches confirmPassword
+    const isPasswordMatch = password === confirmPassword;
+
+    // Progress calculation
+    const progressCount = [
+        isValid(userName),
+        isValid(userId),
+        isValidEmail(email),
+        isValid(password),
+        isPasswordMatch,
+    ].filter(Boolean).length;
+
+    const progressPercent = progressCount * 20;
+
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
 
-        // 비밀번호 확인
-        if (password !== confirmPassword) {
+        if (!userName || !userId || !email || !password || !confirmPassword) {
+            alert('모든 항목을 입력해주세요.');
+            return;
+        }
+
+        if (!isPasswordMatch) {
             alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            alert('유효한 이메일 주소를 입력해주세요.');
             return;
         }
 
@@ -29,10 +55,8 @@ const RegisterPage = () => {
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/register`, registerData);
-            alert(response.data.message);  // 회원가입 성공 시 메시지 표시
-
-            // 회원가입 성공 후 로그인 페이지로 리디렉션
-            navigate('/login');  // 홈 페이지로 이동
+            alert(response.data.message);
+            navigate('/login');
         } catch (error) {
             alert('회원가입 실패: 입력 정보를 확인해주세요.');
         }
@@ -40,10 +64,17 @@ const RegisterPage = () => {
 
     return (
         <div>
-            <Header />  {/* Header 컴포넌트 추가 */}
+            <Header />
 
             <div style={styles.container}>
                 <h1 style={styles.h1}>Register</h1>
+
+                {/* 🔵 진행도 표시 바 */}
+                <div style={styles.progressContainer}>
+                    <div style={{ ...styles.progressBar, width: `${progressPercent}%` }}></div>
+                </div>
+                <p>{progressPercent}% 완료</p>
+
                 <form onSubmit={handleRegisterSubmit}>
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>User Name:</label>
@@ -93,7 +124,7 @@ const RegisterPage = () => {
                     <button type="submit" style={styles.submitButton}>회원가입</button>
                 </form>
             </div>
-            <Footer />  {/* Footer 컴포넌트 추가 */}
+            <Footer />
         </div>
     );
 };
@@ -134,6 +165,19 @@ const styles = {
         cursor: 'pointer',
         borderRadius: '5px',
         fontFamily: 'Jua'
+    },
+    progressContainer: {
+        width: '300px',
+        height: '20px',
+        borderRadius: '10px',
+        backgroundColor: '#eee',
+        margin: '20px auto',
+        overflow: 'hidden',
+    },
+    progressBar: {
+        height: '100%',
+        backgroundColor: '#1ED760',
+        transition: 'width 0.3s ease',
     },
 };
 
