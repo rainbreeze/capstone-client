@@ -2,28 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../common/Header';
-import Footer from '../common/Footer'; // Material Icons Outlined 스타일
+import Footer from '../common/Footer';
 
 function ViewReviewCommentPage() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { reviewId } = location.state || {};
+    const { reviewId } = location.state || {}; // URL로부터 reviewId를 가져옴
 
-    const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [comments, setComments] = useState([]); // 댓글 리스트 상태
+    const [loading, setLoading] = useState(true); // 로딩 상태
+    const [error, setError] = useState(null); // 에러 상태
 
-    const [replyInputMap, setReplyInputMap] = useState({}); // 어떤 댓글에 답글창이 열려있는지
+    const [replyInputMap, setReplyInputMap] = useState({}); // 댓글별 답글 입력창 열림 상태
+    const [replyTexts, setReplyTexts] = useState({}); // 답글 입력 상태
 
     // 댓글 클릭 시 답글 입력창 토글
     const toggleReplyInput = (commentId) => {
         setReplyInputMap((prev) => ({
             ...prev,
-            [commentId]: !prev[commentId], // 해당 댓글의 상태를 반전시켜서 열고 닫음
+            [commentId]: !prev[commentId], // 해당 댓글에 대해 입력창을 열거나 닫음
         }));
     };
-
-    const [replyTexts, setReplyTexts] = useState({});
 
     // 답글 텍스트 변경 시 상태 업데이트
     const handleReplyChange = (commentId, value) => {
@@ -33,29 +32,52 @@ function ViewReviewCommentPage() {
         }));
     };
 
-    // 답글 제출 시
-    const handleReplySubmit = (commentId) => {
+    const handleReplySubmit = async (commentId) => {
         const replyContent = replyTexts[commentId];
-        console.log(`댓글 ID ${commentId}에 대한 답글: ${replyContent}`);
+        const userId = localStorage.getItem('userId');
 
-        // 여기에 답글을 서버로 전송하는 axios 코드 작성 가능
-        // 예시: axios.post(`/comment/${commentId}/reply`, { content: replyContent, user_id: ... })
+        if (!userId) {
+            setError('로그인된 사용자 정보가 없습니다.');
+            return;
+        }
 
-        // 전송 후 입력창 초기화
-        setReplyTexts((prev) => ({
-            ...prev,
-            [commentId]: '',
-        }));
-        setReplyInputMap((prev) => ({
-            ...prev,
-            [commentId]: false,
-        }));
+        if (!replyContent.trim()) {
+            setError('답글을 작성해주세요.');
+            return;
+        }
+
+        try {
+            // 답글 등록 API 수정된 경로 사용
+            await axios.post(`${process.env.REACT_APP_API_URL}/reply/${reviewId}/reply`, {
+                comment: replyContent,
+                user_id: userId,
+                parent_comment_id: commentId,
+            });
+
+            // 답글 작성 후 전체 댓글 다시 불러오기
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`);
+            setComments(response.data);
+
+            setReplyTexts(prev => ({
+                ...prev,
+                [commentId]: '',
+            }));
+            setReplyInputMap(prev => ({
+                ...prev,
+                [commentId]: false,
+            }));
+        } catch (err) {
+            console.error('답글 제출 실패:', err);
+            setError('답글 제출 중 오류가 발생했습니다.');
+        }
     };
 
+    // 댓글 작성 페이지로 이동
     const handleWriteCommentClick = (reviewId) => {
         navigate('/writereviewcomment', { state: { reviewId } });
     };
 
+    // 댓글 삭제
     const handleDeleteComment = async (commentId) => {
         const userId = localStorage.getItem('userId');
 
@@ -65,6 +87,7 @@ function ViewReviewCommentPage() {
         }
 
         try {
+            // 댓글 삭제 요청
             await axios.delete(`${process.env.REACT_APP_API_URL}/comment/${commentId}`, {
                 data: { user_id: userId }, // 삭제 요청시 user_id 포함
             });
@@ -85,19 +108,21 @@ function ViewReviewCommentPage() {
             return;
         }
 
-        const fetchComments = async () => {
+        const fetchCommentsWithReplies = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`);
+                // 백엔드에서 replies가 포함되어 오므로 별도 가공 불필요
                 setComments(response.data);
+                console.log(response.data);
             } catch (err) {
-                console.error('댓글 불러오기 실패:', err);
+                console.error('댓글 및 답글 불러오기 실패:', err);
                 setError('댓글을 불러오는 중 오류가 발생했습니다.');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchComments();
+        fetchCommentsWithReplies();
     }, [reviewId]);
 
     return (
@@ -130,7 +155,7 @@ function ViewReviewCommentPage() {
                                     <button
                                         style={styles.deleteButton}
                                         onClick={(e) => {
-                                            e.stopPropagation(); // 삭제 버튼 클릭 시 이벤트 전파 방지
+                                            e.stopPropagation();
                                             handleDeleteComment(comment.comment_id);
                                         }}
                                     >
@@ -148,7 +173,6 @@ function ViewReviewCommentPage() {
 
                                 {replyInputMap[comment.comment_id] && (
                                     <div style={styles.replyInputContainer}>
-                                        {/* 답글 입력폼 왼쪽에 화살표 아이콘 추가 */}
                                         <span className="material-icons-outlined" style={styles.arrowIcon}>
                                             subdirectory_arrow_right
                                         </span>
@@ -168,17 +192,21 @@ function ViewReviewCommentPage() {
                                     </div>
                                 )}
 
-                                {/* 답글들 */}
-                                {comment.replies && comment.replies.map((reply) => (
-                                    <div style={styles.replyTextWrapper} key={reply.reply_id}>
-                                        <div style={styles.replyText}>
-                                            <span className="material-icons-outlined">
-                                                subdirectory_arrow_right
-                                            </span>
-                                            {reply.content}
+                                {comment.replies && Array.isArray(comment.replies) && comment.replies.map((reply) => {
+                                    console.log('답글 객체:', reply); // 👈 여기 추가
+                                    return (
+                                        <div style={styles.replyTextWrapper} key={reply.reply_id}>
+                                            <div style={styles.replyText}>
+                                                <span className="material-icons-outlined" style={{ fontSize: '1.2rem', color: 'black', marginRight: '10px' }}>
+                                                    subdirectory_arrow_right
+                                                </span>
+                                                {/* reply_id를 표시 */}
+                                                <strong>{reply.user_id}</strong> : {reply.content || '(내용 없음)'}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
+
                             </li>
                         ))}
                     </ul>
@@ -255,7 +283,7 @@ const styles = {
         fontWeight: 'bold',
     },
     commentContentWrapper: {
-        cursor: 'pointer', // 클릭 가능하도록 설정
+        cursor: 'pointer',
     },
     commentContent: {
         fontSize: '1.2rem',
@@ -267,14 +295,14 @@ const styles = {
         color: '#888',
     },
     replyInputContainer: {
-        marginTop: '10px', // 댓글과 답글 입력창 사이에 공간을 추가
+        marginTop: '10px',
         padding: '8px',
         borderRadius: '8px',
         backgroundColor: '#f1f1f1',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        gap: '10px', // 입력창과 버튼 사이 간격 추가
+        gap: '10px',
     },
     replyInput: {
         flex: 1,
@@ -293,17 +321,17 @@ const styles = {
         fontFamily: 'Jua',
     },
     replyTextWrapper: {
-        marginLeft: '20px', // 답글은 왼쪽에 들여쓰기 추가
-        marginTop: '10px', // 답글 간격
+        marginLeft: '20px',
+        marginTop: '10px',
     },
     replyText: {
-        fontSize: '1rem', // 답글 폰트 크기
-        color: '#555', // 답글 색상
+        fontSize: '1rem',
+        color: '#555',
     },
     arrowIcon: {
-        fontSize: '1.2rem', // 화살표 아이콘 크기
-        color: 'black', // 화살표 색상
-        marginRight: '10px', // 화살표와 답글 사이 간격
+        fontSize: '1.2rem',
+        color: 'black',
+        marginRight: '10px',
     },
 };
 
