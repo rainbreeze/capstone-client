@@ -5,6 +5,8 @@ import Header from '../common/Header';
 import Footer from '../common/Footer';
 
 const RegisterPage = () => {
+    const [step, setStep] = useState(1);
+
     const [userId, setUserId] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -13,25 +15,35 @@ const RegisterPage = () => {
 
     const navigate = useNavigate();
 
-    // Basic validation for any field
     const isValid = (value) => value.trim() !== '';
-
-    // Email validation with regular expression
-    const isValidEmail = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-
-    // Check if password matches confirmPassword
+    const isValidEmail = (email) =>
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
     const isPasswordMatch = password === confirmPassword;
 
-    // Progress calculation
-    const progressCount = [
-        isValid(userName),
-        isValid(userId),
-        isValidEmail(email),
-        isValid(password),
-        isPasswordMatch,
-    ].filter(Boolean).length;
+    const isStepValid = () => {
+        switch (step) {
+            case 1:
+                return isValid(userName) && isValid(userId);
+            case 2:
+                return isValidEmail(email);
+            case 3:
+                return isValid(password) && isPasswordMatch;
+            default:
+                return false;
+        }
+    };
 
-    const progressPercent = progressCount * 20;
+    const handleNext = () => {
+        if (!isStepValid()) {
+            alert('입력을 완료해주세요.');
+            return;
+        }
+        setStep((prev) => prev + 1);
+    };
+
+    const handleBack = () => {
+        setStep((prev) => prev - 1);
+    };
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
@@ -62,40 +74,35 @@ const RegisterPage = () => {
         }
     };
 
-    return (
-        <div>
-            <Header />
-
-            <div style={styles.container}>
-                <h1 style={styles.h1}>Register</h1>
-
-                {/* 🔵 진행도 표시 바 */}
-                <div style={styles.progressContainer}>
-                    <div style={{ ...styles.progressBar, width: `${progressPercent}%` }}></div>
-                </div>
-                <p>{progressPercent}% 완료</p>
-
-                <form onSubmit={handleRegisterSubmit}>
+    const renderStepContent = () => {
+        switch (step) {
+            case 1:
+                return (
+                    <>
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>이  름</label>
+                            <input
+                                type="text"
+                                value={userName}
+                                onChange={(e) => setUserName(e.target.value)}
+                                style={styles.input}
+                            />
+                        </div>
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>아이디</label>
+                            <input
+                                type="text"
+                                value={userId}
+                                onChange={(e) => setUserId(e.target.value)}
+                                style={styles.input}
+                            />
+                        </div>
+                    </>
+                );
+            case 2:
+                return (
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>User Name:</label>
-                        <input
-                            type="text"
-                            value={userName}
-                            onChange={(e) => setUserName(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>User ID:</label>
-                        <input
-                            type="text"
-                            value={userId}
-                            onChange={(e) => setUserId(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Email:</label>
+                        <label style={styles.label}>이메일</label>
                         <input
                             type="email"
                             value={email}
@@ -103,25 +110,83 @@ const RegisterPage = () => {
                             style={styles.input}
                         />
                     </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Password:</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={styles.input}
-                        />
+                );
+            case 3:
+                return (
+                    <>
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>비밀번호</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                style={styles.input}
+                            />
+                        </div>
+                        <div style={styles.inputGroup}>
+                            <label style={styles.label}>재 입 력</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                style={styles.input}
+                            />
+                        </div>
+                    </>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <div>
+            <Header />
+            <div style={styles.container}>
+                <h1 style={styles.h1}>회원가입</h1>
+
+                {/* 프로그레스 */}
+                <div style={styles.stepIndicatorWrapper}>
+                    {[1, 2, 3].map((s, index) => (
+                        <React.Fragment key={s}>
+                            <div style={{
+                                ...styles.stepCircle,
+                                backgroundColor: step >= s ? '#1ED760' : '#fff',
+                                color: step >= s ? '#fff' : '#ccc',
+                                borderColor: step >= s ? '#1ED760' : '#ccc'
+                            }}>
+                                {s}
+                            </div>
+                            {index < 2 && (
+                                <div style={{
+                                    ...styles.stepLine,
+                                    backgroundColor: step > s ? '#1ED760' : '#ccc'
+                                }} />
+                            )}
+                        </React.Fragment>
+                    ))}
+                </div>
+
+                <form onSubmit={handleRegisterSubmit}>
+                    {renderStepContent()}
+
+                    <div style={{ marginTop: '20px' }}>
+                        {step > 1 && (
+                            <button type="button" onClick={handleBack} style={{ ...styles.submitButton, marginRight: '10px' }}>
+                                이전
+                            </button>
+                        )}
+                        {step < 3 && (
+                            <button type="button" onClick={handleNext} style={styles.submitButton}>
+                                다음
+                            </button>
+                        )}
+                        {step === 3 && (
+                            <button type="submit" style={styles.submitButton}>
+                                회원가입
+                            </button>
+                        )}
                     </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Confirm Password:</label>
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
-                    <button type="submit" style={styles.submitButton}>회원가입</button>
                 </form>
             </div>
             <Footer />
@@ -166,18 +231,31 @@ const styles = {
         borderRadius: '5px',
         fontFamily: 'Jua'
     },
-    progressContainer: {
-        width: '300px',
-        height: '20px',
-        borderRadius: '10px',
-        backgroundColor: '#eee',
-        margin: '20px auto',
-        overflow: 'hidden',
+    stepIndicatorWrapper: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: '20px',
+        gap: '10px',
     },
-    progressBar: {
-        height: '100%',
-        backgroundColor: '#1ED760',
-        transition: 'width 0.3s ease',
+    stepCircle: {
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+        border: '2px solid #ccc',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        fontSize: '16px',
+        fontFamily: 'Jua',
+        transition: 'all 0.3s ease',
+    },
+    stepLine: {
+        width: '40px',
+        height: '2px',
+        backgroundColor: '#ccc',
+        transition: 'background-color 0.3s ease',
     },
 };
 
