@@ -80,7 +80,7 @@ const RegisterPage = () => {
                 return (
                     <>
                         <div style={styles.inputGroup}>
-                            <label style={styles.label}>이  름</label>
+                            <label style={styles.label}>이   름</label>
                             <input
                                 type="text"
                                 value={userName}
