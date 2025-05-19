@@ -6,202 +6,181 @@ export default class GameScene extends Phaser.Scene {
         super("GameScene");
     }
 
-
-
     preload() {
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/map_tiled.json');
-        this.load.image('forestTown', 'assets/tilesets/tiles_packed.png');
-        this.load.image('snowExpansion', 'assets/tilesets/snow-expansion.png');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/section01.json');
+        this.load.image('clean_16x16_tileset', 'assets/tilesets/clean_16x16_tileset.png');
+        this.load.image('music_box_64x64', 'assets/tilesets/music_box_64x64.png');
 
-        //캐릭터 이미지셋
         this.load.image('Char1', 'assets/images/Character1.png');
         this.load.image('Char2', 'assets/images/Character2.png');
         this.load.image('Char3', 'assets/images/Character3.png');
 
-        //장애물 이미지셋
-        this.load.image('musicbox', 'assets/images/musicbox.png');
-        this.load.image('brokenMusicBox', 'assets/images/musicbox_off.png');
+
     }
 
     init(data) {
         this.selectedCharacter = data.selectedCharacter;
     }
 
-
     create() {
-        console.log('create start');
-
         const map = this.make.tilemap({ key: "map" });
-        const tileset = map.addTilesetImage('ForestTownMap', 'forestTown');
-        const bridge = map.addTilesetImage('SnowTown', 'snowExpansion');
-        map.createLayer('Tile Layer 1', tileset, 0, 0).setScrollFactor(1);
-        map.createLayer('Bridge', [tileset, bridge], 0, 0).setScrollFactor(1);
-        map.createLayer('Object', [tileset, bridge], 0, 0).setScrollFactor(1);
+
+        console.log(map.getObjectLayer('Collision Layer'));
 
 
-        //맵 충돌 셋팅 
-        const collisionObjects = map.getObjectLayer('Collision').objects;
+
+        const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
+        const musicBoxTileset = map.addTilesetImage('music_box_64x64', 'music_box_64x64');
+
+        if (!tileset) console.warn('clean_16x16_tileset 연결 실패');
+        if (!musicBoxTileset) console.warn('music_box_64x64 연결 실패');
 
 
-        console.log('selectedCharacter: ', this.selectedCharacter);
-        // 플레이어 역할
-        let imageName = undefined;
-
-        if (this.selectedCharacter === 'char1') {
-            imageName = 'Char1'
-        } else if (this.selectedCharacter === 'char2') {
-            imageName = 'Char2'
-        } else if (this.selectedCharacter === 'char3') {
-            imageName = 'Char3'
+        if (!tileset || !musicBoxTileset) {
+            console.error('Tileset 연결 실패!');
+            return;
         }
 
-        this.player = this.physics.add.image(100, 100, imageName);
-        this.player.setDisplaySize(24, 24);
-        this.physics.add.existing(this.player);
+        map.createLayer('Tile Layer 1', tileset, 0, 0);
+        map.createLayer('Mini Layer 1', [tileset, musicBoxTileset], 0, 0);
+
+
+        let imageName = {
+            char1: 'Char1',
+            char2: 'Char2',
+            char3: 'Char3'
+        }[this.selectedCharacter];
+
+        this.player = this.physics.add.image(10, 320, imageName).setDisplaySize(48, 48);
         this.player.body.setCollideWorldBounds(true);
 
-        //맵 충돌 관련
-        collisionObjects.forEach(obj => {
-            const box = this.physics.add.staticImage(obj.x + obj.width / 2, obj.y + obj.height / 2)
-                .setSize(obj.width, obj.height)
-                .setOrigin(0.5)
-                .setVisible(false); //안보이도록 설정
 
-            this.physics.add.collider(this.player, box);
+
+
+
+        this.mapColliders = {};
+        const objectLayer = map.getObjectLayer('Collision Layer');
+
+
+        objectLayer.objects.forEach(obj => {
+            const { x, y, width, height, name, type: cls } = obj;
+            const centerX = x + width / 2;
+            const centerY = y + height / 2;
+
+            if (cls === 'Collision') {
+                if (cls === 'Collision') {
+                    const box = this.physics.add.staticImage(centerX, centerY)
+                        .setSize(width, height)
+                        .setOrigin(0.5)
+                        .setVisible(false);
+
+                    this.physics.add.collider(this.player, box);
+                }
+
+            }
+
+            // if (cls === 'troll_section') {
+            //     const zone = this.add.zone(centerX, centerY, width, height);
+            //     this.physics.add.existing(zone);
+            //     zone.body.setAllowGravity(false);
+            //     zone.body.moves = false;
+            //     this.physics.add.overlap(this.player, zone, () => {
+            //         const target = this.mapColliders['ground_collision'];
+            //         if (target) {
+            //             this.tweens.add({
+            //                 targets: target,
+            //                 y: target.y + 100,
+            //                 duration: 600,
+            //                 ease: 'Power2',
+            //                 onComplete: () => target.destroy()
+            //             });
+            //         }
+            //     });
+            // }
+
+            if (cls === 'spike') {
+                const spike = this.physics.add.staticImage(centerX, centerY, null).setSize(width, height).setOrigin(0.5).setVisible(false);
+                this.physics.add.overlap(this.player, spike, () => {
+                    console.log('스파이크 데미지!');
+
+                });
+            }
+
+            if (cls === 'note') {
+                const note = this.physics.add.staticImage(centerX, centerY, null).setSize(width, height).setOrigin(0.5).setVisible(false);
+                this.physics.add.overlap(this.player, note, () => {
+                    console.log('노트 획득!');
+                    note.destroy();
+
+                });
+            }
+
+            if (cls === 'ending') {
+                const musicBox = this.physics.add.staticImage(centerX, centerY, 'music_box').setDisplaySize(48, 48);
+                this.physics.add.overlap(this.player, musicBox, () => {
+                    if (!this.choiceShown) {
+                        this.choiceShown = true;
+                        this.showChoiceButtons();
+                    }
+                });
+            }
         });
 
-
+        // 키보드 입력
         this.cursors = this.input.keyboard.createCursorKeys();
-
-        //맵 줌 설정
-        const mapWidth = map.widthInPixels;
-        const mapHeight = map.heightInPixels;
-
-        console.log(mapWidth, mapHeight)
-        const zoom = 2
-        this.cameras.main.setZoom(zoom);
-        this.cameras.main.startFollow(this.player);
-
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-        // this.physics.world.createDebugGraphic();
-
+        this.cameras.main.startFollow(this.player);
         this.controlsEnabled = true;
-        // 개별 장애물
-        this.obstacles = this.physics.add.staticGroup();
-
-        // 장애물을 그룹에 추가
-        this.obstacles.create(300, 100, 'musicbox')
-            .setDisplaySize(20, 20)
-            .refreshBody(); // 필수: staticGroup일 경우
-
-        this.attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.input.keyboard.on('keydown-SPACE', () => {
-            const attackBox = this.physics.add.sprite(this.player.x + 32, this.player.y, null);
-            attackBox.body.setSize(32, 32); // 히트박스 크기
-
-            // 충돌 체크
-            this.physics.add.overlap(attackBox, this.obstacles, (hitBox, obstacle) => {
-                console.log('장애물 부서짐!');
-                obstacle.setTexture('brokenMusicBox');
-                if (this.choiceShown) return;
-                this.choiceShown = true;
-                this.showChoiceButtons();
-
-
-            });
-
-            // 히트박스는 잠깐만 유지하고 제거
-            this.time.delayedCall(200, () => {
-                attackBox.destroy();
-            });
-        });
 
     }
 
     update() {
         const speed = 300;
+        const jumpPower = 450;
         const body = this.player.body;
-        body.setVelocity(0);
-
-        if (this.cursors.left.isDown) {
-            body.setVelocityX(-speed);
-        } else if (this.cursors.right.isDown) {
-            body.setVelocityX(speed);
-        }
-
-        if (this.cursors.up.isDown) {
-            body.setVelocityY(-speed);
-
-        } else if (this.cursors.down.isDown) {
-            body.setVelocityY(speed);
-        }
-
         if (!this.controlsEnabled) return;
 
+        body.setVelocityX(0);
+        if (this.cursors.left.isDown) body.setVelocityX(-speed);
+        else if (this.cursors.right.isDown) body.setVelocityX(speed);
+
+        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && body.onFloor()) {
+            body.setVelocityY(-jumpPower);
+        }
     }
 
-
-    //장애물 부서질 때 선택지 등장
     showChoiceButtons() {
         this.controlsEnabled = false;
-        if (this.choiceGroup) {
-            this.choiceGroup.clear(true, true);
-        }
-
         const centerX = this.player.x;
         const centerY = this.player.y;
 
+        const option1 = this.add.text(centerX - 50, centerY, 'classic', this.getTextStyle()).setOrigin(0.5).setInteractive();
+        const option2 = this.add.text(centerX + 50, centerY, 'rock', this.getTextStyle()).setOrigin(0.5).setInteractive();
 
-        const option1 = this.add.text(centerX - 50, centerY, 'classic', {
-            fontFamily: 'Jua',
-            fontSize: '12px',
-            fill: '#000',
-            backgroundColor: '#fff',
-            padding: { x: 10, y: 10 },
-            border: '1px solid #000',
-
-        }).setOrigin(0.5).setInteractive();
-        const option2 = this.add.text(centerX + 50, centerY, 'rock', {
-            fontSize: '12px',
-            fontFamily: 'Jua',
-            fill: '#000',
-            backgroundColor: '#fff',
-            padding: { x: 10, y: 10 },
-            border: '1px solid #000',
-        }).setOrigin(0.5).setInteractive();
-
-        this.choiceGroup = this.add.group();
-        this.choiceGroup.addMultiple([option1, option2]);
-
-        option1.on('pointerover', () => option1.setStyle({ backgroundColor: '#ccc' }));
-        option1.on('pointerout', () => option1.setStyle({ backgroundColor: '#fff' }));
-        option2.on('pointerover', () => option2.setStyle({ backgroundColor: '#ccc' }));
-        option2.on('pointerout', () => option2.setStyle({ backgroundColor: '#fff' }));
-
-        console.log(this.children.list.filter(obj => obj instanceof Phaser.GameObjects.Text));
-
-
-        option1.on('pointerdown', () => {
-            console.log(option1);
-            console.log(typeof option1.destroy);
-            // 여기에 원하는 행동 추가
-            this.choiceGroup.clear(true, true);
-            console.log('destroy 완료?', !this.children.list.includes(option1));
-            this.controlsEnabled = true;
-            console.log('classic 선택됨');
-        });
-
-        option2.on('pointerdown', () => {
-            console.log(option2);
-            console.log(typeof option2.destroy);
-            // 여기에 원하는 행동 추가
-            this.choiceGroup.clear(true, true);
-            console.log('destroy 완료?', !this.children.list.includes(option2));
-            this.controlsEnabled = true;
-            console.log('rock 선택됨');
-        });
+        this.choiceGroup = this.add.group([option1, option2]);
+        this.setButtonEvents(option1, 'classic');
+        this.setButtonEvents(option2, 'rock');
     }
 
+    getTextStyle() {
+        return {
+            fontFamily: 'Jua',
+            fontSize: '12px',
+            fill: '#000',
+            backgroundColor: '#fff',
+            padding: { x: 10, y: 10 }
+        };
+    }
+
+    setButtonEvents(btn, value) {
+        btn.on('pointerover', () => btn.setStyle({ backgroundColor: '#ccc' }));
+        btn.on('pointerout', () => btn.setStyle({ backgroundColor: '#fff' }));
+        btn.on('pointerdown', () => {
+            this.choiceGroup.clear(true, true);
+            this.controlsEnabled = true;
+            alert(`${value} 선택됨`);
+        });
+    }
 }
