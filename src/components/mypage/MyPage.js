@@ -7,12 +7,9 @@ const MyPage = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('/api/mypage', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const UserId = localStorage.getItem('userId');  // localStorage에서 userId 가져오기
+                console.log(UserId);
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/${UserId}`);
                 setUserInfo(res.data);
             } catch (err) {
                 console.error('Failed to fetch user info:', err.response ? err.response.data : err.message);
