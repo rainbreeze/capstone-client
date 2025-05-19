@@ -12,6 +12,7 @@ function WriteReviewComment() {
     const { reviewId } = location.state || {};
     const [comment, setComment] = useState('');
     const [error, setError] = useState(null);
+    const parrent_id = null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,6 +21,7 @@ function WriteReviewComment() {
             await axios.post(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`, {
                 comment,
                 user_id,
+                parrent_id
             });
 
             // 작성 후 리뷰 목록 페이지로 이동

@@ -51,10 +51,10 @@ const LoginPage = () => {
         <div>
             <Header />  {/* Header 컴포넌트 추가 */}
             <div style={styles.container}>
-                <h1 style={styles.h1}>Login</h1>
+                <h1 style={styles.h1}>로그인</h1>
                 <form onSubmit={handleLoginSubmit}>
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>User ID:</label>
+                        <label style={styles.label}>아 이 디</label>
                         <input
                             type="text"
                             value={userId}
@@ -63,7 +63,7 @@ const LoginPage = () => {
                         />
                     </div>
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>Password:</label>
+                        <label style={styles.label}>비밀번호</label>
                         <input
                             type="password"
                             value={password}

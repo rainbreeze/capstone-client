@@ -68,7 +68,7 @@ const Header = () => {
             <NavRight>
                 <NavList>
                     <NavItem scrolled={scrolled}><NavLink as={Link} to="/playlist">Play List</NavLink></NavItem>
-                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/myinfo">내 정보</NavLink></NavItem>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/mypage">내 정보</NavLink></NavItem>
                     {user ? (
                         <NavItem scrolled={scrolled} onClick={handleLogout}>
                             <NavLink as={Link} to="/" isLogout={true}>로그아웃</NavLink> {/* 로그인된 경우 로그아웃 버튼 */}
@@ -101,7 +101,7 @@ const Header = () => {
                             <NavLink as={Link} to="/playlist">Play List</NavLink>
                         </SidebarItem>
                         <SidebarItem onClick={() => setIsSidebarOpen(false)}>
-                            <NavLink as={Link} to="/myinfo">내 정보</NavLink>
+                            <NavLink as={Link} to="/mypage">내 정보</NavLink>
                         </SidebarItem>
                         {user ? (
                             <SidebarItem onClick={() => setIsSidebarOpen(false)}>
