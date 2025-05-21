@@ -1,4 +1,5 @@
 import Phaser from "phaser"
+import axios from 'axios';
 
 export default class GameScene extends Phaser.Scene {
 
@@ -16,8 +17,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('Char3', 'assets/images/Character3.png');
 
         this.load.spritesheet('char1', 'assets/images/test_sprite_1.png', {
-            frameWidth: 125,
-            frameHeight: 250,
+            frameWidth: 165,
+            frameHeight: 249,
             spacing: 2
         });
 
@@ -63,17 +64,18 @@ export default class GameScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'char1_walk',
-            frames: this.anims.generateFrameNumbers('char1', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('char1', { start: 0, end: 2 }),
             frameRate: 8,
             repeat: -1
         });
 
         this.anims.create({
             key: 'char1_jump',
-            frames: this.anims.generateFrameNumbers('char1', { start: 4, end: 5 }),
+            frames: this.anims.generateFrameNumbers('char1', { start: 3, end: 5 }),
             frameRate: 4,
             repeat: 0
         });
+
 
 
         this.mapColliders = {};
@@ -129,6 +131,7 @@ export default class GameScene extends Phaser.Scene {
                 this.physics.add.overlap(this.player, note, () => {
                     console.log('노트 획득!');
                     note.destroy();
+                    // note.disableBody(true, true);
 
                 });
             }
@@ -211,26 +214,26 @@ export default class GameScene extends Phaser.Scene {
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
             alert(`${value} 선택됨`);
+            this.showSearchResult(value);
         });
     }
 
 
 
-    // async showSearchResult(value) {
-    //     const gameData = {
-    //         userId,
-    //         score,
-    //         genre,
-    //         year,
-    //         hipster
-    //     };
-    //     try {
-    //         const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
+    async showSearchResult(value) {
+        const gameData = {
+            userId: localStorage.getItem('userId'), // 또는 사전 설정한 값
+            score: 999,
+            genre: value,
+            year: 2005,
+            hipster: "no"
+        };
 
-    //         // 추천된 곡을 GameResultPage로 전달
-    //         navigate('/testResult', { state: { musicRecommendation: response.data.musicRecommendation } });
-    //     } catch (error) {
-    //         alert('데이터 저장에 실패했습니다.');
-    //     }
-    // }
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
+            console.log('🎵 추천 결과:', res.data.musicRecommendation);
+        } catch (err) {
+            console.error('❌ Spotify API 호출 실패:', err);
+        }
+    }
 }
