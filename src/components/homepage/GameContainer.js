@@ -12,11 +12,11 @@ const GameContainer = () => {
         const config = {
             type: Phaser.AUTO,
             width: 800,
-            height: 800,
+            height: 400,
             parent: gameRef.current,
             physics: {
                 default: "arcade",
-                arcade: { debug: false }
+                arcade: { debug: false, gravity: { y: 1000 } }
             },
             scene: [IntroScene, MainScene, ChoiceScene, GameScene]
         };
