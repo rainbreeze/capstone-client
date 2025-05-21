@@ -36,7 +36,8 @@ const TestPage = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
 
-            // 추천된 곡을 GameResultPage로 전달
+          // 추천된 곡을 GameResultPage로 전달
+          console.log(userId);
             navigate('/testResult', { state: { musicRecommendation: response.data.musicRecommendation } });
         } catch (error) {
             alert('데이터 저장에 실패했습니다.');

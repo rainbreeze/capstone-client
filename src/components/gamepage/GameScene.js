@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
             char3: 'Char3'
         }[this.selectedCharacter];
 
-        this.player = this.physics.add.sprite(10, 352, imageName).setScale(0.3);
+        this.player = this.physics.add.sprite(10, 352, 'char1').setScale(0.3);
         this.player.body.setCollideWorldBounds(true);
 
         this.anims.create({
@@ -227,10 +227,9 @@ export default class GameScene extends Phaser.Scene {
     }
 
 
-
     async showSearchResult(value) {
         const gameData = {
-            userId: localStorage.getItem('userId'), // 또는 사전 설정한 값
+            userId: localStorage.getItem('userId'),
             score: 999,
             genre: value,
             year: 2005,
