@@ -15,6 +15,13 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('Char2', 'assets/images/Character2.png');
         this.load.image('Char3', 'assets/images/Character3.png');
 
+        this.load.spritesheet('char1', 'assets/images/test_sprite_1.png', {
+            frameWidth: 125,
+            frameHeight: 250,
+            spacing: 2
+        });
+
+
 
     }
 
@@ -51,11 +58,22 @@ export default class GameScene extends Phaser.Scene {
             char3: 'Char3'
         }[this.selectedCharacter];
 
-        this.player = this.physics.add.image(10, 320, imageName).setDisplaySize(48, 48);
+        this.player = this.physics.add.sprite(10, 352, 'char1').setScale(0.3);
         this.player.body.setCollideWorldBounds(true);
 
+        this.anims.create({
+            key: 'char1_walk',
+            frames: this.anims.generateFrameNumbers('char1', { start: 0, end: 3 }),
+            frameRate: 8,
+            repeat: -1
+        });
 
-
+        this.anims.create({
+            key: 'char1_jump',
+            frames: this.anims.generateFrameNumbers('char1', { start: 4, end: 5 }),
+            frameRate: 4,
+            repeat: 0
+        });
 
 
         this.mapColliders = {};
@@ -143,11 +161,21 @@ export default class GameScene extends Phaser.Scene {
         if (!this.controlsEnabled) return;
 
         body.setVelocityX(0);
-        if (this.cursors.left.isDown) body.setVelocityX(-speed);
-        else if (this.cursors.right.isDown) body.setVelocityX(speed);
+        if (this.cursors.left.isDown) {
+            body.setVelocityX(-speed);
+            this.player.setFlipX(true);
+            this.player.anims.play('char1_walk', true);
+        } else if (this.cursors.right.isDown) {
+            body.setVelocityX(speed);
+            this.player.setFlipX(false);
+            this.player.anims.play('char1_walk', true);
+        } else {
+            this.player.anims.stop();
+        }
 
         if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && body.onFloor()) {
             body.setVelocityY(-jumpPower);
+            this.player.anims.play('char1_jump', true);
         }
     }
 
@@ -174,6 +202,8 @@ export default class GameScene extends Phaser.Scene {
         };
     }
 
+
+
     setButtonEvents(btn, value) {
         btn.on('pointerover', () => btn.setStyle({ backgroundColor: '#ccc' }));
         btn.on('pointerout', () => btn.setStyle({ backgroundColor: '#fff' }));
@@ -183,4 +213,24 @@ export default class GameScene extends Phaser.Scene {
             alert(`${value} 선택됨`);
         });
     }
+
+
+
+    // async showSearchResult(value) {
+    //     const gameData = {
+    //         userId,
+    //         score,
+    //         genre,
+    //         year,
+    //         hipster
+    //     };
+    //     try {
+    //         const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
+
+    //         // 추천된 곡을 GameResultPage로 전달
+    //         navigate('/testResult', { state: { musicRecommendation: response.data.musicRecommendation } });
+    //     } catch (error) {
+    //         alert('데이터 저장에 실패했습니다.');
+    //     }
+    // }
 }
