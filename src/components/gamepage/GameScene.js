@@ -59,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
             char3: 'Char3'
         }[this.selectedCharacter];
 
-        this.player = this.physics.add.sprite(10, 352, 'char1').setScale(0.3);
+        this.player = this.physics.add.sprite(10, 352, imageName).setScale(0.3);
         this.player.body.setCollideWorldBounds(true);
 
         this.anims.create({
@@ -76,10 +76,17 @@ export default class GameScene extends Phaser.Scene {
             repeat: 0
         });
 
-
-
         this.mapColliders = {};
         const objectLayer = map.getObjectLayer('Collision Layer');
+
+        this.score = 0;
+
+        this.scoreText = this.add.text(16, 16, 'Score: 0', {
+            fontSize: '24px',
+            fill: '#fff',
+            fontFamily: 'Jua'
+        }).setScrollFactor(0);
+
 
 
         objectLayer.objects.forEach(obj => {
@@ -131,7 +138,8 @@ export default class GameScene extends Phaser.Scene {
                 this.physics.add.overlap(this.player, note, () => {
                     console.log('노트 획득!');
                     note.destroy();
-                    // note.disableBody(true, true);
+                    this.score += 100;
+                    this.scoreText.setText(`Score: ${this.score}`);
 
                 });
             }
@@ -231,9 +239,9 @@ export default class GameScene extends Phaser.Scene {
 
         try {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
-            console.log('🎵 추천 결과:', res.data.musicRecommendation);
+            console.log('추천 결과:', res.data.musicRecommendation);
         } catch (err) {
-            console.error('❌ Spotify API 호출 실패:', err);
+            console.error('Spotify API 호출 실패:', err);
         }
     }
 }
