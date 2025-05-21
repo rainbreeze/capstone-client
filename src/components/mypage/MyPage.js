@@ -25,7 +25,7 @@ const MyPage = () => {
     return (
         <div style={{ padding: '20px' }}>
             <h2>My Page</h2>
-            <p><strong>Username:</strong> {userInfo.username}</p>
+            <p><strong>Username:</strong> {userInfo.userName}</p>
             <p><strong>User ID:</strong> {userInfo.userId}</p>
             <p><strong>Email:</strong> {userInfo.email}</p>
             <p><strong>Joined:</strong> {new Date(userInfo.createdAt).toLocaleDateString()}</p>
