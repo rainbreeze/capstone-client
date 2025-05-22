@@ -14,26 +14,28 @@ const TestResultPage = () => {
                 <h1 style={styles.h1}>음악 추천 결과</h1>
                 {musicRecommendation && musicRecommendation.length > 0 ? (
                     <div>
-                        {musicRecommendation.map((track, index) => (
-                            <div key={index} style={styles.trackContainer}>
-                                {/* 앨범 이미지 표시 */}
-                                {track.album.images && track.album.images.length > 0 && (
-                                    <img 
-                                        src={track.album.images[0].url} 
-                                        alt={`${track.name} album cover`} 
-                                        style={styles.albumImage} 
-                                    />
-                                )}
-                                <p style={styles.trackText}>장르: {track.genre}</p>
-                                <p style={styles.trackText}>
-                                    아티스트: {track.artists.map(artist => artist.name).join(', ')}
-                                </p>
-                                <p style={styles.trackText}>곡 제목: {track.name}</p>
-                                <a href={track.external_urls.spotify} target="_blank" rel="noopener noreferrer" style={styles.spotifyLink}>
-                                    Spotify에서 듣기
-                                </a>
-                            </div>
-                        ))}
+                        {musicRecommendation.map((track, index) => {
+                            console.log('Track:', track);
+                            return (
+                                <div key={index} style={styles.trackContainer}>
+                                    {/* 앨범 이미지 표시 */}
+                                    {track.album.images && track.album.images.length > 0 && (
+                                        <img
+                                            src={track.album.images[0].url}
+                                            alt={`${track.name} album cover`}
+                                            style={styles.albumImage}
+                                        />
+                                    )}
+                                    <p style={styles.trackText}>장르: {track.genre}</p>
+                                    <p style={styles.trackText}>
+                                        아티스트: {track.artists.map(artist => artist.name).join(', ')}
+                                    </p>
+                                    <p style={styles.trackText}>곡 제목: {track.name}</p>
+                                    <a href={track.external_urls.spotify} target="_blank" rel="noopener noreferrer" style={styles.spotifyLink}>
+                                        Spotify에서 듣기
+                                    </a>
+                                </div>);
+                        })}
                     </div>
                 ) : (
                     <p style={styles.trackText}>추천된 음악이 없습니다.</p>
