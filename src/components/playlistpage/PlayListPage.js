@@ -3,14 +3,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
+
 const PlayListPage = () => {
-    const [playlists, setPlaylists] = useState([]);  // playlistId + createdAt 담는 배열
-    const [playlistMusicIds, setPlaylistMusicIds] = useState({});
-    const [musicImageUrls, setMusicImageUrls] = useState({});
+    const [playlists, setPlaylists] = useState([]);  // playlists + 각 음악 배열 포함
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchPlaylists = async () => {
+        const fetchFullPlaylists = async () => {
             const userId = localStorage.getItem('userId');
 
             if (!userId) {
@@ -20,51 +19,32 @@ const PlayListPage = () => {
             }
 
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/${userId}`);
-                const playlistData = response.data.playlists;
-                setPlaylists(playlistData);
-
-                for (const { playlistId } of playlistData) {
-                    const musicResponse = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/playlistmusic/${playlistId}`);
-                    setPlaylistMusicIds(prev => ({
-                        ...prev,
-                        [playlistId]: musicResponse.data.playlist_music_ids
-                    }));
-
-                    for (const musicId of musicResponse.data.playlist_music_ids) {
-                        const imageResponse = await axios.get(`${process.env.REACT_APP_API_URL}/playlistmusic/image/${musicId}`);
-                        setMusicImageUrls(prev => ({
-                            ...prev,
-                            [musicId]: imageResponse.data.album_image_url
-                        }));
-                    }
-                }
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/full/${userId}`);
+                // response.data가 playlists 배열 [{ playlistId, createdAt, musics: [...] }, ...]
+                setPlaylists(response.data);
             } catch (error) {
-                console.error('플레이리스트 조회 실패:', error);
+                console.error('전체 플레이리스트 조회 실패:', error);
                 alert('플레이리스트를 가져오는 데 실패했습니다.');
             }
         };
 
-        fetchPlaylists('/login');
+        fetchFullPlaylists();
     }, [navigate]);
 
     const handleDeletePlaylist = async (playlistId) => {
-
         try {
             const response = await axios.delete(`${process.env.REACT_APP_API_URL}/playlist/${playlistId}`);
             alert(response.data.message);
-            setPlaylists(prevPlaylists => prevPlaylists.filter(playlist => playlist.playlistId !== playlistId));
+            setPlaylists(prev => prev.filter(playlist => playlist.playlistId !== playlistId));
         } catch (error) {
             console.error('플레이리스트 삭제 실패:', error);
             alert('플레이리스트를 삭제하는 데 실패했습니다.');
         }
-    }
-
-    const handleImageClick = (musicId) => {
-        const imageUrl = musicImageUrls[musicId];
-        navigate('/write', { state: { musicId, imageUrl } });
     };
-    
+
+    const handleImageClick = (musicId, albumImageUrl) => {
+        navigate('/write', { state: { musicId, imageUrl: albumImageUrl } });
+    };
 
     return (
         <div>
@@ -74,7 +54,7 @@ const PlayListPage = () => {
                 <div style={styles.playlistContainer}>
                     {playlists.length > 0 ? (
                         <ul style={styles.playlistList}>
-                            {playlists.map(({ playlistId, createdAt }) => (
+                            {playlists.map(({ playlistId, createdAt, musics }) => (
                                 <li key={playlistId} style={styles.playlistItem}>
                                     <h3 style={styles.playlistTitle}>Playlist ID: {playlistId}</h3>
                                     <p style={styles.creationDate}>
@@ -84,17 +64,16 @@ const PlayListPage = () => {
                                         삭제
                                     </button>
                                     <div style={styles.musicImagesContainer}>
-                                        {playlistMusicIds[playlistId] && playlistMusicIds[playlistId].length > 0 ? (
-                                            playlistMusicIds[playlistId].map((musicId) => (
-                                                <div key={musicId} style={styles.musicImageWrapper}>
-                                                    {musicImageUrls[musicId] && (
-                                                        <img
-                                                            src={musicImageUrls[musicId]}
-                                                            alt={`Album cover for music ID ${musicId}`}
-                                                            style={styles.albumImage}
-                                                            onClick={() => handleImageClick(musicId)}
-                                                        />
-                                                    )}
+                                        {musics.length > 0 ? (
+                                            musics.map(({ playlistMusicId, musicId, albumImageUrl, trackName }) => (
+                                                <div key={playlistMusicId} style={styles.musicImageWrapper}>
+                                                    <img
+                                                        src={albumImageUrl}
+                                                        alt={`Album cover for ${trackName}`}
+                                                        style={styles.albumImage}
+                                                        onClick={() => handleImageClick(musicId, albumImageUrl)}
+                                                    />
+                                                    <p>{trackName}</p>
                                                 </div>
                                             ))
                                         ) : (
@@ -115,6 +94,7 @@ const PlayListPage = () => {
 };
 
 const styles = {
+    // ... 기존 스타일 그대로 유지
     deleteButton: {
         position: 'absolute',
         top: '10px',
@@ -188,6 +168,7 @@ const styles = {
         objectFit: 'cover',
         borderRadius: '8px',
         transition: 'transform 0.3s ease',
+        cursor: 'pointer',
     },
     noMusicText: {
         color: '#888',
@@ -198,7 +179,7 @@ const styles = {
         color: '#888',
         fontSize: '1.2rem',
         fontWeight: 'bold',
-        fontStyle: 'JUA',
+        fontFamily: 'Jua',
     },
 };
 
