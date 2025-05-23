@@ -71,7 +71,7 @@ const TestPage = () => {
                     <div style={styles.inputGroup}>
                         <label style={styles.label}>Year:</label>
                         <input
-                            type="number"
+                            type="text"
                             value={year}
                             onChange={(e) => setYear(e.target.value)}
                             style={styles.input}
