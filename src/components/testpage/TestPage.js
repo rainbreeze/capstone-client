@@ -10,7 +10,6 @@ const TestPage = () => {
     const [score, setScore] = useState('');
     const [genre, setGenre] = useState('');
     const [year, setYear] = useState('');
-    const [hipster, setHipster] = useState('no');
     const navigate = useNavigate();  // navigate 함수 사용
 
     // 컴포넌트가 마운트될 때 로컬 스토리지에서 userId 가져오기
@@ -30,14 +29,13 @@ const TestPage = () => {
             score,
             genre,
             year,
-            hipster
         };
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
 
-          // 추천된 곡을 GameResultPage로 전달
-          console.log(userId);
+            // 추천된 곡을 GameResultPage로 전달
+            console.log(userId);
             navigate('/testResult', { state: { musicRecommendation: response.data.musicRecommendation } });
         } catch (error) {
             alert('데이터 저장에 실패했습니다.');
@@ -76,13 +74,6 @@ const TestPage = () => {
                             onChange={(e) => setYear(e.target.value)}
                             style={styles.input}
                         />
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>Hipster:</label>
-                        <select value={hipster} onChange={(e) => setHipster(e.target.value)} style={styles.input}>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
                     </div>
                     <button type="submit" style={styles.submitButton}>제출</button>
                 </form>
