@@ -1,6 +1,24 @@
 import Phaser from "phaser"
 import axios from 'axios';
 
+let genres = [
+    { name: 'rock', count: 0 },
+    { name: 'rap', count: 0 },
+    { name: 'edm', count: 0 },
+    { name: 'latin', count: 0 },
+    { name: 'pop', count: 0 },
+    { name: 'hiphop', count: 0 },
+    { name: 'R&B', count: 0 },
+];
+
+// const storedUserId = localStorage.getItem('userId');
+// if (!storedUserId) {
+//     alert('로그인 후 다시 시도해주세요.');
+// }
+
+let stageIndex = 0;
+let totalStages = 5;
+
 export default class GameScene extends Phaser.Scene {
 
     constructor() {
@@ -21,9 +39,6 @@ export default class GameScene extends Phaser.Scene {
             frameHeight: 249,
             spacing: 2
         });
-
-
-
     }
 
     init(data) {
@@ -31,23 +46,14 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // this.showStage(this.stageIndex);
+
         const map = this.make.tilemap({ key: "map" });
 
         console.log(map.getObjectLayer('Collision Layer'));
 
-
-
         const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
         const musicBoxTileset = map.addTilesetImage('music_box_64x64', 'music_box_64x64');
-
-        if (!tileset) console.warn('clean_16x16_tileset 연결 실패');
-        if (!musicBoxTileset) console.warn('music_box_64x64 연결 실패');
-
-
-        if (!tileset || !musicBoxTileset) {
-            console.error('Tileset 연결 실패!');
-            return;
-        }
 
         map.createLayer('Tile Layer 1', tileset, 0, 0);
         map.createLayer('Mini Layer 1', [tileset, musicBoxTileset], 0, 0);
@@ -88,7 +94,6 @@ export default class GameScene extends Phaser.Scene {
         }).setScrollFactor(0);
 
 
-
         objectLayer.objects.forEach(obj => {
             const { x, y, width, height, name, type: cls } = obj;
             const centerX = x + width / 2;
@@ -103,33 +108,39 @@ export default class GameScene extends Phaser.Scene {
 
                     this.physics.add.collider(this.player, box);
                 }
-
             }
 
-            // if (cls === 'troll_section') {
-            //     const zone = this.add.zone(centerX, centerY, width, height);
-            //     this.physics.add.existing(zone);
-            //     zone.body.setAllowGravity(false);
-            //     zone.body.moves = false;
-            //     this.physics.add.overlap(this.player, zone, () => {
-            //         const target = this.mapColliders['ground_collision'];
-            //         if (target) {
-            //             this.tweens.add({
-            //                 targets: target,
-            //                 y: target.y + 100,
-            //                 duration: 600,
-            //                 ease: 'Power2',
-            //                 onComplete: () => target.destroy()
-            //             });
-            //         }
-            //     });
-            // }
-
+            if (cls === 'troll_section') {
+                const zone = this.add.zone(centerX, centerY, width, height);
+                this.physics.add.existing(zone);
+                zone.body.setAllowGravity(false);
+                zone.body.moves = false;
+                this.physics.add.overlap(this.player, zone, () => {
+                    const target = this.mapColliders['ground_collision'];
+                    if (target) {
+                        this.tweens.add({
+                            targets: target,
+                            y: target.y + 100,
+                            duration: 600,
+                            ease: 'Power2',
+                            onComplete: () => target.destroy()
+                        });
+                    }
+                });
+            }
             if (cls === 'spike') {
-                const spike = this.physics.add.staticImage(centerX, centerY, null).setSize(width, height).setOrigin(0.5).setVisible(false);
+                const spike = this.physics.add.staticImage(centerX, centerY, null)
+                    .setSize(width, height)
+                    .setOrigin(0.5)
+                    .setVisible(false);
+
                 this.physics.add.overlap(this.player, spike, () => {
                     console.log('스파이크 데미지!');
+                });
 
+                this.events.on('update', () => {
+                    const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, spike.x, spike.y);
+                    if (distance < 150) spike.setVisible(true);
                 });
             }
 
@@ -149,6 +160,8 @@ export default class GameScene extends Phaser.Scene {
                 this.physics.add.overlap(this.player, musicBox, () => {
                     if (!this.choiceShown) {
                         this.choiceShown = true;
+                        this.score += 1000
+                        this.scoreText.setText(`Score: ${this.score}`);
                         this.showChoiceButtons();
                     }
                 });
@@ -162,7 +175,6 @@ export default class GameScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.player);
         this.controlsEnabled = true;
-
     }
 
     update() {
@@ -190,17 +202,25 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    getRandomGenres(n) {
+        const shuffled = [...genres].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, n);
+    }
+
     showChoiceButtons() {
         this.controlsEnabled = false;
+
+        const choices = this.getRandomGenres(2);
+
         const centerX = this.player.x;
         const centerY = this.player.y;
 
-        const option1 = this.add.text(centerX - 50, centerY, 'classic', this.getTextStyle()).setOrigin(0.5).setInteractive();
-        const option2 = this.add.text(centerX + 50, centerY, 'rock', this.getTextStyle()).setOrigin(0.5).setInteractive();
+        const option1 = this.add.text(centerX - 50, centerY, choices[0].name, this.getTextStyle()).setOrigin(0.5).setInteractive();
+        const option2 = this.add.text(centerX + 50, centerY, choices[1].name, this.getTextStyle()).setOrigin(0.5).setInteractive();
 
         this.choiceGroup = this.add.group([option1, option2]);
-        this.setButtonEvents(option1, 'classic');
-        this.setButtonEvents(option2, 'rock');
+        this.setButtonEvents(option1, choices[0].name);
+        this.setButtonEvents(option2, choices[1].name);
     }
 
     getTextStyle() {
@@ -213,25 +233,22 @@ export default class GameScene extends Phaser.Scene {
         };
     }
 
-
-
     setButtonEvents(btn, value) {
         btn.on('pointerover', () => btn.setStyle({ backgroundColor: '#ccc' }));
         btn.on('pointerout', () => btn.setStyle({ backgroundColor: '#fff' }));
         btn.on('pointerdown', () => {
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
-            alert(`${value} 선택됨`);
+            console.log('choice genre: ', value);
             this.showSearchResult(value);
         });
     }
 
-
-    async showSearchResult(value) {
+    async showSearchResult(genre) {
         const gameData = {
-            userId: localStorage.getItem('userId'),
+            userId: 111,
             score: 999,
-            genre: value,
+            genre: genre,
             year: 2005,
             hipster: "no"
         };
