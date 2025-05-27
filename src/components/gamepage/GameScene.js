@@ -29,6 +29,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/section01.json');
         this.load.image('clean_16x16_tileset', 'assets/tilesets/clean_16x16_tileset.png');
         this.load.image('music_box_64x64', 'assets/tilesets/music_box_64x64.png');
+        this.load.image('noteImage', 'assets/images/note.png');
+        this.load.image('spikeImage', 'assets/images/spike.png');
+        this.load.image('tree', 'assets/images/tree.png');
 
         this.load.image('Char1', 'assets/images/Character1.png');
         this.load.image('Char2', 'assets/images/Character2.png');
@@ -53,10 +56,8 @@ export default class GameScene extends Phaser.Scene {
         console.log(map.getObjectLayer('Collision Layer'));
 
         const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
-        const musicBoxTileset = map.addTilesetImage('music_box_64x64', 'music_box_64x64');
 
         map.createLayer('Tile Layer 1', tileset, 0, 0);
-        map.createLayer('Mini Layer 1', [tileset, musicBoxTileset], 0, 0);
 
 
         let imageName = {
@@ -129,9 +130,9 @@ export default class GameScene extends Phaser.Scene {
                 });
             }
             if (cls === 'spike') {
-                const spike = this.physics.add.staticImage(centerX, centerY, null)
-                    .setSize(width, height)
-                    .setOrigin(0.5)
+                const spike = this.physics.add.staticImage(centerX, centerY, 'spikeImage')
+                    .setDisplaySize(32, 32)
+                    .setSize(32, 32)
                     .setVisible(false);
 
                 this.physics.add.overlap(this.player, spike, () => {
@@ -145,7 +146,7 @@ export default class GameScene extends Phaser.Scene {
             }
 
             if (cls === 'note') {
-                const note = this.physics.add.staticImage(centerX, centerY, null).setSize(width, height).setOrigin(0.5).setVisible(false);
+                const note = this.physics.add.staticImage(centerX, centerY, 'noteImage').setDisplaySize(32, 32).setSize(32, 32).setVisible(true);
                 this.physics.add.overlap(this.player, note, () => {
                     console.log('노트 획득!');
                     note.destroy();
@@ -156,7 +157,7 @@ export default class GameScene extends Phaser.Scene {
             }
 
             if (cls === 'ending') {
-                const musicBox = this.physics.add.staticImage(centerX, centerY, 'music_box').setDisplaySize(48, 48);
+                const musicBox = this.physics.add.staticImage(centerX, centerY, 'music_box_64x64').setDisplaySize(48, 48);
                 this.physics.add.overlap(this.player, musicBox, () => {
                     if (!this.choiceShown) {
                         this.choiceShown = true;
@@ -173,6 +174,7 @@ export default class GameScene extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.player);
         this.controlsEnabled = true;
     }
