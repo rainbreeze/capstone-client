@@ -11,10 +11,10 @@ let genres = [
     { name: 'R&B', count: 0 },
 ];
 
-// const storedUserId = localStorage.getItem('userId');
-// if (!storedUserId) {
-//     alert('로그인 후 다시 시도해주세요.');
-// }
+const storedUserId = localStorage.getItem('userId');
+if (!storedUserId) {
+    alert('로그인 후 다시 시도해주세요.');
+}
 
 let stageIndex = 0;
 let totalStages = 5;
@@ -26,18 +26,18 @@ export default class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/section01.json');
+        // 맵 생성에 필요한 이미지
         this.load.image('clean_16x16_tileset', 'assets/tilesets/clean_16x16_tileset.png');
         this.load.image('music_box_64x64', 'assets/tilesets/music_box_64x64.png');
         this.load.image('noteImage', 'assets/images/note.png');
         this.load.image('spikeImage', 'assets/images/spike.png');
-        this.load.image('tree', 'assets/images/tree.png');
 
-        this.load.image('Char1', 'assets/images/Character1.png');
-        this.load.image('Char2', 'assets/images/Character2.png');
-        this.load.image('Char3', 'assets/images/Character3.png');
+        // 실제 맵
+        this.load.tilemapTiledJSON('map1', 'assets/tilemaps/section01.json');
+        this.load.tilemapTiledJSON('map2', 'assets/tilemaps/section02.json');
 
-        this.load.spritesheet('char1', 'assets/images/test_sprite_1.png', {
+        // 캐릭터 스프라이트 시트
+        this.load.spritesheet('char1', 'assets/images/sprite_char1.png', {
             frameWidth: 165,
             frameHeight: 249,
             spacing: 2
@@ -48,10 +48,10 @@ export default class GameScene extends Phaser.Scene {
         this.selectedCharacter = data.selectedCharacter;
     }
 
-    create() {
+    create(data) {
         // this.showStage(this.stageIndex);
 
-        const map = this.make.tilemap({ key: "map" });
+        const map = this.make.tilemap({ key: "map1" });
 
         console.log(map.getObjectLayer('Collision Layer'));
 
