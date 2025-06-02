@@ -4,7 +4,7 @@ import styled from 'styled-components';
 // Footer 컴포넌트에는 props가 없으므로 특별한 타입을 정의할 필요는 없습니다.
 const Footer: React.FC = () => (
     <FooterWrapper>
-        <CopyrightText>© 2025 Capstone Group 6 All rights reserved.</CopyrightText>
+        <CopyrightText>© 2025 Capstone Group 8 All rights reserved.</CopyrightText>
     </FooterWrapper>
 );
 

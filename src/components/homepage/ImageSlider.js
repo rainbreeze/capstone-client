@@ -5,22 +5,16 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 
 const images = [
   {
-    src: '/images/homepage/er1.png',
+    src: '/images/homepage/slide_1.png',
   },
-  {
-    src: '/images/homepage/er2.png',
+    {
+    src: '/images/homepage/slide_2.png',
   },
-  {
-    src: '/images/homepage/er3.png',
+    {
+    src: '/images/homepage/slide_3.png',
   },
-  {
-    src: '/images/homepage/homepage_nav05.png',
-  },
-  {
-    src: '/images/homepage/er5.png',
-  },
-  {
-    src: '/images/homepage/er4.png',
+    {
+    src: '/images/homepage/slide_4.png',
   },
 ];
 

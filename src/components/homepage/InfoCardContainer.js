@@ -58,7 +58,7 @@ const SectionWrapper = styled.div`
   display: flex;
   justify-content: space-around;
   padding: 6vh 4vw;
-  background-color: #f7f7f7;
+  background-color: white;
 
   @media (max-width: 768px) {
     flex-direction: column;

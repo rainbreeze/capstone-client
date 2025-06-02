@@ -235,7 +235,7 @@ const NavLink = styled.a`
 
     /* 로그아웃 버튼에 대한 색상 변경 */
     ${props => props.isLogout && `
-        color: black !important;/* 빨간색 */
+        color: black !important;
     `}
 
     ${props => props.isFirst && `
