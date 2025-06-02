@@ -3,12 +3,18 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa'; // 햄버거 아이콘
 import { FiSearch } from 'react-icons/fi';
+import { useLocation } from 'react-router-dom';
+
 
 
 const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 상태 관리
     const [user, setUser] = useState(null); // 로그인된 사용자 정보
+
+    const location = useLocation();
+    const transparentPaths = ['/playlist']; // 여기에 필요한 경로 추가
+    const isTransparentPage = transparentPaths.includes(location.pathname);
 
     // 로그인된 사용자 정보(localStorage에서 userId 가져오기)
     useEffect(() => {
@@ -48,7 +54,7 @@ const Header = () => {
     };
 
     return (
-        <HeaderWrapper scrolled={scrolled}>
+        <HeaderWrapper scrolled={scrolled} transparent={isTransparentPage && !scrolled}>
             <Logo src="/images/logo_image.png" alt="Logo" />
 
             {/* 모바일에서 햄버거 메뉴 버튼 */}
@@ -163,18 +169,22 @@ const SearchIcon = styled(FiSearch)`
 `;
 
 const HeaderWrapper = styled.header`
-    background-color: hsl(0, 0.00%, 100.00%);
-    position: fixed;
-    top: 0;
-    z-index: 99;
-    width: 100%;
-    height: 8vh;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0 2%;
-    border-bottom: 1px solid rgba(0,0,0, 0.2);
+  position: fixed;
+  top: 0;
+  z-index: 99;
+  width: 100%;
+  height: 8vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 2%;
+  border-bottom: 1px solid rgba(0,0,0, 0.2);
+  transition: background-color 0.3s ease;
+
+  background-color: ${({ transparent, scrolled }) =>
+        transparent ? 'transparent' : 'white'};
 `;
+
 
 const Logo = styled.img`
     height: 80%;

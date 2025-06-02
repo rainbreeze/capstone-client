@@ -49,8 +49,24 @@ const PlayListPage = () => {
     return (
         <div>
             <Header />
+            <div style={styles.imageContainer}>
+                <img
+                    src="images/playlist/top_banner.png"
+                    alt="헤더 배경 이미지"
+                    style={styles.headerImage}
+                />
+                <div style={styles.overlayText}>
+                    내가 만든 음악으로,<br />
+                    세상과 함께 듣고 나누세요.
+                </div>
+                <div style={styles.listenHereText}>감상 가능한 곳</div>
+                <div style={styles.logoContainer}>
+                    <img src="images/playlist/logo1.png" alt="YouTube" style={styles.logo} />
+                    <img src="images/playlist/logo2.png" alt="Spotify" style={styles.logo} />
+                </div>
+            </div>
             <div style={styles.container}>
-                <h1 style={styles.h1}>My Playlists</h1>
+                <h1 style={styles.h1}>내 음악</h1>
                 <div style={styles.playlistContainer}>
                     {playlists.length > 0 ? (
                         <ul style={styles.playlistList}>
@@ -94,6 +110,53 @@ const PlayListPage = () => {
 };
 
 const styles = {
+    imageContainer: {
+        position: 'relative',  // 자식요소 절대위치를 위해 필요
+        width: '100%',
+        height: '72vh',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+    },
+    headerImage: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        userSelect: 'none',
+        pointerEvents: 'none',
+    },
+    overlayText: {
+        position: 'absolute',
+        bottom: '8vh',
+        left: '12vw',
+        color: 'white',
+        fontSize: '2vw',
+        fontWeight: '600',
+        textShadow: '2px 2px 6px rgba(0,0,0,0.7)',
+        lineHeight: '1.4',
+        maxWidth: '60vw',
+        fontFamily: "Noto Sans KR"
+    },
+    logoContainer: {
+        position: 'absolute',
+        bottom: '15px',
+        right: '30px',
+        display: 'flex',
+        gap: '15px',
+    },
+    logo: {
+        width: '80px',
+        height: '80px',
+        objectFit: 'contain',
+        cursor: 'pointer',
+        filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.5))',
+        transition: 'transform 0.3s ease',
+    },
+    logoHover: {
+        transform: 'scale(1.1)',
+    },
     // ... 기존 스타일 그대로 유지
     deleteButton: {
         position: 'absolute',
@@ -110,17 +173,17 @@ const styles = {
         transition: 'background-color 0.3s ease',
     },
     h1: {
-        fontSize: '3.5rem',
-        fontFamily: 'Jua',
+        fontSize: '2.5vw',
+        fontFamily: "Noto Sans KR",
         color: '#333',
         marginBottom: '20px',
-        fontWeight: 'bold',
+        fontWeight: '700',
     },
     container: {
         padding: '0 10vw',
-        textAlign: 'center',
+        textAlign: 'start',
         backgroundColor: 'transparent',
-        marginTop: '8vh'
+        margin: '4vh 0'
     },
     playlistContainer: {
         marginTop: '20px',
@@ -144,7 +207,7 @@ const styles = {
         fontWeight: '600',
         color: '#333',
         marginBottom: '10px',
-        fontFamily: 'Jua',
+        fontFamily: "Noto Sans KR"
     },
     creationDate: {
         fontSize: '0.9rem',
@@ -181,6 +244,17 @@ const styles = {
         fontSize: '1.2rem',
         fontWeight: 'bold',
         fontFamily: 'Jua',
+    },
+    // styles 객체에 추가
+    listenHereText: {
+        position: 'absolute',
+        bottom: '95px',    // logoContainer (bottom:15px) 위쪽에 띄우기 위해 적당히 조절
+        right: '30px',
+        color: 'rgba(110, 110, 110, 0.8)',     // 연한 회색
+        fontSize: '0.8rem',
+        fontWeight: '500',
+        fontFamily: 'Noto Sans KR',
+        userSelect: 'none',
     },
 };
 
