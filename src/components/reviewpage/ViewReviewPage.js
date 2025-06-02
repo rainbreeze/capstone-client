@@ -145,6 +145,7 @@ const styles = {
         textAlign: 'center',
         backgroundColor: 'transparent',
         minHeight: '80vh',
+        marginTop: '8vh'
     },
     h1: {
         fontSize: '3rem',

@@ -120,6 +120,7 @@ const styles = {
         padding: '0 10vw',
         textAlign: 'center',
         backgroundColor: 'transparent',
+        marginTop: '8vh'
     },
     playlistContainer: {
         marginTop: '20px',
