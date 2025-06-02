@@ -1,6 +1,27 @@
 import Phaser from "phaser"
 import axios from 'axios';
 
+let genres = [
+    { name: 'rock', count: 0 },
+    { name: 'rap', count: 0 },
+    { name: 'edm', count: 0 },
+    { name: 'latin', count: 0 },
+    { name: 'pop', count: 0 },
+    { name: 'hiphop', count: 0 },
+    { name: 'R&B', count: 0 },
+];
+
+// let year = 0;
+
+const storedUserId = localStorage.getItem('userId');
+if (!storedUserId) {
+    alert('로그인 후 다시 시도해주세요.');
+}
+
+// let stageIndex = 0;
+let score = 0;
+let totalStages = 3;
+
 export default class GameScene extends Phaser.Scene {
 
     constructor() {
@@ -8,58 +29,68 @@ export default class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/section01.json');
+        // 맵 생성에 필요한 이미지
         this.load.image('clean_16x16_tileset', 'assets/tilesets/clean_16x16_tileset.png');
         this.load.image('music_box_64x64', 'assets/tilesets/music_box_64x64.png');
+        this.load.image('noteImage', 'assets/images/note.png');
+        this.load.image('spikeImage', 'assets/images/spike.png');
 
-        this.load.image('Char1', 'assets/images/Character1.png');
-        this.load.image('Char2', 'assets/images/Character2.png');
-        this.load.image('Char3', 'assets/images/Character3.png');
 
-        this.load.spritesheet('char1', 'assets/images/test_sprite_1.png', {
+        this.load.tilemapTiledJSON('map1', 'assets/tilemaps/section01.json');
+        this.load.tilemapTiledJSON('map2', 'assets/tilemaps/section02.json');
+        this.load.tilemapTiledJSON('map3', 'assets/tilemaps/section03.json');
+
+
+        this.load.spritesheet('char1', 'assets/images/sprite_char1.png', {
             frameWidth: 165,
             frameHeight: 249,
             spacing: 2
         });
-
-
-
     }
 
     init(data) {
         this.selectedCharacter = data.selectedCharacter;
+        this.stageIndex = data.stageIndex || 0
+
+        this.score = data.score || 0;
     }
 
-    create() {
-        const map = this.make.tilemap({ key: "map" });
 
-        console.log(map.getObjectLayer('Collision Layer'));
+    create(data) {
+
+        const mapKey = `map${this.stageIndex + 1}`;
+
+        const map = this.make.tilemap({ key: mapKey });
 
 
+        // 공통 코드
 
         const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
-        const musicBoxTileset = map.addTilesetImage('music_box_64x64', 'music_box_64x64');
 
-        if (!tileset) console.warn('clean_16x16_tileset 연결 실패');
-        if (!musicBoxTileset) console.warn('music_box_64x64 연결 실패');
-
-
-        if (!tileset || !musicBoxTileset) {
-            console.error('Tileset 연결 실패!');
-            return;
-        }
-
+        // 맵 레이어
         map.createLayer('Tile Layer 1', tileset, 0, 0);
-        map.createLayer('Mini Layer 1', [tileset, musicBoxTileset], 0, 0);
+        this.mapColliders = {};
+        const objectLayer = map.getObjectLayer('Collision Layer');
+        console.log('objectLayer', objectLayer);
+
+        // 스코어
 
 
+
+        this.scoreText = this.add.text(16, 16, 'Score: 0', {
+            fontSize: '24px',
+            fill: '#fff',
+            fontFamily: 'Jua'
+        }).setScrollFactor(0);
+
+        // 캐릭터 선택 이미지
         let imageName = {
             char1: 'Char1',
             char2: 'Char2',
             char3: 'Char3'
         }[this.selectedCharacter];
 
-        this.player = this.physics.add.sprite(10, 352, 'char1').setScale(0.3);
+        this.player = this.physics.add.sprite(10, 352, imageName).setScale(0.3);
         this.player.body.setCollideWorldBounds(true);
 
         this.anims.create({
@@ -76,21 +107,15 @@ export default class GameScene extends Phaser.Scene {
             repeat: 0
         });
 
-        this.mapColliders = {};
-        const objectLayer = map.getObjectLayer('Collision Layer');
-
-        this.score = 0;
-
-        this.scoreText = this.add.text(16, 16, 'Score: 0', {
-            fontSize: '24px',
-            fill: '#fff',
-            fontFamily: 'Jua'
-        }).setScrollFactor(0);
+        this.jumpCount = 0;
+        this.maxJump = 2;
 
 
 
+
+        // 오브젝트 레이어
         objectLayer.objects.forEach(obj => {
-            const { x, y, width, height, name, type: cls } = obj;
+            const { x, y, width, height, type: cls } = obj;
             const centerX = x + width / 2;
             const centerY = y + height / 2;
 
@@ -103,52 +128,44 @@ export default class GameScene extends Phaser.Scene {
 
                     this.physics.add.collider(this.player, box);
                 }
-
             }
 
-            // if (cls === 'troll_section') {
-            //     const zone = this.add.zone(centerX, centerY, width, height);
-            //     this.physics.add.existing(zone);
-            //     zone.body.setAllowGravity(false);
-            //     zone.body.moves = false;
-            //     this.physics.add.overlap(this.player, zone, () => {
-            //         const target = this.mapColliders['ground_collision'];
-            //         if (target) {
-            //             this.tweens.add({
-            //                 targets: target,
-            //                 y: target.y + 100,
-            //                 duration: 600,
-            //                 ease: 'Power2',
-            //                 onComplete: () => target.destroy()
-            //             });
-            //         }
-            //     });
-            // }
-
             if (cls === 'spike') {
-                const spike = this.physics.add.staticImage(centerX, centerY, null).setSize(width, height).setOrigin(0.5).setVisible(false);
+                const spike = this.physics.add.staticImage(centerX, centerY, 'spikeImage')
+                    .setDisplaySize(32, 32)
+                    .setSize(32, 32)
+                    .setVisible(false);
+                spike.refreshBody();
+
                 this.physics.add.overlap(this.player, spike, () => {
                     console.log('스파이크 데미지!');
+                });
 
+                this.events.on('update', () => {
+                    const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, spike.x, spike.y);
+                    if (distance < 150) spike.setVisible(true);
                 });
             }
 
             if (cls === 'note') {
-                const note = this.physics.add.staticImage(centerX, centerY, null).setSize(width, height).setOrigin(0.5).setVisible(false);
+                const note = this.physics.add.staticImage(centerX, centerY, 'noteImage').setDisplaySize(32, 32).setSize(32, 32).setVisible(true);
+                note.refreshBody();
                 this.physics.add.overlap(this.player, note, () => {
-                    console.log('노트 획득!');
                     note.destroy();
-                    this.score += 100;
-                    this.scoreText.setText(`Score: ${this.score}`);
+                    score += 100;
+                    this.scoreText.setText(`Score: ${score}`);
 
                 });
             }
 
+            // 뮤직박스
             if (cls === 'ending') {
-                const musicBox = this.physics.add.staticImage(centerX, centerY, 'music_box').setDisplaySize(48, 48);
+                const musicBox = this.physics.add.staticImage(centerX, centerY, 'music_box_64x64').setDisplaySize(48, 48);
                 this.physics.add.overlap(this.player, musicBox, () => {
                     if (!this.choiceShown) {
                         this.choiceShown = true;
+                        score += 1000
+                        this.scoreText.setText(`Score: ${score}`);
                         this.showChoiceButtons();
                     }
                 });
@@ -157,20 +174,26 @@ export default class GameScene extends Phaser.Scene {
 
         // 키보드 입력
         this.cursors = this.input.keyboard.createCursorKeys();
+
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.player);
         this.controlsEnabled = true;
+
+        this.choiceShown = false;
 
     }
 
     update() {
-        const speed = 300;
-        const jumpPower = 450;
-        const body = this.player.body;
         if (!this.controlsEnabled) return;
 
+        const speed = 300;
+        const jumpPower = 400;
+        const body = this.player.body;
+
+        // 좌우 이동
         body.setVelocityX(0);
         if (this.cursors.left.isDown) {
             body.setVelocityX(-speed);
@@ -184,23 +207,44 @@ export default class GameScene extends Phaser.Scene {
             this.player.anims.stop();
         }
 
-        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && body.onFloor()) {
-            body.setVelocityY(-jumpPower);
-            this.player.anims.play('char1_jump', true);
+        // 바닥에 닿았을 때 점프 카운트 초기화
+        if (body.blocked.down || body.onFloor()) {
+            this.jumpCount = 0;
         }
+
+        // 점프 입력 (space 또는 up 모두 처리 가능)
+        if (
+            Phaser.Input.Keyboard.JustDown(this.spaceKey) ||
+            Phaser.Input.Keyboard.JustDown(this.cursors.up)
+        ) {
+            if (this.jumpCount < this.maxJump) {
+                this.player.setVelocityY(-jumpPower);
+                this.jumpCount += 1;
+                this.player.anims.play('char1_jump', true);
+            }
+        }
+    }
+
+
+    getRandomGenres(n) {
+        const shuffled = [...genres].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, n);
     }
 
     showChoiceButtons() {
         this.controlsEnabled = false;
+
+        const choices = this.getRandomGenres(2);
+
         const centerX = this.player.x;
         const centerY = this.player.y;
 
-        const option1 = this.add.text(centerX - 50, centerY, 'classic', this.getTextStyle()).setOrigin(0.5).setInteractive();
-        const option2 = this.add.text(centerX + 50, centerY, 'rock', this.getTextStyle()).setOrigin(0.5).setInteractive();
+        const option1 = this.add.text(centerX - 50, centerY, choices[0].name, this.getTextStyle()).setOrigin(0.5).setInteractive();
+        const option2 = this.add.text(centerX + 50, centerY, choices[1].name, this.getTextStyle()).setOrigin(0.5).setInteractive();
 
         this.choiceGroup = this.add.group([option1, option2]);
-        this.setButtonEvents(option1, 'classic');
-        this.setButtonEvents(option2, 'rock');
+        this.setButtonEvents(option1, choices[0].name);
+        this.setButtonEvents(option2, choices[1].name);
     }
 
     getTextStyle() {
@@ -213,32 +257,71 @@ export default class GameScene extends Phaser.Scene {
         };
     }
 
-
-
     setButtonEvents(btn, value) {
-        btn.on('pointerover', () => btn.setStyle({ backgroundColor: '#ccc' }));
-        btn.on('pointerout', () => btn.setStyle({ backgroundColor: '#fff' }));
         btn.on('pointerdown', () => {
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
-            alert(`${value} 선택됨`);
-            this.showSearchResult(value);
+            console.log('choice genre: ', value);
+
+            genres.find(g => g.name === value).count += 1;
+
+            if (this.stageIndex < totalStages - 1) {
+                this.scene.restart({
+                    selectedCharacter: this.selectedCharacter,
+                    stageIndex: this.stageIndex + 1
+                });
+            } else {
+                // 5스테이지 종료 후 결과 정리
+                const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
+                console.log('가장 많이 선택된 장르:', result.name);
+                this.showSearchResult(result.name);
+            }
         });
     }
 
+    showResultPopup(result) {
+        this.controlsEnabled = false;
+        const centerX = this.player.x;
+        const centerY = this.player.y;
 
-    async showSearchResult(value) {
+        // 배경 박스
+        const bg = this.add.rectangle(400, 300, 300, 200, 0x000000, 0.8).setOrigin(0.5);
+
+        // 텍스트
+        const resultText = this.add.text(400, 270, result, {
+            fontSize: '20px',
+            color: '#ffffff',
+            align: 'center'
+        }).setOrigin(0.5);
+
+        // 닫기 버튼
+        const closeBtn = this.add.text(400, 330, '닫기', {
+            fontSize: '16px',
+            color: '#00ff00',
+            backgroundColor: '#222'
+        }).setOrigin(0.5).setInteractive();
+
+        closeBtn.on('pointerdown', () => {
+            popup.destroy(); // 팝업 제거
+        });
+
+        // 컨테이너로 묶기
+        const popup = this.add.container(0, 0, [bg, resultText, closeBtn]);
+
+    }
+
+
+    async showSearchResult(genre) {
         const gameData = {
-            userId: localStorage.getItem('userId'),
-            score: 999,
-            genre: value,
+            userId: storedUserId,
+            score: score,
+            genre: genre,
             year: 2005,
-            hipster: "no"
         };
 
         try {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
-            console.log('추천 결과:', res.data.musicRecommendation);
+            this.showResultPopup(res.data.musicRecommendation);
         } catch (err) {
             console.error('Spotify API 호출 실패:', err);
         }
