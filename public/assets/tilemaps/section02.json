@@ -29,7 +29,7 @@
             241, 242, 243, 244, 245, 246, 247, 248, 241, 242, 243, 244, 245, 246, 247, 248, 241, 242, 243, 244, 245, 246, 247, 248, 241, 242, 243, 244, 245, 246, 247, 248, 241, 242, 243, 244, 245, 246, 247, 248, 241, 242, 243, 244, 245, 246, 247, 248, 241, 242],
          "height":24,
          "id":1,
-         "name":"Tile Layer 1 st2",
+         "name":"Tile Layer 1",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -40,7 +40,7 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer st2",
+         "name":"Collision Layer",
          "objects":[
                 {
                  "height":64,
@@ -118,6 +118,28 @@
                  "width":80,
                  "x":352,
                  "y":304
+                }, 
+                {
+                 "height":32,
+                 "id":13,
+                 "name":"Ground",
+                 "rotation":0,
+                 "type":"Collision",
+                 "visible":true,
+                 "width":208,
+                 "x":432,
+                 "y":240
+                }, 
+                {
+                 "height":32,
+                 "id":14,
+                 "name":"Ground",
+                 "rotation":0,
+                 "type":"Collision",
+                 "visible":true,
+                 "width":128,
+                 "x":672,
+                 "y":192
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -126,7 +148,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":13,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
