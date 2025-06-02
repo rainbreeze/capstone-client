@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './Header';
+import Header from '../common/Header';
 import Footer from '../common/Footer';
 import Middle from './Middle';
 import StartGameContainer from './StartGameContainer';
@@ -8,6 +8,7 @@ import ContainerWrapper from './ContainerWrapper';
 import NoticeSection from './NoticeSection'; // ← import 추가
 import RankingContainer from './RankingContainer';
 import LottoContainer from './LottoContainer';
+import InfoCardContainer from './InfoCardContainer';
 
 const HomePage = () => (
     <div>
@@ -15,6 +16,7 @@ const HomePage = () => (
         <Middle>
             <ContainerWrapper>
                 <StartGameContainer />
+                <InfoCardContainer></InfoCardContainer>
                 <NoticeSection /> {/* ← 여기 삽입 */}
                 <ImageSlider />
                 <RankingContainer></RankingContainer>

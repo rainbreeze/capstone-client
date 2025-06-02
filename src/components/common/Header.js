@@ -1,100 +1,297 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { FaBars } from 'react-icons/fa'; // 햄버거 아이콘
+import { FiSearch } from 'react-icons/fi';
+
 
 const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const navigate = useNavigate();
+    const [scrolled, setScrolled] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 상태 관리
+    const [user, setUser] = useState(null); // 로그인된 사용자 정보
 
-    // 로그인 상태 확인
+    // 로그인된 사용자 정보(localStorage에서 userId 가져오기)
     useEffect(() => {
-        const userId = localStorage.getItem('userId');  // userId로 변경
-        if (userId) {
-            setIsLoggedIn(true);  // 로그인된 상태로 설정
+        const loggedUserId = localStorage.getItem('userId');  // localStorage에서 userId 가져오기
+        if (loggedUserId) {
+            setUser({ userId: loggedUserId });  // 상태에 userId 설정
         }
     }, []);
 
-    // 로그아웃 처리 함수
+    // 스크롤 이벤트 리스너 추가
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 10) { // 10px 이상 스크롤 했을 때
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        // 컴포넌트가 unmount될 때 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    // 사이드바 토글
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen); // 사이드바 열고 닫기
+    };
+
+    // 로그아웃 처리
     const handleLogout = () => {
-        localStorage.removeItem('userId');  // userId를 localStorage에서 삭제
-        setIsLoggedIn(false);  // 로그인 상태를 false로 설정
-        navigate('/login');  // 로그인 페이지로 이동
+        localStorage.removeItem('userId'); // localStorage에서 userId 삭제
+        setUser(null); // 상태에서 사용자 정보 삭제
     };
 
     return (
-        <header style={styles.header}>
-            <div style={styles.left}>
-                <button style={styles.backButton} onClick={() => window.history.back()}>
-                    &#8592;
-                </button>
-            </div>
-            <div style={styles.right}>
-                {isLoggedIn ? (
-                    <button style={styles.logoutButton} onClick={handleLogout}>
-                        로그아웃
-                    </button>
-                ) : (
-                    <>
-                        <Link to="/login">
-                            <button style={styles.authButton}>로그인</button>
-                        </Link>
-                        <Link to="/signup">
-                            <button style={styles.authButton}>회원가입</button>
-                        </Link>
-                    </>
-                )}
-            </div>
-        </header>
+        <HeaderWrapper scrolled={scrolled}>
+            <Logo src="/images/logo_image.png" alt="Logo" />
+
+            {/* 모바일에서 햄버거 메뉴 버튼 */}
+            <HamburgerMenu onClick={toggleSidebar}>
+                <FaBars size={18} color="#fff" />
+            </HamburgerMenu>
+
+            {/* 모바일에서 메뉴는 숨기기 */}
+            <NavLeft>
+                <NavList>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/" isFirst>홈</NavLink></NavItem>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/game">게임</NavLink></NavItem>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/playlist">음악</NavLink></NavItem>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/viewreview">감상평</NavLink></NavItem>
+                    <NavItem scrolled={scrolled}><NavLink as={Link} to="/test">테스트</NavLink></NavItem>
+                </NavList>
+            </NavLeft>
+            <NavRight>
+                <SearchContainer>
+                    <SearchIcon />
+                    <SearchInput type="text" placeholder="검색어를 입력해주세요." />
+                </SearchContainer>
+                <NavList>
+                    {user &&
+                        <NavItem scrolled={scrolled}><NavLink as={Link} to="/mypage">내 정보</NavLink></NavItem>
+                    }
+                    {user ? (
+                        <NavItem scrolled={scrolled} onClick={handleLogout}>
+                            <NavLink as={Link} to="/" isLogout={true}>로그아웃</NavLink>
+                        </NavItem>
+                    ) : (
+                        <>
+                            <NavItem scrolled={scrolled}>
+                                <NavLink as={Link} to="/login">로그인</NavLink>
+                            </NavItem>
+                            <NavItem scrolled={scrolled}>
+                                <NavLink as={Link} to="/signup" isSignup>회원가입</NavLink>
+                            </NavItem>
+                        </>
+                    )}
+                </NavList>
+            </NavRight>
+
+            {/* 사이드바 */}
+            {isSidebarOpen && (
+                <Sidebar>
+                    <SidebarList>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/game">게임</NavLink>
+                        </SidebarItem>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/viewreview">감상평</NavLink>
+                        </SidebarItem>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/ranking">랭킹</NavLink>
+                        </SidebarItem>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/test">테스트</NavLink>
+                        </SidebarItem>
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/playlist">Play List</NavLink>
+                        </SidebarItem>
+                        {user && <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/mypage">내 정보</NavLink>
+                        </SidebarItem>}
+                        {user ? (
+                            <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                                <NavLink as={Link} to="/" isLogout={true} onClick={handleLogout}>로그아웃</NavLink> {/* 로그인된 경우 로그아웃 버튼 */}
+                            </SidebarItem>
+                        ) : (
+                            <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                                <NavLink as={Link} to="/login">로그인/회원가입</NavLink>
+                            </SidebarItem>
+                        )}
+                    </SidebarList>
+                </Sidebar>
+            )}
+        </HeaderWrapper>
     );
 };
 
-const styles = {
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '2vh 2vw',
-        backgroundColor: '#121212',
-        color: '#fff',
-        height: '6vh',
-    },
-    left: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    right: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    backButton: {
-        background: 'none',
-        border: 'none',
-        color: '#fff',
-        fontSize: '2vw',
-        padding: '1vh 2vw',
-        cursor: 'pointer',
-    },
-    authButton: {
-        background: '#1ED760',
-        color: '#fff',
-        border: 'none',
-        fontSize: '1.5vw',
-        padding: '1.7vh 1.7vw',
-        marginLeft: '2vw',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Jua',
-    },
-    logoutButton: {
-        background: '#FF4F4F',  // 빨간색으로 변경
-        color: '#fff',
-        border: 'none',
-        fontSize: '1.5vw',
-        padding: '1.7vh 1.7vw',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Jua',
-        marginLeft: '2vw',
-    },
-};
-
 export default Header;
+
+// 스타일 컴포넌트 정의
+
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: rgba(200, 200, 200, 0.3); /* 회색 배경에 투명도 */
+  border: 1px solid rgba(180, 180, 180, 0.4); /* 아주 살짝 border */
+  border-radius: 6px;
+  padding: 0.4vh 0.8vw;
+  height: 4.5vh;
+`;
+
+const SearchInput = styled.input`
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #333;
+  font-size: 0.9vw;
+  font-family: "Noto Sans KR", sans-serif;
+  margin-left: 0.5vw;
+  ::placeholder {
+    color: #888;
+  }
+`;
+
+const SearchIcon = styled(FiSearch)`
+  color: #888;
+  font-size: 1.3vw;
+`;
+
+const HeaderWrapper = styled.header`
+    background-color: hsl(0, 0.00%, 100.00%);
+    position: fixed;
+    top: 0;
+    z-index: 99;
+    width: 100%;
+    height: 8vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 2%;
+    border-bottom: 1px solid rgba(0,0,0, 0.2);
+`;
+
+const Logo = styled.img`
+    height: 80%;
+    width: auto;
+    display: flex;
+    margin-left: 5%;
+`;
+
+const HamburgerMenu = styled.div`
+    display: none;
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+        display: block; /* 모바일에서는 햄버거 메뉴 보이기 */
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 10vw;
+    }
+`;
+
+const NavLeft = styled.nav`
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 3%;
+
+    @media (max-width: 768px) {
+        display: none; /* 모바일에서는 메뉴 숨기기 */
+    }
+`;
+
+const NavRight = styled.nav`
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 3%;
+
+    @media (max-width: 768px) {
+        display: none; /* 모바일에서는 메뉴 숨기기 */
+    }
+`;
+
+const NavList = styled.ul`
+    list-style-type: none;
+    display: flex;
+    height: 8vh;
+    padding: 0;
+`;
+
+const NavLink = styled.a`
+    text-decoration: none;
+    color: rgba(0,0,0,0.5);
+    font-size: 1vw;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 700;
+    transition: 0.7s ease;
+
+    /* 로그아웃 버튼에 대한 색상 변경 */
+    ${props => props.isLogout && `
+        color: black !important;/* 빨간색 */
+    `}
+
+    ${props => props.isFirst && `
+        color: black !important;
+    `}
+
+        ${props => props.isSignup && `
+        color: black !important;
+    `}
+`;
+
+const NavItem = styled.li`
+    padding: 0 1.5vw;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    transition: 0.7s ease;
+    position: relative;
+
+    &:hover {
+        background-color: #FFFFFF;
+        a {
+            color: black; /* hover 시 a 태그 색상 변경 */
+        }
+    }
+`;
+
+const Sidebar = styled.div`
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 30vw;
+    height: 100%;
+    background-color: #121212;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1vw;
+    z-index: 100;
+`;
+
+const SidebarList = styled.ul`
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+`;
+
+const SidebarItem = styled.li`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2.5vh 0;
+    text-align: left;
+    color: #fff;
+    border-bottom: 1px solid #333;
+`;
+

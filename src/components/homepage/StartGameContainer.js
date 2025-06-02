@@ -3,45 +3,39 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const StartGameContainer = () => (
-    <ImageContainer1>
-        <LeftContainer>
-            <TextBoxWrapper>
-                <TextLine1>게임 속에서 새로운 음악을 발견하고,</TextLine1>
-                <TextLine2>그 리듬에 맞춰 여정을 떠나보세요!</TextLine2>
-                <GameButton as={Link} to="/game">게임하러 가기</GameButton>
-            </TextBoxWrapper>
-        </LeftContainer>
-        <RightContainer>
-            <YouTubeContainer>
-                <iframe
-                    width="100%"
-                    height="100%"
-                    src="https://www.youtube.com/embed/oPLNNx8pp4s?start=80&autoplay=1&mute=1"
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                ></iframe>
-            </YouTubeContainer>
-        </RightContainer>
-    </ImageContainer1>
+  <ImageContainer>
+    <ContentWrapper>
+      <Title>게임을 통해 음악을 추천 받으세요</Title>
+      <Subtitle>게임과 음악을 통해, 나 자신을 알아가고 공유할 수 있는 공간</Subtitle>
+      <StartButton to="/game">게임 하러가기</StartButton>
+    </ContentWrapper>
+  </ImageContainer>
 );
 
 export default StartGameContainer;
 
 // ========== Styled Components ==========
 
-const ImageContainer1 = styled.div`
+const ImageContainer = styled.div`
+  position: relative;
+  margin-top: 8vh;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;  /* 중앙 정렬 */
   align-items: center;
   width: 100%;
-  height: 60vh;
-  margin-top: 8vh;
-  background-image: url('/images/homepage/ex2.png');
+  height: 70vh;
+  background-image: url('/images/homepage/game_bg.png');
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 1;
+  }
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -49,117 +43,58 @@ const ImageContainer1 = styled.div`
   }
 `;
 
-const LeftContainer = styled.div`
-  width: 50%;
-  padding: 2%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    padding: 5%;
-    align-items: center;
-  }
-`;
-
-const TextBoxWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+const ContentWrapper = styled.div`
   position: relative;
-  animation: slideInWrapper 0.5s ease forwards;
-  animation-delay: 0.3s;
-  opacity: 0;
-
-  @keyframes slideInWrapper {
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  transform: translateX(-20%);
-`;
-
-const TextLine1 = styled.div`
-  font-family: 'Jua', sans-serif;
-  font-size: 2.5vw;
-  color: #1ED760;
-
-  @media (max-width: 768px) {
-    font-size: 5vw;
-    text-align: center;
-  }
-`;
-
-const TextLine2 = styled.div`
-  font-family: 'Jua', sans-serif;
-  font-size: 2vw;
+  text-align: center;
   color: white;
-  margin-top: 0.5rem;
+  max-width: 800px;
+  padding: 0 20px;
+  z-index: 2;
+`;
+
+const Title = styled.h1`
+  font-size: 3.5vw;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  font-family: "Noto Sans KR", sans-serif;
 
   @media (max-width: 768px) {
-    font-size: 4.5vw;
-    text-align: center;
+    font-size: 7vw;
   }
 `;
 
-const GameButton = styled(Link)`
-  margin-top: 1rem;
-  text-decoration: none;
+const Subtitle = styled.p`
+  font-size: 1.5vw;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+  font-family: "Noto Sans KR", sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 4vw;
+  }
+`;
+
+const StartButton = styled(Link)`
+  display: inline-block;
   background-color: transparent;
-  border: 2px solid white;
-  color: white;
-  font-size: 1.7vw;
-  font-family: 'Jua', sans-serif;
-  padding: 0.6em 1.2em;
-  border-radius: 10px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  display: inline-block; /* 텍스트에 맞는 너비 */
-  align-self: flex-start; /* 왼쪽 정렬 */
-
-  animation: fadeSlideUp 0.5s ease forwards;
-  animation-delay: 1s;
-  opacity: 0;
-  transform: translateY(20px);
-
-  @keyframes fadeSlideUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  color: rgba(255,255,255,0.9);
+  font-weight: 500;
+  font-size: 1.3vw;
+  font-family: "Noto Sans KR", sans-serif;
+  border: 2px solid rgba(255, 255, 255, 1);
+  padding: 0.8rem 2.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #FFFFFF;
-    color: #1ED760;
+    background-color:rgba(0, 0, 0,0.5);
+      color: rgba(255,255,255,1);
+      font-weight: 700;
   }
 
   @media (max-width: 768px) {
-    font-size: 3.5vw;
-    padding: 0.8em 1.5em;
-    align-self: center; /* 모바일에서 중앙 정렬 */
+    font-size: 4vw;
+    padding: 1rem 3rem;
   }
-`;
-
-const RightContainer = styled.div`
-  width: 50%;
-  height: 90%;
-  padding: 2%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 50%;
-  }
-`;
-
-const YouTubeContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-color: black;
 `;
