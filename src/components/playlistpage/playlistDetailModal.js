@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReview, onTrackDelete }) => {
-    const musics = playlist?.musics || [];
+    const musics = useMemo(() => playlist?.musics || [], [playlist?.musics]);
     const [selectedTrack, setSelectedTrack] = useState(musics.length > 0 ? musics[0] : null);
 
     useEffect(() => {
