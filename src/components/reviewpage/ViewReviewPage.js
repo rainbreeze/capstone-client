@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
+import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
 function ViewReviewPage() {
@@ -9,12 +10,17 @@ function ViewReviewPage() {
     const [error, setError] = useState(null);
     const [likedReviews, setLikedReviews] = useState([]);
     const navigate = useNavigate();
-    
-    // 로컬스토리지에서 userName, profileImage 가져오기
+
+    const handleShare = (reviewId) => {
+        const reviewUrl = `${window.location.origin}/review/${reviewId}`;
+        navigator.clipboard.writeText(reviewUrl)
+            .then(() => alert('리뷰 URL이 복사되었습니다!'))
+            .catch(() => alert('복사에 실패했습니다.'));
+    };
 
     useEffect(() => {
         const storedProfileImage = localStorage.getItem('profileImage') || '';
-        console.log('프로필 이미지: ', storedProfileImage)
+        console.log('프로필 이미지:', storedProfileImage);
     }, []);
 
     const handleCommentClick = (reviewId) => {
@@ -23,19 +29,14 @@ function ViewReviewPage() {
 
     const handleLike = async (reviewId) => {
         const alreadyLiked = likedReviews.includes(reviewId);
+        const endpoint = alreadyLiked ? 'unLike' : 'like';
 
         try {
-            const endpoint = alreadyLiked ? 'unLike' : 'like';
-
             await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/${endpoint}`);
-
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
             setReviews(response.data);
-
             setLikedReviews((prev) =>
-                alreadyLiked
-                    ? prev.filter((id) => id !== reviewId)
-                    : [...prev, reviewId]
+                alreadyLiked ? prev.filter((id) => id !== reviewId) : [...prev, reviewId]
             );
         } catch (err) {
             console.error('좋아요 처리 실패:', err);
@@ -47,7 +48,6 @@ function ViewReviewPage() {
         const fetchAllReviews = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
-
                 if (Array.isArray(response.data)) {
                     setReviews(response.data);
                 } else {
@@ -58,327 +58,406 @@ function ViewReviewPage() {
                 setError('리뷰를 불러오는 데 실패했습니다.');
             }
         };
-
         fetchAllReviews();
     }, []);
 
     return (
-        <div>
+        <>
             <Header />
-            <div style={styles.imageContainer}>
-                <img
+            <ImageContainer>
+                <HeaderImage
                     src="images/review/top_banner.png"
                     alt="헤더 배경 이미지"
-                    style={styles.headerImage}
                 />
-                <div style={styles.overlayText}>
+                <OverlayText>
                     음악 위에 남겨진 마음들, <br />
                     천천히 읽어보세요.
-                </div>
-                <div style={styles.listenHereText}>감상 가능한 곳</div>
-                <div style={styles.logoContainer}>
-                    <img src="images/playlist/logo1.png" alt="YouTube" style={styles.logo} />
-                    <img src="images/playlist/logo2.png" alt="Spotify" style={styles.logo} />
-                </div>
-            </div>
-            <div style={styles.container}>
-                <h1 style={styles.h1}>전체 리뷰</h1>
-
+                </OverlayText>
+                <ListenHereText>감상 가능한 곳</ListenHereText>
+                <LogoContainer>
+                    <Logo src="images/playlist/logo1.png" alt="YouTube" />
+                    <Logo src="images/playlist/logo2.png" alt="Spotify" />
+                </LogoContainer>
+            </ImageContainer>
+            <ButtonSection>
+                <RealTimeButton onClick={() => alert('실시간 리뷰 클릭!')}>
+                    최신
+                </RealTimeButton>
+            </ButtonSection>
+            <Container>
                 {reviews.length === 0 ? (
-                    <p style={styles.text}>리뷰가 아직 없습니다.</p>
+                    <Text>리뷰가 아직 없습니다.</Text>
                 ) : (
-                    <div>
-                        {reviews.map((review) => (
-                            <div key={review.review_id} style={styles.reviewCard}>
-                                {/* 좌측 */}
-                                <div style={styles.leftSection}>
-                                    <img src={review.album_image_url} alt="Album" style={styles.albumImage} />
-                                    <div style={styles.bottomLeft}>
-                                        <p style={styles.text}><strong>장르:</strong> {review.genre}</p>
-                                        <p style={styles.text}><strong>곡이름:</strong> {review.playlist_music_name}</p>
-                                        <p style={styles.dateText}><strong>작성일:</strong> {new Date(review.created_at).toLocaleString()}</p>
-                                    </div>
-                                </div>
+                    reviews.map((review) => (
+                        <ReviewCard key={review.review_id}>
+                            <LeftSection>
+                                <ProfileBoxVertical>
+                                    <ProfileImage
+                                        src={'/images/header/profile.png'}
+                                        alt="Profile"
+                                    />
+                                    <ProfileName>{review.user_name}</ProfileName>
+                                </ProfileBoxVertical>
+                                <AlbumImage
+                                    src={review.album_image_url}
+                                    alt="Album"
+                                />
+                                <SongName>{review.playlist_music_name}</SongName>
+                            </LeftSection>
 
-                                {/* 우측 */}
-                                <div style={styles.rightSection}>
-                                    {/* 사용자 프로필 박스 우측 상단 */}
-                                    <div style={styles.profileBox}>
-                                        <img
-                                            src={'/images/header/profile.png'}
-                                            alt="Profile"
-                                            style={styles.profileImage}
-                                        />
-                                        <p style={styles.profileName}>{review.user_name}</p>
-                                    </div>
-
-                                    {/* 작성자 ID */}
-                                    <div style={styles.userId}>
-                                        <p style={styles.text}><strong>작성자 ID:</strong> {review.user_id}</p>
-                                    </div>
-
-                                    {/* 별점 */}
-                                    <div style={styles.topLeft}>
-                                        <p style={styles.rating}><strong>{'★'.repeat(review.rating)}</strong></p>
-                                    </div>
-
-                                    {/* 코멘트 */}
-                                    <div style={styles.middleRight}>
-                                        <p style={styles.text}>{review.comment}</p>
-                                    </div>
-
-                                    {/* 하단 좋아요/댓글 */}
-                                    <div style={styles.bottomSection}>
-                                        <div style={styles.bottomLeftSection}>
-                                            <button
-                                                style={
-                                                    likedReviews.includes(review.review_id)
-                                                        ? styles.likeButtonActive
-                                                        : styles.likeButton
-                                                }
-                                                onClick={() => handleLike(review.review_id)}
-                                            >
-                                                <span className="material-icons-outlined">thumb_up</span>
-                                            </button>
-
-                                            <button
-                                                style={styles.likeButton}
-                                                onClick={() => handleCommentClick(review.review_id)}
-                                            >
-                                                <span className="material-icons-outlined">chat</span>
-                                            </button>
-                                        </div>
-                                        <div style={styles.bottomRight}>
-                                            <p style={styles.text}>👍 {review.like_count}</p>
-                                            <p style={styles.text}>💬 {review.comment_count}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            <RightSection>
+                                <RatingBox>
+                                    <Rating>{'★'.repeat(review.rating)}</Rating>
+                                </RatingBox>
+                                <CommentBox>{review.comment}</CommentBox>
+                                <Divider />
+                                <BottomSection>
+                                    <BottomLeftSection>
+                                        <LikeButton
+                                            active={likedReviews.includes(review.review_id)}
+                                            onClick={() => handleLike(review.review_id)}
+                                        >
+                                            <span className="material-icons-outlined">thumb_up</span>
+                                        </LikeButton>
+                                        <LikeButton onClick={() => handleCommentClick(review.review_id)}>
+                                            <span className="material-icons-outlined">chat</span>
+                                        </LikeButton>
+                                        <LikeButton onClick={() => handleShare(review.review_id)} title="공유하기">
+                                            <span className="material-icons-outlined">share</span>
+                                        </LikeButton>
+                                    </BottomLeftSection>
+                                    <BottomLeftSection>
+                                        <SmallGrayText>좋아요 {review.like_count}</SmallGrayText>
+                                        <SmallGrayText>댓글 {review.comment_count}</SmallGrayText>
+                                    </BottomLeftSection>
+                                </BottomSection>
+                            </RightSection>
+                        </ReviewCard>
+                    ))
                 )}
 
-                {error && <p style={styles.errorText}>{error}</p>}
-            </div>
+                {error && <ErrorText>{error}</ErrorText>}
+            </Container>
             <Footer />
-        </div>
+        </>
     );
 }
 
-const styles = {
-    imageContainer: {
-        position: 'relative',
-        width: '100%',
-        height: '48vh',
-        overflow: 'hidden',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-    },
-    headerImage: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        userSelect: 'none',
-        pointerEvents: 'none',
-    },
-    overlayText: {
-        position: 'absolute',
-        bottom: '8vh',
-        left: '12vw',
-        color: 'white',
-        fontSize: '2vw',
-        fontWeight: '600',
-        textShadow: '2px 2px 6px rgba(0,0,0,0.7)',
-        lineHeight: '1.4',
-        maxWidth: '60vw',
-        fontFamily: 'Noto Sans KR',
-    },
-    listenHereText: {
-        position: 'absolute',
-        bottom: '95px',
-        right: '30px',
-        color: 'rgba(110, 110, 110, 0.8)',
-        fontSize: '0.8rem',
-        fontWeight: '500',
-        fontFamily: 'Noto Sans KR',
-        userSelect: 'none',
-    },
-    logoContainer: {
-        position: 'absolute',
-        bottom: '15px',
-        right: '30px',
-        display: 'flex',
-        gap: '15px',
-    },
-    logo: {
-        width: '80px',
-        height: '80px',
-        objectFit: 'contain',
-        cursor: 'pointer',
-        filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.5))',
-    },
-    container: {
-        padding: '0 10vw',
-        textAlign: 'center',
-        backgroundColor: 'transparent',
-        minHeight: '80vh',
-        marginTop: '8vh'
-    },
-    h1: {
-        fontSize: '3rem',
-        fontFamily: 'Jua',
-        color: '#333',
-        marginBottom: '30px',
-        fontWeight: 'bold',
-    },
-    text: {
-        fontSize: '1.2rem',
-        marginBottom: '15px',
-        color: '#333',
-        fontFamily: 'Jua',
-    },
-    reviewCard: {
-        display: 'flex',
-        border: '1px solid #ddd',
-        borderRadius: '10px',
-        padding: '20px',
-        marginBottom: '20px',
-        backgroundColor: '#fff',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-        justifyContent: 'space-between',
-        position: 'relative',
-    },
-    leftSection: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '200px',
-        justifyContent: 'space-between',
-    },
-    albumImage: {
-        width: '180px',
-        height: '180px',
-        objectFit: 'cover',
-        borderRadius: '10px',
-        marginBottom: '10px',
-    },
-    bottomLeft: {
-        textAlign: 'center',
-    },
-    dateText: {
-        fontSize: '0.8rem',
-        color: '#888',
-    },
-    rightSection: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        flex: 1,
-        marginLeft: '20px',
-        position: 'relative',
-    },
-    profileBox: {
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        backgroundColor: '#fff',
-        padding: '5px 10px',
-        borderRadius: '20px',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-        zIndex: 10,
-    },
-    profileImage: {
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        objectFit: 'cover',
-    },
-    profileName: {
-        fontSize: '1rem',
-        fontFamily: 'Jua',
-        color: '#333',
-        fontWeight: '600',
-        whiteSpace: 'nowrap',
-    },
-    userId: {
-        position: 'absolute',
-        top: '60px',
-        right: '10px',
-    },
-    topLeft: {
-        position: 'absolute',
-        top: '0',
-        left: '0',
-    },
-    rating: {
-        fontSize: '1.5rem',
-        color: '#f39c12',
-        fontFamily: 'Jua',
-    },
-    middleRight: {
-        textAlign: 'left',
-        marginTop: '50px',
-    },
-    bottomSection: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        marginTop: 'auto',
-        width: '100%',
-    },
-    bottomLeftSection: {
-        display: 'flex',
-        alignItems: 'flex-end',
-        gap: '10px',
-    },
-    bottomRight: {
-        display: 'flex',
-        alignItems: 'flex-end',
-        gap: '15px',
-    },
-    likeButton: {
-        backgroundColor: 'white',
-        color: 'black',
-        fontFamily: 'Jua',
-        fontSize: '1.2rem',
-        padding: '6px 12px',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        border: '3px solid black',
-        transition: 'all 0.3s ease',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '40px',
-        width: '40px',
-    },
-    likeButtonActive: {
-        backgroundColor: '#f1c40f',
-        color: 'white',
-        fontFamily: 'Jua',
-        fontSize: '1.2rem',
-        padding: '6px 12px',
-        border: '1px solid white',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '40px',
-        width: '40px',
-    },
-    errorText: {
-        color: 'red',
-        fontWeight: 'bold',
-        marginTop: '20px',
-    },
-};
+// Styled Components
+
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 48vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+`;
+
+const HeaderImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+`;
+
+const OverlayText = styled.div`
+  position: absolute;
+  bottom: 8vh;
+  left: 12vw;
+  color: white;
+  font-size: 2vw;
+  font-weight: 600;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  line-height: 1.4;
+  max-width: 60vw;
+  font-family: 'Noto Sans KR';
+
+  @media (max-width: 768px) {
+    font-size: 4vw;
+    left: 5vw;
+    max-width: 90vw;
+  }
+`;
+
+const ListenHereText = styled.div`
+  position: absolute;
+  bottom: 95px;
+  right: 30px;
+  color: rgba(110, 110, 110, 0.8);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: 'Noto Sans KR';
+  user-select: none;
+
+  @media (max-width: 768px) {
+    font-size: 0.6rem;
+    right: 10px;
+  }
+`;
+
+const LogoContainer = styled.div`
+  position: absolute;
+  bottom: 15px;
+  right: 30px;
+  display: flex;
+  gap: 15px;
+
+  @media (max-width: 768px) {
+    bottom: 10px;
+    right: 10px;
+    gap: 10px;
+  }
+`;
+
+const Logo = styled.img`
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  cursor: pointer;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
+
+  @media (max-width: 768px) {
+    width: 50px;
+    height: 50px;
+  }
+`;
+
+const ButtonSection = styled.div`
+  padding: 2vh 10vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+`;
+
+const RealTimeButton = styled.button`
+  padding: 10px 20px;
+  font-size: 1vw;
+  font-family: 'Noto Sans KR';
+  font-weight: 500;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: white;
+    color: black;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 3vw;
+    padding: 12px 25px;
+  }
+`;
+
+const Container = styled.div`
+  padding: 0 10vw;
+  text-align: center;
+  min-height: 80vh;
+  font-family: 'Noto Sans KR';
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 5vw;
+  }
+`;
+
+const Text = styled.p`
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #333;
+  font-family: 'Noto Sans KR';
+`;
+
+const ReviewCard = styled.div`
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  justify-content: space-between;
+  width: calc(50% - 10px);
+  box-sizing: border-box;
+  max-height: 300px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-height: 300px;
+  }
+`;
+
+const LeftSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+
+`;
+
+const ProfileBoxVertical = styled.div`
+  display: flex;
+  align-self: flex-start;
+  margin-left: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  height: 40px;
+`;
+
+const ProfileImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+`;
+
+const ProfileName = styled.p`
+  font-size: 1rem;
+  font-family: 'Noto Sans KR';
+  color: #333;
+  font-weight: 600;
+  white-space: nowrap;
+`;
+
+const AlbumImage = styled.img`
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+
+
+  @media (max-width: 768px) {
+    width: 180px;
+    height: 180px;
+  }
+`;
+
+const SongName = styled.p`
+  font-size: 0.9rem;
+  color: #555;
+  font-style: italic;
+  font-family: 'Noto Sans KR';
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1vw;
+  }
+`;
+
+const RightSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  margin-left: 20px;
+
+    @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+  }
+`;
+
+const RatingBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 40px;
+`;
+
+const Rating = styled.p`
+  font-size: 1.5rem;
+  color: #f39c12;
+  font-family: 'Jua';
+`;
+
+const CommentBox = styled.div`
+  flex: 1;
+  margin-top: 1.5vh;
+  text-align: left;
+  font-family: 'Noto Sans KR';
+  font-size: 1.1rem;
+  font-weight: 450;
+  color: #333;
+  margin-bottom: 20px;
+  min-height: 60px;  /* 추가 */
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+  margin: 0 auto 2px auto;
+  opacity: 0.5;
+`;
+
+const BottomSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+  width: 100%;
+`;
+
+const BottomLeftSection = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  font-family: 'Noto Sans KR';
+`;
+
+const LikeButton = styled.button`
+  background-color: ${(props) => (props.active ? '#f1c40f' : 'white')};
+  color: ${(props) => (props.active ? 'white' : '#ddd')};
+  font-family: 'Noto Sans KR';
+  font-size: 1.2rem;
+  padding: 4px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2vw;
+  width: 2vw;
+  border: none;
+  outline: none;
+`;
+
+const SmallGrayText = styled.p`
+  color: gray;
+  font-size: 0.6vw;
+  font-family: 'Noto Sans KR';
+  cursor: default;
+  user-select: none;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  @media (max-width: 768px) {
+    font-size: 1vw;
+  }
+`;
+
+const ErrorText = styled.p`
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
+  font-family: 'Noto Sans KR';
+`;
 
 export default ViewReviewPage;
