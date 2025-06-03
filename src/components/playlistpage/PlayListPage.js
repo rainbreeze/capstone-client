@@ -1,12 +1,14 @@
+// pages/PlayListPage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
+import PlaylistDetailModal from './playlistDetailModal';
 
 const PlayListPage = () => {
   const [playlists, setPlaylists] = useState([]);
-  const [expandedPlaylistId, setExpandedPlaylistId] = useState(null);
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +19,7 @@ const PlayListPage = () => {
         navigate('/login');
         return;
       }
+
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/playlist/full/${userId}`);
         setPlaylists(response.data);
@@ -32,28 +35,25 @@ const PlayListPage = () => {
       const response = await axios.delete(`${process.env.REACT_APP_API_URL}/playlist/${playlistId}`);
       alert(response.data.message);
       setPlaylists(prev => prev.filter(p => p.playlistId !== playlistId));
-      if (expandedPlaylistId === playlistId) setExpandedPlaylistId(null);
     } catch (error) {
-      alert('플레이리스트를 삭제하는 데 실패했습니다.');
+      alert('플레이리스트 삭제 실패');
     }
   };
+
+  const handleCardClick = (playlistId) => {
+    const playlist = playlists.find(p => p.playlistId === playlistId);
+    setSelectedPlaylist(playlist);
+  };
+
+  const handleCloseDetail = () => setSelectedPlaylist(null);
 
   const handleImageClick = (musicId, albumImageUrl) => {
     navigate('/write', { state: { musicId, imageUrl: albumImageUrl } });
   };
 
-  const handleCardClick = (playlistId) => {
-    setExpandedPlaylistId(playlistId);
-  };
-
-  const handleCloseDetail = () => {
-    setExpandedPlaylistId(null);
-  };
-
   return (
     <div>
       <Header />
-
       <div style={styles.imageContainer}>
         <img
           src="images/playlist/top_banner.png"
@@ -73,69 +73,41 @@ const PlayListPage = () => {
 
       <div style={styles.container}>
         <h1 style={styles.h1}>내 음악</h1>
+        <div style={styles.cardListContainer}>
+          {playlists.map((playlist) => {
+            const firstMusic = playlist.musics[0];
+            if (!firstMusic) return null;
 
-        {expandedPlaylistId === null ? (
-          <div style={styles.cardListContainer}>
-            {playlists.map(playlist => {
-              const firstMusic = playlist.musics[0];
-              if (!firstMusic) return null;
-              const genre = firstMusic.genre || '장르 없음';
-              const createdAt = new Date(playlist.createdAt).toLocaleDateString('ko-KR');
+            const genre = firstMusic.genre || '장르 없음';
+            const createdAt = new Date(playlist.createdAt).toLocaleDateString('ko-KR');
 
-              return (
-                <div
-                  key={playlist.playlistId}
-                  style={{
-                    ...styles.playlistCard,
-                    backgroundImage: `url(${firstMusic.albumImageUrl})`,
-                  }}
-                  onClick={() => handleCardClick(playlist.playlistId)}
-                >
-                  <div style={styles.cardOverlay}>
-                    <div style={styles.cardGenre}>{genre}</div>
-                    <div style={styles.cardDate}>{createdAt}</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div style={styles.playlistDetail}>
-            <button onClick={handleCloseDetail} style={styles.backButton}>← 뒤로</button>
-
-            {playlists.filter(p => p.playlistId === expandedPlaylistId).map(({ playlistId, createdAt, musics }) => (
-              <div key={playlistId} style={styles.playlistItem}>
-                <h3 style={styles.playlistTitle}>Playlist ID: {playlistId}</h3>
-                <p style={styles.creationDate}>
-                  생성일: {new Date(createdAt).toLocaleDateString('ko-KR')}
-                </p>
-                <button onClick={() => handleDeletePlaylist(playlistId)} style={styles.deleteButton}>
-                  삭제
-                </button>
-                <div style={styles.musicImagesContainer}>
-                  {musics.length > 0 ? (
-                    musics.map(({ playlistMusicId, musicId, albumImageUrl, trackName }) => (
-                      <div key={playlistMusicId} style={styles.musicImageWrapper}>
-                        <img
-                          src={albumImageUrl}
-                          alt={`Album cover for ${trackName}`}
-                          style={styles.albumImage}
-                          onClick={() => handleImageClick(musicId, albumImageUrl)}
-                        />
-                        <p>{trackName}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p style={styles.noMusicText}>이 플레이리스트에 음악이 없습니다.</p>
-                  )}
+            return (
+              <div
+                key={playlist.playlistId}
+                style={{
+                  ...styles.playlistCard,
+                  backgroundImage: `url(${firstMusic.albumImageUrl})`,
+                }}
+                onClick={() => handleCardClick(playlist.playlistId)}
+              >
+                <div style={styles.cardOverlay}>
+                  <div style={styles.cardGenre}>{genre}</div>
+                  <div style={styles.cardDate}>{createdAt}</div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
       </div>
 
       <Footer />
+
+      <PlaylistDetailModal
+        playlist={selectedPlaylist}
+        onClose={handleCloseDetail}
+        onDelete={handleDeletePlaylist}
+        onTrackClick={handleImageClick}
+      />
     </div>
   );
 };
@@ -168,7 +140,7 @@ const styles = {
     textShadow: '2px 2px 6px rgba(0,0,0,0.7)',
     lineHeight: '1.4',
     maxWidth: '60vw',
-    fontFamily: "Noto Sans KR"
+    fontFamily: 'Noto Sans KR',
   },
   listenHereText: {
     position: 'absolute',
@@ -193,7 +165,6 @@ const styles = {
     objectFit: 'contain',
     cursor: 'pointer',
     filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.5))',
-    transition: 'transform 0.3s ease',
   },
   container: {
     padding: '0 10vw',
@@ -247,68 +218,6 @@ const styles = {
   cardDate: {
     fontSize: '0.85rem',
     color: '#ddd',
-  },
-  backButton: {
-    marginBottom: '15px',
-    padding: '8px 16px',
-    fontSize: '1rem',
-    cursor: 'pointer',
-  },
-  playlistDetail: {
-    position: 'relative',
-  },
-  playlistItem: {
-    position: 'relative',
-    marginBottom: '30px',
-    padding: '20px',
-    border: '1px solid #e0e0e0',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-  },
-  playlistTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '600',
-    marginBottom: '10px',
-  },
-  creationDate: {
-    fontSize: '0.9rem',
-    color: '#666',
-    marginBottom: '10px',
-  },
-  deleteButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
-    padding: '8px 16px',
-    backgroundColor: '#f44336',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '600',
-  },
-  musicImagesContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '15px',
-    marginTop: '20px',
-  },
-  musicImageWrapper: {
-    textAlign: 'center',
-  },
-  albumImage: {
-    width: '12vw',
-    height: '18vh',
-    objectFit: 'cover',
-    borderRadius: '8px',
-    cursor: 'pointer',
-  },
-  noMusicText: {
-    color: '#888',
-    fontSize: '1rem',
-    fontStyle: 'italic',
   },
 };
 
