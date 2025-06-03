@@ -36,9 +36,10 @@ const MyPage = () => {
                 marginBottom: '30px',
                 color: '#333',
                 borderBottom: '2px solid #ddd',
-                paddingBottom: '10px'
+                paddingBottom: '20px',
+                fontSize: '40px',
             }}>
-                My Page
+                MY PAGE
             </h2>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '120px' }}>
