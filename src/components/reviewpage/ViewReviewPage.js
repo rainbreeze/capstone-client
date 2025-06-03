@@ -61,6 +61,22 @@ function ViewReviewPage() {
     return (
         <div>
             <Header />
+            <div style={styles.imageContainer}>
+                <img
+                    src="images/review/top_banner.png"
+                    alt="헤더 배경 이미지"
+                    style={styles.headerImage}
+                />
+                <div style={styles.overlayText}>
+                    음악 위에 남겨진 마음들, <br/>
+                    천천히 읽어보세요.
+                </div>
+                <div style={styles.listenHereText}>감상 가능한 곳</div>
+                <div style={styles.logoContainer}>
+                    <img src="images/playlist/logo1.png" alt="YouTube" style={styles.logo} />
+                    <img src="images/playlist/logo2.png" alt="Spotify" style={styles.logo} />
+                </div>
+            </div>
             <div style={styles.container}>
                 <h1 style={styles.h1}>전체 리뷰</h1>
 
@@ -140,6 +156,59 @@ function ViewReviewPage() {
 }
 
 const styles = {
+    imageContainer: {
+        position: 'relative',
+        width: '100%',
+        height: '48vh',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+    },
+    headerImage: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        userSelect: 'none',
+        pointerEvents: 'none',
+    },
+    overlayText: {
+        position: 'absolute',
+        bottom: '8vh',
+        left: '12vw',
+        color: 'white',
+        fontSize: '2vw',
+        fontWeight: '600',
+        textShadow: '2px 2px 6px rgba(0,0,0,0.7)',
+        lineHeight: '1.4',
+        maxWidth: '60vw',
+        fontFamily: 'Noto Sans KR',
+    },
+    listenHereText: {
+        position: 'absolute',
+        bottom: '95px',
+        right: '30px',
+        color: 'rgba(110, 110, 110, 0.8)',
+        fontSize: '0.8rem',
+        fontWeight: '500',
+        fontFamily: 'Noto Sans KR',
+        userSelect: 'none',
+    },
+    logoContainer: {
+        position: 'absolute',
+        bottom: '15px',
+        right: '30px',
+        display: 'flex',
+        gap: '15px',
+    },
+    logo: {
+        width: '80px',
+        height: '80px',
+        objectFit: 'contain',
+        cursor: 'pointer',
+        filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.5))',
+    },
     container: {
         padding: '0 10vw',
         textAlign: 'center',

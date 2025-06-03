@@ -11,7 +11,7 @@ const Header = () => {
     const [user, setUser] = useState(null);
 
     const location = useLocation();
-    const transparentPaths = ['/playlist'];
+    const transparentPaths = ['/playlist', '/viewreview'];
     const isTransparentPage = transparentPaths.includes(location.pathname);
 
     useEffect(() => {
