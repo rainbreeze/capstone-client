@@ -124,8 +124,8 @@ const Header = () => {
                 <SidebarBanner>
                     <ProfileImage src="/images/header/profile.png" alt="Profile" />
                     <TextBox>
-                        <UserName>{user ? `안녕하세요, ${user.userId}` : '게스트'}</UserName>
-                        {!user && <WelcomeText>음악과 게임을 즐겨보세요.</WelcomeText>}
+                        <UserName>{user ? `안녕하세요, ${user.userId}님` : '게스트'}</UserName>
+                        <WelcomeText>음악과 게임을 즐겨보세요.</WelcomeText>
                     </TextBox>
                 </SidebarBanner>
                 <SidebarList>
