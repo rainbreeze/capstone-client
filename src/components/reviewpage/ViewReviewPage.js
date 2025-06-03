@@ -97,6 +97,7 @@ function ViewReviewPage() {
                                         alt="Profile"
                                     />
                                     <ProfileName>{review.user_name}</ProfileName>
+                                    <CreatedAt>{review.created_at.slice(0, 16).replace('T', ' ')}</CreatedAt>
                                 </ProfileBoxVertical>
                                 <AlbumImage
                                     src={review.album_image_url}
@@ -352,6 +353,19 @@ const SongName = styled.p`
   font-style: italic;
   font-family: 'Noto Sans KR';
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 1vw;
+  }
+`;
+
+const CreatedAt = styled.p`
+  font-size: 0.6rem;
+  color: #555;
+  font-style: italic;
+  font-family: 'Noto Sans KR';
+  text-align: center;
+  margin-left: 10px;
 
   @media (max-width: 768px) {
     font-size: 1vw;
