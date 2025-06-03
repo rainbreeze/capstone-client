@@ -115,8 +115,9 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTra
             {/* 여기서 PlaylistReviewModal을 조건부로 렌더링 */}
             {showReviewModal && selectedTrack && (
                 <PlaylistReviewModal
-                    musicId={selectedTrack.musicId}          // musicId 넘기기
-                    imageUrl={selectedTrack.albumImageUrl}   // albumImageUrl 넘기기
+                    musicId={selectedTrack.playlistMusicId}          // musicId 넘기기
+                    imageUrl={selectedTrack.albumImageUrl}
+                    genre={selectedTrack.genre}
                     onClose={() => setShowReviewModal(false)}
                 />
             )}

@@ -151,7 +151,7 @@ const Header = () => {
                     </SidebarItem>
                     <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                         <NavLink as={Link} to="/playlist">
-                            Play List
+                            음악
                         </NavLink>
                     </SidebarItem>
 
