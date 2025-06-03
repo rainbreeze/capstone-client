@@ -57,6 +57,7 @@ const Title = styled.h1`
   font-weight: 800;
   margin-bottom: 1rem;
   font-family: "Noto Sans KR", sans-serif;
+  white-space: nowrap;
 
   @media (max-width: 768px) {
     font-size: 6vw;
