@@ -20,9 +20,6 @@ const LoginPage = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, loginData);
 
-            // 콘솔에 응답을 출력하여 확인
-            console.log(response.data);  // 응답 확인
-
             if (response.data.message === '로그인 성공!') {  // 여기서 응답 메시지 확인
                 const token = response.data.token;  // 서버에서 받은 토큰
                 localStorage.setItem('token', token);  // 토큰을 localStorage에 저장
@@ -30,10 +27,14 @@ const LoginPage = () => {
                 // JWT 토큰 디코딩하여 사용자 ID 추출
                 const decodedToken = jwtDecode(token);  // 토큰 디코딩
                 const userIdFromToken = decodedToken.userId;  // 디코딩한 토큰에서 userId 추출
+                const userNameFromToken = decodedToken.userName;  // 가능
+                const profileImageFromToken = decodedToken.profileImage;  // 가능
+                console.log(decodedToken);  // userId, userName, profileImage 다 잘 나오나요?
 
                 // 사용자 ID를 localStorage에 저장
                 localStorage.setItem('userId', userIdFromToken);
-
+                localStorage.setItem('userName', userNameFromToken);
+                localStorage.setItem('profileImage', profileImageFromToken);
                 alert(response.data.message);  // 로그인 성공 시 메시지 표시
 
                 // 로그인 후 홈 페이지로 리디렉션
