@@ -44,7 +44,6 @@ const PlayListPage = () => {
     const handleOpenReviewModal = (track) => {
         setReviewTargetTrack(track);
         setShowReviewModal(true);
-        // 여기서는 setSelectedPlaylist(null) 제거! useEffect에서 처리 중
     };
 
     // 리뷰 모달 닫기
@@ -125,20 +124,25 @@ const PlayListPage = () => {
 
             <Footer />
 
-            {showReviewModal && reviewTargetTrack && (
-                <PlaylistReviewModal
-                    music={reviewTargetTrack}
-                    onClose={handleCloseReviewModal}
+            {/* 디테일 모달 */}
+            {selectedPlaylist && (
+                <PlaylistDetailModal
+                    playlist={selectedPlaylist}
+                    onClose={handleCloseDetail}
+                    onDelete={handleDeletePlaylist}
+                    onTrackClick={handleImageClick}
+                    onReviewClick={handleOpenReviewModal}
                 />
             )}
 
-            <PlaylistDetailModal
-                playlist={selectedPlaylist}
-                onClose={handleCloseDetail}
-                onDelete={handleDeletePlaylist}
-                onTrackClick={handleImageClick}
-                onReviewClick={handleOpenReviewModal}
-            />
+            {/* 리뷰 모달 */}
+            {showReviewModal && reviewTargetTrack && (
+                <PlaylistReviewModal
+                    musicId={reviewTargetTrack.musicId}
+                    imageUrl={reviewTargetTrack.albumImageUrl}
+                    onClose={handleCloseReviewModal}
+                />
+            )}
         </div>
     );
 };

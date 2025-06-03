@@ -4,8 +4,6 @@ import axios from 'axios';
 const PlaylistReviewModal = ({ musicId, imageUrl, onClose }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  console.log('imageUrl:', imageUrl);
-
 
   const handleSubmit = async () => {
     const user_id = localStorage.getItem('userId');
@@ -18,7 +16,7 @@ const PlaylistReviewModal = ({ musicId, imageUrl, onClose }) => {
       await axios.post(`${process.env.REACT_APP_API_URL}/reviews`, {
         user_id,
         playlist_music_id: musicId,
-        album_image_url: imageUrl,  // 여기 이미지 URL 포함해서 보냄
+        album_image_url: imageUrl,
         rating,
         comment,
       });
@@ -34,7 +32,6 @@ const PlaylistReviewModal = ({ musicId, imageUrl, onClose }) => {
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2>리뷰 작성</h2>
-        {/* 앨범 이미지 출력 */}
         <img src={imageUrl} alt="Album" style={styles.image} />
         <div>
           {[1, 2, 3, 4, 5].map(star => (

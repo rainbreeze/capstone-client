@@ -4,7 +4,7 @@ import PlaylistReviewModal from './playlistReviewModal'; // 최상단에 추가
 const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTrackDelete }) => {
     const musics = useMemo(() => playlist?.musics || [], [playlist?.musics]);
     const [selectedTrack, setSelectedTrack] = useState(musics.length > 0 ? musics[0] : null);
-    const [showReviewModal, setShowReviewModal] = useState(false); // 모달 열림 상태
+    const [showReviewModal, setShowReviewModal] = useState(false); // 추가
 
     useEffect(() => {
         if (musics.length > 0) {
@@ -29,7 +29,7 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTra
                 <button onClick={onClose} style={styles.closeButton}>✕</button>
 
                 <div style={styles.container}>
-                    {/* 좌측: 2열 그리드 이미지 버튼 */}
+                    {/* 좌측: 가변 곡수 2열 그리드 이미지 버튼 */}
                     <div style={styles.leftPanel}>
                         {musics.length > 0 ? (
                             musics.map(music => (
@@ -83,7 +83,9 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTra
 
                                 <div style={styles.buttonGroup}>
                                     <button
-                                        onClick={() => setShowReviewModal(true)} // 여기서 모달 열기!
+                                        onClick={() => {
+                                            if (onReviewClick) onReviewClick(selectedTrack);
+                                        }}
                                         style={styles.simpleButton}
                                     >
                                         리뷰 작성
@@ -110,11 +112,11 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTra
                     </div>
                 </div>
             </div>
-            {/* PlaylistReviewModal 조건부 렌더링 */}
+            {/* 여기서 PlaylistReviewModal을 조건부로 렌더링 */}
             {showReviewModal && selectedTrack && (
                 <PlaylistReviewModal
-                    musicId={selectedTrack.musicId}
-                    imageUrl={selectedTrack.albumImageUrl}
+                    musicId={selectedTrack.musicId}          // musicId 넘기기
+                    imageUrl={selectedTrack.albumImageUrl}   // albumImageUrl 넘기기
                     onClose={() => setShowReviewModal(false)}
                 />
             )}
