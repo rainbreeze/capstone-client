@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import PlaylistReviewModal from './playlistReviewModal'; // 최상단에 추가
 
-const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReview, onTrackDelete }) => {
+const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTrackDelete }) => {
     const musics = useMemo(() => playlist?.musics || [], [playlist?.musics]);
     const [selectedTrack, setSelectedTrack] = useState(musics.length > 0 ? musics[0] : null);
+    const [showReviewModal, setShowReviewModal] = useState(false); // 모달 열림 상태
 
     useEffect(() => {
         if (musics.length > 0) {
@@ -27,7 +29,7 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReview, onTrackDel
                 <button onClick={onClose} style={styles.closeButton}>✕</button>
 
                 <div style={styles.container}>
-                    {/* 좌측: 가변 곡수 2열 그리드 이미지 버튼 */}
+                    {/* 좌측: 2열 그리드 이미지 버튼 */}
                     <div style={styles.leftPanel}>
                         {musics.length > 0 ? (
                             musics.map(music => (
@@ -81,7 +83,7 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReview, onTrackDel
 
                                 <div style={styles.buttonGroup}>
                                     <button
-                                        onClick={() => onReview(selectedTrack.musicId)}
+                                        onClick={() => setShowReviewModal(true)} // 여기서 모달 열기!
                                         style={styles.simpleButton}
                                     >
                                         리뷰 작성
@@ -108,6 +110,14 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReview, onTrackDel
                     </div>
                 </div>
             </div>
+            {/* PlaylistReviewModal 조건부 렌더링 */}
+            {showReviewModal && selectedTrack && (
+                <PlaylistReviewModal
+                    musicId={selectedTrack.musicId}
+                    imageUrl={selectedTrack.albumImageUrl}
+                    onClose={() => setShowReviewModal(false)}
+                />
+            )}
         </div>
     );
 };
