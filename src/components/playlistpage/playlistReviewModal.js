@@ -7,13 +7,14 @@ const PlaylistReviewModal = ({ musicId, imageUrl, genre, playlist_music_name, on
 
     const handleSubmit = async () => {
         const user_id = localStorage.getItem('userId');
+        const user_name = localStorage.getItem('userName') || '익명';
         if (!user_id || !rating || !comment.trim()) {
             alert('모든 항목을 입력해주세요.');
             return;
         }
 
         try {
-            console.log('보낼값들' + user_id, musicId, imageUrl, genre, rating, comment, playlist_music_name)
+            console.log('보낼값들' + user_id, musicId, imageUrl, genre, rating, comment, playlist_music_name, user_name)
             await axios.post(`${process.env.REACT_APP_API_URL}/reviews`, {
                 user_id,
                 playlist_music_id: musicId,
@@ -21,7 +22,8 @@ const PlaylistReviewModal = ({ musicId, imageUrl, genre, playlist_music_name, on
                 genre,
                 rating,
                 comment,
-                playlist_music_name
+                playlist_music_name,
+                user_name
             });
             alert('리뷰 제출 완료!');
             onClose();

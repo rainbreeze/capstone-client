@@ -5,10 +5,17 @@ import Footer from '../common/Footer';
 import { useNavigate } from 'react-router-dom';
 
 function ViewReviewPage() {
-    const [reviews, setReviews] = useState([]);  // 리뷰 상태를 빈 배열로 초기화
-    const [error, setError] = useState(null);  // 에러 상태
+    const [reviews, setReviews] = useState([]);
+    const [error, setError] = useState(null);
     const [likedReviews, setLikedReviews] = useState([]);
     const navigate = useNavigate();
+    
+    // 로컬스토리지에서 userName, profileImage 가져오기
+
+    useEffect(() => {
+        const storedProfileImage = localStorage.getItem('profileImage') || '';
+        console.log('프로필 이미지: ', storedProfileImage)
+    }, []);
 
     const handleCommentClick = (reviewId) => {
         navigate('/viewreviewcomment', { state: { reviewId } });
@@ -22,11 +29,9 @@ function ViewReviewPage() {
 
             await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/${endpoint}`);
 
-            // 응답 후 리뷰 목록 업데이트
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
             setReviews(response.data);
 
-            // 좋아요 상태 토글
             setLikedReviews((prev) =>
                 alreadyLiked
                     ? prev.filter((id) => id !== reviewId)
@@ -43,9 +48,8 @@ function ViewReviewPage() {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
 
-                // 응답이 배열인지 확인하고 배열로 설정
                 if (Array.isArray(response.data)) {
-                    setReviews(response.data);  // 응답이 배열이면 그 데이터를 상태에 저장
+                    setReviews(response.data);
                 } else {
                     throw new Error("리뷰 데이터 형식이 올바르지 않습니다.");
                 }
@@ -55,8 +59,8 @@ function ViewReviewPage() {
             }
         };
 
-        fetchAllReviews();  // 컴포넌트가 마운트되면 전체 리뷰를 가져옴
-    }, []);  // 빈 배열을 넣어서 컴포넌트가 처음 렌더링될 때 한 번만 호출
+        fetchAllReviews();
+    }, []);
 
     return (
         <div>
@@ -68,7 +72,7 @@ function ViewReviewPage() {
                     style={styles.headerImage}
                 />
                 <div style={styles.overlayText}>
-                    음악 위에 남겨진 마음들, <br/>
+                    음악 위에 남겨진 마음들, <br />
                     천천히 읽어보세요.
                 </div>
                 <div style={styles.listenHereText}>감상 가능한 곳</div>
@@ -80,43 +84,52 @@ function ViewReviewPage() {
             <div style={styles.container}>
                 <h1 style={styles.h1}>전체 리뷰</h1>
 
-                {/* 리뷰가 없다면 안내 */}
                 {reviews.length === 0 ? (
                     <p style={styles.text}>리뷰가 아직 없습니다.</p>
                 ) : (
                     <div>
                         {reviews.map((review) => (
                             <div key={review.review_id} style={styles.reviewCard}>
-                                {/* 좌측: 이미지 및 좌측 하단 정보 */}
+                                {/* 좌측 */}
                                 <div style={styles.leftSection}>
                                     <img src={review.album_image_url} alt="Album" style={styles.albumImage} />
                                     <div style={styles.bottomLeft}>
                                         <p style={styles.text}><strong>장르:</strong> {review.genre}</p>
+                                        <p style={styles.text}><strong>곡이름:</strong> {review.playlist_music_name}</p>
                                         <p style={styles.dateText}><strong>작성일:</strong> {new Date(review.created_at).toLocaleString()}</p>
                                     </div>
                                 </div>
 
-                                {/* 우측: 정보 */}
+                                {/* 우측 */}
                                 <div style={styles.rightSection}>
-                                    {/* user_id (우측 상단) */}
+                                    {/* 사용자 프로필 박스 우측 상단 */}
+                                    <div style={styles.profileBox}>
+                                        <img
+                                            src={'/images/header/profile.png'}
+                                            alt="Profile"
+                                            style={styles.profileImage}
+                                        />
+                                        <p style={styles.profileName}>{review.user_name}</p>
+                                    </div>
+
+                                    {/* 작성자 ID */}
                                     <div style={styles.userId}>
                                         <p style={styles.text}><strong>작성자 ID:</strong> {review.user_id}</p>
                                     </div>
 
-                                    {/* 별점 (우측 섹션의 좌측 상단) */}
+                                    {/* 별점 */}
                                     <div style={styles.topLeft}>
                                         <p style={styles.rating}><strong>{'★'.repeat(review.rating)}</strong></p>
                                     </div>
 
-                                    {/* 코멘트 중앙 */}
+                                    {/* 코멘트 */}
                                     <div style={styles.middleRight}>
-                                        <p style={styles.text}><strong></strong> {review.comment}</p>
+                                        <p style={styles.text}>{review.comment}</p>
                                     </div>
 
-                                    {/* 공통 하단 섹션 */}
+                                    {/* 하단 좋아요/댓글 */}
                                     <div style={styles.bottomSection}>
                                         <div style={styles.bottomLeftSection}>
-                                            {/* 좋아요 버튼 */}
                                             <button
                                                 style={
                                                     likedReviews.includes(review.review_id)
@@ -128,7 +141,6 @@ function ViewReviewPage() {
                                                 <span className="material-icons-outlined">thumb_up</span>
                                             </button>
 
-                                            {/* 댓글 버튼 */}
                                             <button
                                                 style={styles.likeButton}
                                                 onClick={() => handleCommentClick(review.review_id)}
@@ -147,7 +159,6 @@ function ViewReviewPage() {
                     </div>
                 )}
 
-                {/* 에러 메시지 */}
                 {error && <p style={styles.errorText}>{error}</p>}
             </div>
             <Footer />
@@ -223,15 +234,6 @@ const styles = {
         marginBottom: '30px',
         fontWeight: 'bold',
     },
-    contentBox: {
-        padding: '20px',
-        border: '1px solid #e0e0e0',
-        borderRadius: '8px',
-        backgroundColor: '#fff',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        maxWidth: '600px',
-        margin: '0 auto',
-    },
     text: {
         fontSize: '1.2rem',
         marginBottom: '15px',
@@ -247,8 +249,8 @@ const styles = {
         backgroundColor: '#fff',
         boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
         justifyContent: 'space-between',
+        position: 'relative',
     },
-
     leftSection: {
         display: 'flex',
         flexDirection: 'column',
@@ -256,7 +258,6 @@ const styles = {
         width: '200px',
         justifyContent: 'space-between',
     },
-
     albumImage: {
         width: '180px',
         height: '180px',
@@ -264,16 +265,13 @@ const styles = {
         borderRadius: '10px',
         marginBottom: '10px',
     },
-
     bottomLeft: {
         textAlign: 'center',
     },
-
     dateText: {
         fontSize: '0.8rem',
         color: '#888',
     },
-
     rightSection: {
         display: 'flex',
         flexDirection: 'column',
@@ -282,32 +280,51 @@ const styles = {
         marginLeft: '20px',
         position: 'relative',
     },
-
+    profileBox: {
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        backgroundColor: '#fff',
+        padding: '5px 10px',
+        borderRadius: '20px',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+        zIndex: 10,
+    },
+    profileImage: {
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        objectFit: 'cover',
+    },
+    profileName: {
+        fontSize: '1rem',
+        fontFamily: 'Jua',
+        color: '#333',
+        fontWeight: '600',
+        whiteSpace: 'nowrap',
+    },
     userId: {
         position: 'absolute',
-        top: 0,
-        right: 0,
-        marginTop: '10px',
-        marginRight: '10px',
+        top: '60px',
+        right: '10px',
     },
-
     topLeft: {
         position: 'absolute',
         top: '0',
         left: '0',
     },
-
     rating: {
         fontSize: '1.5rem',
-        color: '#f39c12',  // 노란색으로 변경
+        color: '#f39c12',
         fontFamily: 'Jua',
     },
-
     middleRight: {
         textAlign: 'left',
-        marginTop: '50px', // 별점 아래로 공간 확보
+        marginTop: '50px',
     },
-
     bottomSection: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -325,7 +342,6 @@ const styles = {
         alignItems: 'flex-end',
         gap: '15px',
     },
-
     likeButton: {
         backgroundColor: 'white',
         color: 'black',
@@ -336,13 +352,12 @@ const styles = {
         cursor: 'pointer',
         border: '3px solid black',
         transition: 'all 0.3s ease',
-        display: 'flex', // Flexbox 활성화
-        justifyContent: 'center', // 가로 중앙 정렬
-        alignItems: 'center', // 세로 중앙 정렬
-        height: '40px', // 버튼 높이를 지정
-        width: '40px', // 버튼 너비를 지정
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '40px',
+        width: '40px',
     },
-
     likeButtonActive: {
         backgroundColor: '#f1c40f',
         color: 'white',
@@ -353,11 +368,16 @@ const styles = {
         borderRadius: '10px',
         cursor: 'pointer',
         transition: 'all 0.3s ease',
-        display: 'flex', // Flexbox 활성화
-        justifyContent: 'center', // 가로 중앙 정렬
-        alignItems: 'center', // 세로 중앙 정렬
-        height: '40px', // 버튼 높이를 지정
-        width: '40px', // 버튼 너비를 지정
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '40px',
+        width: '40px',
+    },
+    errorText: {
+        color: 'red',
+        fontWeight: 'bold',
+        marginTop: '20px',
     },
 };
 

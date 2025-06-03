@@ -9,6 +9,7 @@ const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const [userName, setuserName] = useState(null);
 
     const location = useLocation();
     const transparentPaths = ['/playlist', '/viewreview'];
@@ -16,8 +17,10 @@ const Header = () => {
 
     useEffect(() => {
         const loggedUserId = localStorage.getItem('userId');
+        const loggeduserName = localStorage.getItem('userName');
         if (loggedUserId) {
-            setUser({ userId: loggedUserId });
+            setUser({ userId: loggedUserId});
+            setuserName({userName: loggeduserName});
         }
     }, []);
 
@@ -124,7 +127,7 @@ const Header = () => {
                 <SidebarBanner>
                     <ProfileImage src="/images/header/profile.png" alt="Profile" />
                     <TextBox>
-                        <UserName>{user ? `안녕하세요, ${user.userId}님` : '게스트'}</UserName>
+                        <UserName>{user ? `안녕하세요, ${user.userName}님` : '게스트'}</UserName>
                         <WelcomeText>음악과 게임을 즐겨보세요.</WelcomeText>
                     </TextBox>
                 </SidebarBanner>
