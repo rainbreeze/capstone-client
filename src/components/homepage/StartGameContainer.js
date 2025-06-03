@@ -59,7 +59,7 @@ const Title = styled.h1`
   font-family: "Noto Sans KR", sans-serif;
 
   @media (max-width: 768px) {
-    font-size: 7vw;
+    font-size: 6vw;
   }
 `;
 
@@ -70,7 +70,7 @@ const Subtitle = styled.p`
   font-family: "Noto Sans KR", sans-serif;
 
   @media (max-width: 768px) {
-    font-size: 4vw;
+    font-size: 3vw;
   }
 `;
 

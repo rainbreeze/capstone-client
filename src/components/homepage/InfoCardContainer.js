@@ -4,34 +4,34 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const InfoCardSection = () => {
-const cards = [
-    {
-        title: '내 음악',
-        sentence1: '나만의 플레이리스트를',
-        sentence2: '언제 어디서나 감상하세요.',
-        image: '/images/homepage/card_1.png',
-        to: '/playlist',
-    },
-    {
-        title: '감상평',
-        sentence1: '다양한 사람들의 솔직한',
-        sentence2: '음악 감상평을 만나보세요.',
-        image: '/images/homepage/card_2.png',
-        to: '/viewreview',
-    },
-    {
-        title: '랭킹',
-        sentence1: '가장 인기 있는 음악과',
-        sentence2: '사용자 랭킹을 확인해보세요.',
-        image: '/images/homepage/card_3.png',
-        to: '/ranking',
-    },
-];
+    const cards = [
+        {
+            title: '내 음악',
+            sentence1: '나만의 플레이리스트를',
+            sentence2: '언제 어디서나 감상하세요.',
+            image: '/images/homepage/card_1.png',
+            to: '/playlist',
+        },
+        {
+            title: '감상평',
+            sentence1: '다양한 사람들의 솔직한',
+            sentence2: '음악 감상평을 만나보세요.',
+            image: '/images/homepage/card_2.png',
+            to: '/viewreview',
+        },
+        {
+            title: '랭킹',
+            sentence1: '가장 인기 있는 음악과',
+            sentence2: '사용자 랭킹을 확인해보세요.',
+            image: '/images/homepage/card_3.png',
+            to: '/ranking',
+        },
+    ];
 
     return (
         <SectionWrapper>
             {cards.map(({ title, sentence1, sentence2, image, to }, index) => (
-                <Link key={index} to={to} style={{ width: '30%', textDecoration: 'none' }}>
+                <StyledLink key={index} to={to}>
                     <Card
                         backgroundImage={image}
                         whileHover={{
@@ -48,11 +48,15 @@ const cards = [
                             <CardSentence>{sentence2}</CardSentence>
                         </CardContent>
                     </Card>
-                </Link>
+                </StyledLink>
             ))}
         </SectionWrapper>
     );
 };
+
+export default InfoCardSection;
+
+// 스타일 컴포넌트
 
 const SectionWrapper = styled.div`
   display: flex;
@@ -63,6 +67,16 @@ const SectionWrapper = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 2rem;
+    align-items: center;
+  }
+`;
+
+const StyledLink = styled(Link)`
+  width: 30%;
+  text-decoration: none;
+
+  @media (max-width: 768px) {
+    width: 90%;
   }
 `;
 
@@ -85,7 +99,7 @@ const Card = styled(motion.div)`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
+    height: 35vh;
   }
 `;
 
@@ -110,6 +124,7 @@ const CardSentence = styled.p`
   }
 `;
 
+
 const CardContent = styled.div`
   position: relative;
   z-index: 2;
@@ -122,15 +137,13 @@ const CardContent = styled.div`
 
   &:hover {
     ${CardTitle} {
-        font-weight: 800;
-        transition: 0.3s ease;
+      font-weight: 800;
+      transition: 0.3s ease;
     }
-    
+
     ${CardSentence} {
-        font-weight: 600;
-        transition: 0.3s ease;
+      font-weight: 600;
+      transition: 0.3s ease;
     }
   }
 `;
-
-export default InfoCardSection;
