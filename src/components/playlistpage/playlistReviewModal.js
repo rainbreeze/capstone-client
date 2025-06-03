@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const PlaylistReviewModal = ({ musicId, imageUrl, genre, onClose }) => {
+const PlaylistReviewModal = ({ musicId, imageUrl, genre, playlist_music_name, onClose }) => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
 
@@ -13,7 +13,7 @@ const PlaylistReviewModal = ({ musicId, imageUrl, genre, onClose }) => {
         }
 
         try {
-            console.log('보낼값들' + user_id, musicId, imageUrl, genre, rating, comment)
+            console.log('보낼값들' + user_id, musicId, imageUrl, genre, rating, comment, playlist_music_name)
             await axios.post(`${process.env.REACT_APP_API_URL}/reviews`, {
                 user_id,
                 playlist_music_id: musicId,
@@ -21,6 +21,7 @@ const PlaylistReviewModal = ({ musicId, imageUrl, genre, onClose }) => {
                 genre,
                 rating,
                 comment,
+                playlist_music_name
             });
             alert('리뷰 제출 완료!');
             onClose();

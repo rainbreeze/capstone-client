@@ -118,6 +118,7 @@ const PlaylistDetailModal = ({ playlist, onClose, onDelete, onReviewClick, onTra
                     musicId={selectedTrack.playlistMusicId}          // musicId 넘기기
                     imageUrl={selectedTrack.albumImageUrl}
                     genre={selectedTrack.genre}
+                    playlist_music_name={selectedTrack.trackName}
                     onClose={() => setShowReviewModal(false)}
                 />
             )}

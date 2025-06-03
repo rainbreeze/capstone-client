@@ -138,9 +138,10 @@ const PlayListPage = () => {
             {/* 리뷰 모달 */}
             {showReviewModal && reviewTargetTrack && (
                 <PlaylistReviewModal
-                    musicId={reviewTargetTrack.playlistMusicId}  
+                    musicId={reviewTargetTrack.playlistMusicId}
                     imageUrl={reviewTargetTrack.albumImageUrl}
                     genre={reviewTargetTrack.genre}
+                    playlist_music_name={reviewTargetTrack.trackName}
                     onClose={handleCloseReviewModal}
                 />
             )}
