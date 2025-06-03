@@ -1,100 +1,446 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { FaBars } from 'react-icons/fa';
+import { FiSearch } from 'react-icons/fi';
+import { useLocation } from 'react-router-dom';
 
 const Header = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const navigate = useNavigate();
+    const [scrolled, setScrolled] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [user, setUser] = useState(null);
 
-    // 로그인 상태 확인
+    const location = useLocation();
+    const transparentPaths = ['/playlist'];
+    const isTransparentPage = transparentPaths.includes(location.pathname);
+
     useEffect(() => {
-        const userId = localStorage.getItem('userId');  // userId로 변경
-        if (userId) {
-            setIsLoggedIn(true);  // 로그인된 상태로 설정
+        const loggedUserId = localStorage.getItem('userId');
+        if (loggedUserId) {
+            setUser({ userId: loggedUserId });
         }
     }, []);
 
-    // 로그아웃 처리 함수
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 10) {
+                setScrolled(true);
+            } else {
+                setScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
     const handleLogout = () => {
-        localStorage.removeItem('userId');  // userId를 localStorage에서 삭제
-        setIsLoggedIn(false);  // 로그인 상태를 false로 설정
-        navigate('/login');  // 로그인 페이지로 이동
+        localStorage.removeItem('userId');
+        setUser(null);
     };
 
     return (
-        <header style={styles.header}>
-            <div style={styles.left}>
-                <button style={styles.backButton} onClick={() => window.history.back()}>
-                    &#8592;
-                </button>
-            </div>
-            <div style={styles.right}>
-                {isLoggedIn ? (
-                    <button style={styles.logoutButton} onClick={handleLogout}>
-                        로그아웃
-                    </button>
-                ) : (
-                    <>
-                        <Link to="/login">
-                            <button style={styles.authButton}>로그인</button>
-                        </Link>
-                        <Link to="/signup">
-                            <button style={styles.authButton}>회원가입</button>
-                        </Link>
-                    </>
-                )}
-            </div>
-        </header>
+        <HeaderWrapper scrolled={scrolled} transparent={isTransparentPage && !scrolled}>
+            <Logo src="/images/logo_image.png" alt="Logo" />
+
+            <HamburgerMenu onClick={toggleSidebar}>
+                <FaBars size={24} color="#000" />
+            </HamburgerMenu>
+
+            <NavLeft>
+                <NavList>
+                    <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/" isFirst>
+                            홈
+                        </NavLink>
+                    </NavItem>
+                    <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/game">
+                            게임
+                        </NavLink>
+                    </NavItem>
+                    <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/playlist">
+                            음악
+                        </NavLink>
+                    </NavItem>
+                    <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/viewreview">
+                            감상평
+                        </NavLink>
+                    </NavItem>
+                    <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/test">
+                            테스트
+                        </NavLink>
+                    </NavItem>
+                </NavList>
+            </NavLeft>
+
+            <NavRight>
+                <SearchContainer>
+                    <SearchIcon />
+                    <SearchInput type="text" placeholder="검색어를 입력해주세요." />
+                </SearchContainer>
+                <NavList>
+                    {user && (
+                        <NavItem scrolled={scrolled}>
+                            <NavLink as={Link} to="/mypage">
+                                내 정보
+                            </NavLink>
+                        </NavItem>
+                    )}
+                    {user ? (
+                        <NavItem scrolled={scrolled} onClick={handleLogout}>
+                            <NavLink as={Link} to="/" isLogout={true}>
+                                로그아웃
+                            </NavLink>
+                        </NavItem>
+                    ) : (
+                        <>
+                            <NavItem scrolled={scrolled}>
+                                <NavLink as={Link} to="/login">
+                                    로그인
+                                </NavLink>
+                            </NavItem>
+                            <NavItem scrolled={scrolled}>
+                                <NavLink as={Link} to="/signup" isSignup>
+                                    회원가입
+                                </NavLink>
+                            </NavItem>
+                        </>
+                    )}
+                </NavList>
+            </NavRight>
+
+            {/* 항상 렌더링하는 오버레이와 사이드바 */}
+            <Overlay open={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
+            <Sidebar open={isSidebarOpen} onClick={(e) => e.stopPropagation()}>
+                <SidebarBanner>
+                    <ProfileImage src="/images/header/profile.png" alt="Profile" />
+                    <TextBox>
+                        <UserName>{user ? `안녕하세요, ${user.userId}님` : '게스트'}</UserName>
+                        <WelcomeText>음악과 게임을 즐겨보세요.</WelcomeText>
+                    </TextBox>
+                </SidebarBanner>
+                <SidebarList>
+                    <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                        <NavLink as={Link} to="/game">
+                            게임
+                        </NavLink>
+                    </SidebarItem>
+                    <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                        <NavLink as={Link} to="/viewreview">
+                            감상평
+                        </NavLink>
+                    </SidebarItem>
+                    <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                        <NavLink as={Link} to="/ranking">
+                            랭킹
+                        </NavLink>
+                    </SidebarItem>
+                    <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                        <NavLink as={Link} to="/test">
+                            테스트
+                        </NavLink>
+                    </SidebarItem>
+                    <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                        <NavLink as={Link} to="/playlist">
+                            음악
+                        </NavLink>
+                    </SidebarItem>
+
+                    {user && (
+                        <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                            <NavLink as={Link} to="/mypage">
+                                내 정보
+                            </NavLink>
+                        </SidebarItem>
+                    )}
+
+                    {user ? (
+                        <SidebarItem
+                            onClick={() => {
+                                handleLogout();
+                                setIsSidebarOpen(false);
+                            }}
+                        >
+                            <NavLink as={Link} to="/" isLogout={true}>
+                                로그아웃
+                            </NavLink>
+                        </SidebarItem>
+                    ) : (
+                        <>
+                            <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                                <NavLink as={Link} to="/login">
+                                    로그인
+                                </NavLink>
+                            </SidebarItem>
+                            <SidebarItem onClick={() => setIsSidebarOpen(false)}>
+                                <NavLink as={Link} to="/signup" isSignup={true}>
+                                    회원가입
+                                </NavLink>
+                            </SidebarItem>
+                        </>
+                    )}
+                </SidebarList>
+            </Sidebar>
+        </HeaderWrapper>
     );
 };
 
-const styles = {
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '2vh 2vw',
-        backgroundColor: '#121212',
-        color: '#fff',
-        height: '6vh',
-    },
-    left: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    right: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    backButton: {
-        background: 'none',
-        border: 'none',
-        color: '#fff',
-        fontSize: '2vw',
-        padding: '1vh 2vw',
-        cursor: 'pointer',
-    },
-    authButton: {
-        background: '#1ED760',
-        color: '#fff',
-        border: 'none',
-        fontSize: '1.5vw',
-        padding: '1.7vh 1.7vw',
-        marginLeft: '2vw',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Jua',
-    },
-    logoutButton: {
-        background: '#FF4F4F',  // 빨간색으로 변경
-        color: '#fff',
-        border: 'none',
-        fontSize: '1.5vw',
-        padding: '1.7vh 1.7vw',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Jua',
-        marginLeft: '2vw',
-    },
-};
-
 export default Header;
+
+// 스타일 컴포넌트
+
+// 여기 추가
+const WelcomeText = styled.div`
+    font-size: 1.5vw;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    margin-top: 0.3vw;
+`;
+
+const SidebarBanner = styled.div`
+    width: 100%;
+    height: 18vh;
+    background-image: url('/images/header/banner_bg.png'); /* 배경 이미지 경로 */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    padding: 0 4vw;
+    box-sizing: border-box;
+    color: white;
+    border-top-left-radius: 10px; 
+`;
+
+const TextBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const ProfileImage = styled.img`
+    width: 10vh;
+    height: 10vh;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;  /* 이미지 중앙을 기준으로 자르기 */
+    margin-right: 1.5vw;
+    border: 2px solid white;
+    display: block;           /* inline 이미지 여백 제거 */
+`;
+
+const UserName = styled.div`
+    font-size: 2.5vw;
+    font-weight: bold;
+`;
+
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 98;
+  opacity: ${({ open }) => (open ? 1 : 0)};
+  pointer-events: ${({ open }) => (open ? 'auto' : 'none')};
+  transition: opacity 0.3s ease;
+`;
+
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: rgba(200, 200, 200, 0.3);
+  border: 1px solid rgba(180, 180, 180, 0.4);
+  border-radius: 6px;
+  padding: 0.4vh 0.8vw;
+  height: 4.5vh;
+`;
+
+const SearchInput = styled.input`
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #333;
+  font-size: 0.9vw;
+  font-family: 'Noto Sans KR', sans-serif;
+  margin-left: 0.5vw;
+  ::placeholder {
+    color: #888;
+  }
+`;
+
+const SearchIcon = styled(FiSearch)`
+  color: #888;
+  font-size: 1.3vw;
+`;
+
+const HeaderWrapper = styled.header`
+  position: fixed;
+  top: 0;
+  z-index: 99;
+  width: 100%;
+  height: 8vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 2%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+
+  background-color: ${({ transparent, scrolled }) =>
+        transparent ? 'transparent' : 'white'};
+`;
+
+const Logo = styled.img`
+  height: 80%;
+  width: auto;
+  display: flex;
+  margin-left: 5%;
+`;
+
+const HamburgerMenu = styled.div`
+  display: none;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10vw;
+  }
+`;
+
+const NavLeft = styled.nav`
+  display: flex;
+  justify-content: flex-start;
+  margin-left: 3%;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const NavRight = styled.nav`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 3%;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const NavList = styled.ul`
+  list-style-type: none;
+  display: flex;
+  height: 8vh;
+  padding: 0;
+`;
+
+const NavLink = styled.a`
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 1vw;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+  transition: 0.7s ease;
+
+  ${props =>
+        props.isLogout &&
+        `
+    color: black !important;
+  `}
+
+  ${props =>
+        props.isFirst &&
+        `
+    color: black !important;
+  `}
+
+  ${props =>
+        props.isSignup &&
+        `
+    color: black !important;
+  `}
+
+  @media (max-width: 768px) {
+    font-size: 2.5vw;
+  }
+`;
+
+const NavItem = styled.li`
+  padding: 0 1.5vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  transition: 0.7s ease;
+  position: relative;
+
+  &:hover {
+    a {
+      color: black;
+    }
+  }
+`;
+
+const Sidebar = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 45vw;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 100;
+  transform: translateX(${props => (props.open ? '0' : '100%')});
+  transition: transform 0.3s ease-in-out;
+    border-top-left-radius: 10px;  /* 왼쪽 상단 둥글게 */
+    border-bottom-left-radius: 10px;
+`;
+
+const SidebarList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+`;
+
+const SidebarItem = styled.li`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 2.5vh 0;
+  text-align: left;
+  color: #fff;
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    background-color: #f5f5f5;
+    a {
+      color: black;
+      font-weight: 900;
+    }
+  }
+
+  &:first-child {
+    border-top: 1.5px solid rgba(0,0,0,0.5);
+  }
+`;
