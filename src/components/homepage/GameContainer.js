@@ -27,11 +27,11 @@ const GameContainer = () => {
         };
     }, []);
 
-    return <div ref = { gameRef }
-    id = "gameContainer"
-    style = {
-        { width: "100%", height: "100%", overflow: "hidden", margin: "0 auto", textAlign: "center" }
-    }
+    return <div ref={gameRef}
+        id="gameContainer"
+        style={
+            { width: "100%", height: "100%", overflow: "hidden", margin: "0 auto", textAlign: "center" }
+        }
     />;
 };
 

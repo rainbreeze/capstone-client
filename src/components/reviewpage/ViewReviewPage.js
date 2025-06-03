@@ -3,14 +3,20 @@ import axios from 'axios';
 import Header from '../common/Header';
 import Footer from '../common/Footer';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import ReviewCommentModal from './ReviewCommentModal'; // import 위치 적절히 조정
+
 
 function ViewReviewPage() {
     const [reviews, setReviews] = useState([]);
     const [error, setError] = useState(null);
     const [likedReviews, setLikedReviews] = useState([]);
-    const navigate = useNavigate();
-
+    const [selectedReviewId, setSelectedReviewId] = useState(null);
+    const handleCommentClick = (reviewId) => {
+        setSelectedReviewId(reviewId);  // 모달 열기
+    };
+    const handleCloseModal = () => {
+        setSelectedReviewId(null);
+    };
     const handleShare = (reviewId) => {
         const reviewUrl = `${window.location.origin}/review/${reviewId}`;
         navigator.clipboard.writeText(reviewUrl)
@@ -22,10 +28,6 @@ function ViewReviewPage() {
         const storedProfileImage = localStorage.getItem('profileImage') || '';
         console.log('프로필 이미지:', storedProfileImage);
     }, []);
-
-    const handleCommentClick = (reviewId) => {
-        navigate('/viewreviewcomment', { state: { reviewId } });
-    };
 
     const handleLike = async (reviewId) => {
         const alreadyLiked = likedReviews.includes(reviewId);
@@ -139,6 +141,9 @@ function ViewReviewPage() {
 
                 {error && <ErrorText>{error}</ErrorText>}
             </Container>
+            {selectedReviewId && (
+                <ReviewCommentModal reviewId={selectedReviewId} onClose={handleCloseModal} />
+            )}
             <Footer />
         </>
     );
