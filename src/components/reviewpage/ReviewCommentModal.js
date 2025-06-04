@@ -10,6 +10,9 @@ function ReviewCommentModal({ reviewId, onClose }) {
     const [replyInputMap, setReplyInputMap] = useState({});
     const [replyTexts, setReplyTexts] = useState({});
     const [newComment, setNewComment] = useState('');
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    const userProfile = null;
 
     // 프로필 이미지 기본값 함수
     const getProfileImage = (url) => {
@@ -18,9 +21,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
     };
 
     const handleNewCommentSubmit = async () => {
-        const userId = localStorage.getItem('userId');
-        const userName = localStorage.getItem('userName');
-        const userProfile = null;
 
         if (!userId) {
             setError('로그인된 사용자 정보가 없습니다.');
@@ -83,6 +83,8 @@ function ReviewCommentModal({ reviewId, onClose }) {
                 comment: replyContent,
                 user_id: userId,
                 parent_comment_id: commentId,
+                user_name: userName,
+                user_profile: userProfile
             });
 
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`);
@@ -107,7 +109,9 @@ function ReviewCommentModal({ reviewId, onClose }) {
                 data: { user_id: userId },
             });
 
-            setComments(prevComments => prevComments.filter(c => c.comment_id !== commentId));
+            // ✅ 댓글/답글 삭제 후 서버에서 최신 목록 다시 받아오기
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`);
+            setComments(response.data);
         } catch (err) {
             console.error('댓글 삭제 실패:', err);
             setError('댓글 삭제 중 오류가 발생했습니다.');
@@ -190,11 +194,28 @@ function ReviewCommentModal({ reviewId, onClose }) {
                                         </button>
                                     </div>
                                 )}
-
-                                {/* 답글 리스트 */}
                                 {comment.replies?.map((reply) => (
                                     <div key={reply.reply_id} style={styles.reply}>
-                                        ↳ <strong>{reply.user_id}</strong>: {reply.content}
+                                        <img
+                                            src={getProfileImage(reply.user_profile)}
+                                            alt="profile"
+                                            style={styles.replyProfileImage}
+                                        />
+
+                                        <strong style={styles.replyUserName}>{reply.user_name}</strong>
+
+                                        <div style={styles.replyRow}>
+                                            <span style={styles.replyContent}>{reply.content}</span>
+
+                                            {/* 삭제 버튼 (comment_id와 동일하므로 handleDeleteComment 사용 가능) */}
+                                            <button
+                                                style={styles.deleteReplyButton}
+                                                title="답글 삭제"
+                                                onClick={() => handleDeleteComment(reply.comment_id)}
+                                            >
+                                                X
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </li>
@@ -222,6 +243,43 @@ function ReviewCommentModal({ reviewId, onClose }) {
 }
 
 const styles = {
+    reply: {
+        marginTop: 10,
+        marginLeft: 50,
+        display: 'flex',
+        alignItems: 'center',  // 세로 정렬 가운데
+        gap: 10,
+    },
+
+    replyProfileImage: {
+        width: 30,
+        height: 30,
+        borderRadius: '50%',
+        objectFit: 'cover',
+        backgroundColor: '#eee',
+    },
+
+    replyRow: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#f7f7f7',
+        padding: '6px 10px',
+        borderRadius: 8,
+        maxWidth: '80%',
+        flexWrap: 'wrap', // 텍스트가 너무 길어질 때 줄바꿈
+    },
+
+    replyUserName: {
+        fontWeight: 'bold',
+        fontSize: '0.85rem',
+        whiteSpace: 'nowrap',
+    },
+
+    replyContent: {
+        fontSize: '0.9rem',
+        color: '#333',
+    },
     newCommentContainer: {
         display: 'flex',
         flexDirection: 'column',
@@ -247,7 +305,7 @@ const styles = {
 
     newCommentIconButton: {
         position: 'absolute',
-        right: '1.5vw',
+        right: '1vw',
         top: '50%',
         transform: 'translateY(-50%)',
         width: '2.5vw',
@@ -374,7 +432,7 @@ const styles = {
     },
 
     submitReplyButton: {
-        background: '#1abc9c',
+        background: 'black',
         color: 'white',
         border: 'none',
         padding: '6px 12px',
@@ -382,15 +440,18 @@ const styles = {
         cursor: 'pointer',
     },
 
-    reply: {
-        marginTop: 6,
-        paddingLeft: 65,
-        color: '#555',
-        fontSize: '0.95rem',
-    },
-
     error: {
         color: 'red',
+    },
+    deleteReplyButton: {
+        background: 'transparent',
+        border: 'none',
+        color: '#999',
+        fontSize: '0.7vw',
+        cursor: 'pointer',
+        padding: 0,
+        marginLeft: 8,
+        lineHeight: 1,
     },
 };
 

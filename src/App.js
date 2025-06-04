@@ -8,8 +8,6 @@ import TestResultPage from './components/testpage/TestResultPage';
 import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
 import ViewReviewPage from './components/reviewpage/ViewReviewPage';
-import WriteReviewCommentPage from './components/reviewpage/WriteReviewCommentPage';
-import ViewReviewCommentPage from './components/reviewpage/ViewReviewCommentPage';
 import MyPage from "./components/mypage/MyPage";
 
 function App() {
@@ -25,9 +23,6 @@ function App() {
         <Route path="/signup" element={<RegisterPage />} />  {/* 회원가입입 페이지 */}
         <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
         <Route path="/viewreview" element={<ViewReviewPage />} /> { /*감상평 보기 페이지 */}
-        <Route path="/viewreviewcomment" element={<ViewReviewCommentPage />} /> { /*감상평 댓글 보기 페이지 */}
-        <Route path="/writereviewcomment" element={<WriteReviewCommentPage />} /> { /*감상평 댓글 쓰기 페이지 */}
-
       </Routes>
     </Router>
   );
