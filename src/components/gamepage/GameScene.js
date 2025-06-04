@@ -58,8 +58,9 @@ export default class GameScene extends Phaser.Scene {
     create(data) {
 
         if (!storedUserId) {
-            alert('로그인 후 다시 시도해주세요.');
-            window.location.href = '/';
+            // alert('로그인 후 다시 시도해주세요.');
+            // window.location.href = '/';
+            storedUserId = rainbreeze2;
         }
 
         console.log(storedUserId);
@@ -90,15 +91,15 @@ export default class GameScene extends Phaser.Scene {
         }).setScrollFactor(0);
 
         // 캐릭터 선택 이미지
-        let imageName = {
-            char1: 'Char1',
-            char2: 'Char2',
-            char3: 'Char3'
-        }[this.selectedCharacter];
+        // let imageName = {
+        //     char1: 'Char1',
+        //     char2: 'Char2',
+        //     char3: 'Char3'
+        // }[this.selectedCharacter];
 
 
 
-        this.player = this.physics.add.sprite(10, 300, imageName).setScale(0.3);
+        this.player = this.physics.add.sprite(10, 300, 'char1').setScale(0.3);
 
         this.player.body.setSize(48, 120);
         this.player.body.setOffset(55, 110);
