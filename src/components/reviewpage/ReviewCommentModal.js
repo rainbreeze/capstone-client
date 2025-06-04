@@ -1,5 +1,3 @@
-// ReviewCommentModal.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -12,16 +10,20 @@ function ReviewCommentModal({ reviewId, onClose }) {
     const [newComment, setNewComment] = useState('');
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('userName');
-    const userProfile = null;
+    const userProfile = localStorage.getItem('profileImage');
 
-    // 프로필 이미지 기본값 함수
-    const getProfileImage = (url) => {
-        if (!url) return '/images/header/profile.png';
-        return url;
+    const getProfileImage = (path) => {
+        if (!path) return '/images/header/profile.png';
+        const isFullUrl = path.startsWith('http') || path.startsWith('/');
+        const prefix = path.startsWith('/') ? '' : '/uploads/';
+        return `${process.env.REACT_APP_API_URL}${isFullUrl ? '' : prefix}${path}`;
+    };
+
+    const handleOverlayClick = () => {
+        onClose(); // 모달 바깥 클릭 시 닫기
     };
 
     const handleNewCommentSubmit = async () => {
-
         if (!userId) {
             setError('로그인된 사용자 정보가 없습니다.');
             return;
@@ -66,8 +68,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
 
     const handleReplySubmit = async (commentId) => {
         const replyContent = replyTexts[commentId];
-        const userId = localStorage.getItem('userId');
-
         if (!userId) {
             setError('로그인된 사용자 정보가 없습니다.');
             return;
@@ -98,7 +98,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
     };
 
     const handleDeleteComment = async (commentId) => {
-        const userId = localStorage.getItem('userId');
         if (!userId) {
             setError('로그인된 사용자 정보가 없습니다.');
             return;
@@ -109,7 +108,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
                 data: { user_id: userId },
             });
 
-            // ✅ 댓글/답글 삭제 후 서버에서 최신 목록 다시 받아오기
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/comment/${reviewId}/comment`);
             setComments(response.data);
         } catch (err) {
@@ -134,9 +132,8 @@ function ReviewCommentModal({ reviewId, onClose }) {
     }, [reviewId]);
 
     return (
-        <div style={styles.overlay}>
-            <div style={styles.modal}>
-                <button onClick={onClose} style={styles.closeButton}>X</button>
+        <div style={styles.overlay} onClick={handleOverlayClick}>
+            <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <h2 style={styles.title}>댓글 목록</h2>
 
                 {loading ? (
@@ -147,7 +144,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
                     <ul style={styles.commentList}>
                         {comments.map((comment) => (
                             <li key={comment.comment_id} style={styles.commentItem}>
-                                {/* 댓글 헤더: 프로필 이미지, 이름, 날짜, 삭제/답글 버튼 */}
                                 <div style={styles.commentHeader}>
                                     <div style={styles.leftHeader}>
                                         <img
@@ -158,7 +154,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
                                         <strong style={styles.userName}>{comment.user_name}</strong>
                                         <span style={styles.timestamp}>{new Date(comment.created_at).toLocaleString()}</span>
                                     </div>
-
                                     <div style={styles.rightHeader}>
                                         <button
                                             onClick={() => toggleReplyInput(comment.comment_id)}
@@ -176,11 +171,8 @@ function ReviewCommentModal({ reviewId, onClose }) {
                                         </button>
                                     </div>
                                 </div>
-
-                                {/* 댓글 내용 */}
                                 <p style={styles.commentContent}>{comment.content}</p>
 
-                                {/* 답글 입력창 */}
                                 {replyInputMap[comment.comment_id] && (
                                     <div style={styles.replyInputContainer}>
                                         <input
@@ -201,13 +193,9 @@ function ReviewCommentModal({ reviewId, onClose }) {
                                             alt="profile"
                                             style={styles.replyProfileImage}
                                         />
-
                                         <strong style={styles.replyUserName}>{reply.user_name}</strong>
-
                                         <div style={styles.replyRow}>
                                             <span style={styles.replyContent}>{reply.content}</span>
-
-                                            {/* 삭제 버튼 (comment_id와 동일하므로 handleDeleteComment 사용 가능) */}
                                             <button
                                                 style={styles.deleteReplyButton}
                                                 title="답글 삭제"
@@ -223,7 +211,6 @@ function ReviewCommentModal({ reviewId, onClose }) {
                     </ul>
                 )}
 
-                {/* 새 댓글 작성 */}
                 <div style={styles.newCommentContainer}>
                     <div style={styles.newCommentInputWrapper}>
                         <textarea
@@ -247,10 +234,9 @@ const styles = {
         marginTop: 10,
         marginLeft: 50,
         display: 'flex',
-        alignItems: 'center',  // 세로 정렬 가운데
+        alignItems: 'center',
         gap: 10,
     },
-
     replyProfileImage: {
         width: 30,
         height: 30,
@@ -258,7 +244,6 @@ const styles = {
         objectFit: 'cover',
         backgroundColor: '#eee',
     },
-
     replyRow: {
         display: 'flex',
         alignItems: 'center',
@@ -267,15 +252,13 @@ const styles = {
         padding: '6px 10px',
         borderRadius: 8,
         maxWidth: '80%',
-        flexWrap: 'wrap', // 텍스트가 너무 길어질 때 줄바꿈
+        flexWrap: 'wrap',
     },
-
     replyUserName: {
         fontWeight: 'bold',
         fontSize: '0.85rem',
         whiteSpace: 'nowrap',
     },
-
     replyContent: {
         fontSize: '0.9rem',
         color: '#333',
@@ -285,24 +268,21 @@ const styles = {
         flexDirection: 'column',
         gap: 8,
     },
-
     newCommentInputWrapper: {
         position: 'relative',
         width: '100%',
     },
-
     newCommentInput: {
         width: '100%',
         minHeight: 80,
         padding: 8,
-        paddingRight: 40, // 오른쪽 버튼 공간 확보
+        paddingRight: 40,
         borderRadius: 6,
         border: '1px solid #ccc',
         fontSize: '0.95rem',
         resize: 'vertical',
         boxSizing: 'border-box',
     },
-
     newCommentIconButton: {
         position: 'absolute',
         right: '1vw',
@@ -321,7 +301,6 @@ const styles = {
         alignItems: 'center',
         boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
     },
-
     overlay: {
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
@@ -331,7 +310,6 @@ const styles = {
         alignItems: 'center',
         zIndex: 1000,
     },
-
     modal: {
         backgroundColor: 'white',
         padding: 20,
@@ -341,7 +319,6 @@ const styles = {
         overflowY: 'auto',
         position: 'relative',
     },
-
     closeButton: {
         position: 'absolute',
         top: 10,
@@ -351,39 +328,32 @@ const styles = {
         fontSize: '1.5rem',
         cursor: 'pointer',
     },
-
     title: {
         fontSize: '1.5rem',
         marginBottom: 10,
     },
-
     commentList: {
         listStyle: 'none',
         padding: 0,
     },
-
     commentItem: {
         padding: 10,
         borderBottom: '1px solid #ccc',
     },
-
     commentHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-
     leftHeader: {
         display: 'flex',
         alignItems: 'center',
         gap: 10,
     },
-
     rightHeader: {
         display: 'flex',
         gap: 6,
     },
-
     profileImage: {
         width: 40,
         height: 40,
@@ -391,17 +361,14 @@ const styles = {
         objectFit: 'cover',
         backgroundColor: '#eee',
     },
-
     userName: {
         fontWeight: 'bold',
     },
-
     timestamp: {
         fontSize: '0.7rem',
         color: '#999',
         marginLeft: 10,
     },
-
     iconButton: {
         background: 'transparent',
         border: 'none',
@@ -411,26 +378,22 @@ const styles = {
         padding: 2,
         lineHeight: 1,
     },
-
     commentContent: {
         marginTop: 8,
-        marginLeft: 50, // 프로필 이미지 공간 맞추기
+        marginLeft: 50,
     },
-
     replyInputContainer: {
         marginTop: 8,
         display: 'flex',
         gap: 5,
         marginLeft: 50,
     },
-
     replyInput: {
         flex: 1,
         padding: 5,
         border: '1px solid #ccc',
         borderRadius: '4px',
     },
-
     submitReplyButton: {
         background: 'black',
         color: 'white',
@@ -439,7 +402,6 @@ const styles = {
         borderRadius: '4px',
         cursor: 'pointer',
     },
-
     error: {
         color: 'red',
     },
