@@ -23,11 +23,6 @@ li {
     list-style: none
 }
 
-#root {
-    padding: 8vh 0 8vh;
-    width: 100%;
-    height: 100%;
-}
 
 .popup-container {
     position: fixed;
@@ -118,9 +113,4 @@ li {
     background: #fff;
     padding: 5px;
     font-weight: 700;
-}
-
-#root>div {
-    height: 100%;
-    overflow: scroll;
 }
