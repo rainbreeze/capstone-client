@@ -1,5 +1,7 @@
-#gameContainer {
+#gameContainer,
+.mypage-container {
     padding: 8vh 0 0;
+    height: 100%;
 }
 
 #gameContainer canvas {

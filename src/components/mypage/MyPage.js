@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ProfileImageUploader from './ProfileImageUploader';
+import Header from '../common/Header'
+import Footer from '../common/Footer';
 
 const MyPage = () => {
     const [userInfo, setUserInfo] = useState(null);
@@ -21,7 +23,10 @@ const MyPage = () => {
 
     if (!userInfo) return <div style={{ padding: '20px' }}>Loading...</div>;
 
-    return (
+  return (
+    <>
+      <Header />
+      <div className="mypage-container">
         <div style={{
             maxWidth: '800px',
             margin: '40px auto',
@@ -55,6 +60,9 @@ const MyPage = () => {
                 </div>
             </div>
         </div>
+        </div>
+      <Footer />
+      </>
     );
 };
 

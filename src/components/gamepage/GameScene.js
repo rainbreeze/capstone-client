@@ -60,7 +60,7 @@ export default class GameScene extends Phaser.Scene {
         if (!storedUserId) {
             // alert('로그인 후 다시 시도해주세요.');
             // window.location.href = '/';
-            storedUserId = rainbreeze2;
+            storedUserId = 'rainbreeze2';
         }
 
         console.log(storedUserId);
