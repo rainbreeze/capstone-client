@@ -11,14 +11,12 @@ let genres = [
     { name: 'R&B', count: 0 },
 ];
 
-// let year = 0;
 
 const storedUserId = localStorage.getItem('userId');
 if (!storedUserId) {
     //alert('로그인 후 다시 시도해주세요.');
 }
 
-// let stageIndex = 0;
 let score = 0;
 let totalStages = 3;
 
@@ -34,6 +32,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('music_box_64x64', 'assets/tilesets/music_box_64x64.png');
         this.load.image('noteImage', 'assets/images/note.png');
         this.load.image('spikeImage', 'assets/images/spike.png');
+        this.load.image('heart', 'assets/images/heart.png');
 
 
         this.load.tilemapTiledJSON('map1', 'assets/tilemaps/section01.json');
@@ -53,6 +52,9 @@ export default class GameScene extends Phaser.Scene {
         this.stageIndex = data.stageIndex || 0
 
         this.score = data.score || 0;
+
+        this.lives = data.lives || 3;
+
     }
 
 
@@ -67,13 +69,14 @@ export default class GameScene extends Phaser.Scene {
 
         const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
 
+        this.isInvincible = false;
+
+
         // 맵 레이어
         map.createLayer('Tile Layer 1', tileset, 0, 0);
         this.mapColliders = {};
         const objectLayer = map.getObjectLayer('Collision Layer');
         console.log('objectLayer', objectLayer);
-
-        // 스코어
 
 
 
@@ -116,6 +119,17 @@ export default class GameScene extends Phaser.Scene {
         this.jumpCount = 0;
         this.maxJump = 2;
 
+        this.hearts = [];
+        for (let i = 0; i < 3; i++) {
+            const heart = this.add.image(700 + i * 30, 30, 'heart')
+                .setScrollFactor(0)
+                .setScale(0.5)
+                .setDisplaySize(32, 32)
+                .setSize(32, 32)
+            this.hearts.push(heart);
+        }
+
+
 
 
 
@@ -126,11 +140,9 @@ export default class GameScene extends Phaser.Scene {
             const centerY = y + height / 2;
 
             if (cls === 'Collision') {
-                if (cls === 'Collision') {
-                    const zone = this.add.zone(centerX, centerY, width, height);
-                    this.physics.add.existing(zone, true); // true: static body
-                    this.physics.add.collider(this.player, zone);
-                }
+                const zone = this.add.zone(centerX, centerY, width, height);
+                this.physics.add.existing(zone, true); // true: static body
+                this.physics.add.collider(this.player, zone);
             }
 
             if (cls === 'spike') {
@@ -141,7 +153,35 @@ export default class GameScene extends Phaser.Scene {
                 spike.refreshBody();
 
                 this.physics.add.overlap(this.player, spike, () => {
-                    console.log('스파이크 데미지!');
+                    if (!this.isInvincible) {
+                        console.log('스파이크 데미지!');
+
+                        this.lives -= 1;
+                        this.updateLivesUI();
+
+
+                        this.isInvincible = true;
+
+                        this.tweens.add({
+                            targets: this.player,
+                            alpha: 0.3,
+                            duration: 100,
+                            ease: 'Linear',
+                            yoyo: true,
+                            repeat: 5,
+                            onComplete: () => {
+                                this.player.setAlpha(1);
+                            }
+                        });
+
+                        this.time.delayedCall(1000, () => {
+                            this.isInvincible = false;
+                        });
+
+                        if (this.lives <= 0) {
+                            this.gameOver();
+                        }
+                    }
                 });
 
                 this.events.on('update', () => {
@@ -227,6 +267,13 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
+    updateLivesUI() {
+        if (this.hearts) {
+            this.hearts.forEach((heart, index) => {
+                heart.setVisible(index < this.lives);
+            });
+        }
+    }
 
     getRandomGenres(n) {
         const shuffled = [...genres].sort(() => 0.5 - Math.random());
@@ -304,4 +351,24 @@ export default class GameScene extends Phaser.Scene {
             console.error('Spotify API 호출 실패:', err);
         }
     }
+
+    gameOver() {
+        this.controlsEnabled = false;
+        this.player.setTint(0xff0000);
+        this.player.anims.stop();
+
+        const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
+        console.log('가장 많이 선택된 장르:', result.name);
+
+        this.add.text(400, 200, 'Game Over', {
+            fontSize: '32px',
+            fontFamily: 'noto-sans',
+            fill: '#fff'
+        }).setOrigin(0.5);
+
+        this.time.delayedCall(2000, () => {
+            this.showSearchResult(result.name);
+        });
+    }
+
 }
