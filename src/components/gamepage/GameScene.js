@@ -90,7 +90,13 @@ export default class GameScene extends Phaser.Scene {
             char3: 'Char3'
         }[this.selectedCharacter];
 
-        this.player = this.physics.add.sprite(10, 340, imageName).setScale(0.3);
+
+
+        this.player = this.physics.add.sprite(10, 300, imageName).setScale(0.3);
+
+        this.player.body.setSize(48, 120);
+        this.player.body.setOffset(55, 110);
+
         this.player.body.setCollideWorldBounds(true);
 
         this.anims.create({
@@ -120,15 +126,11 @@ export default class GameScene extends Phaser.Scene {
             const centerY = y + height / 2;
 
             if (cls === 'Collision') {
-                this.player.setX(centerX);
-                this.player.setY(centerY);
-                const box = this.physics.add.staticImage(centerX, centerY)
-                    .setSize(width, height)
-                    .setOrigin(0.5)
-                    .setVisible(false);
-
-                box.refreshBody();
-                this.physics.add.collider(this.player, box);
+                if (cls === 'Collision') {
+                    const zone = this.add.zone(centerX, centerY, width, height);
+                    this.physics.add.existing(zone, true); // true: static body
+                    this.physics.add.collider(this.player, zone);
+                }
             }
 
             if (cls === 'spike') {

@@ -37,7 +37,7 @@ class MainScene extends Phaser.Scene {
 
         //캐릭터 선택창
 
-        const characterSceneBtn = this.add.image(100, centerY + 200, 'characterButton').setInteractive();
+        const characterSceneBtn = this.add.image(100, centerY + 100, 'characterButton').setInteractive();
         characterSceneBtn.setDisplaySize(100, 100)
         characterSceneBtn.on('pointerdown', () => {
             console.log('choice CharacterScene');
@@ -47,7 +47,7 @@ class MainScene extends Phaser.Scene {
 
 
         //임시 설정창
-        const settingBtn = this.add.image(700, centerY + 200, 'settingButton').setInteractive();
+        const settingBtn = this.add.image(700, centerY + 100, 'settingButton').setInteractive();
         settingBtn.setDisplaySize(100, 100)
 
 

@@ -4,6 +4,8 @@ import IntroScene from "../gamepage/IntroScene";
 import MainScene from "../gamepage/MainScene";
 import GameScene from "../gamepage/GameScene";
 import ChoiceScene from "../gamepage/ChoiceScene";
+import Header from "../common/Header";
+import Footer from "../common/Footer"
 
 const GameContainer = () => {
   const gameRef = useRef(null);
@@ -14,7 +16,7 @@ const GameContainer = () => {
 
   useEffect(() => {
     window.showGamePopup = (recommendationList) => {
-      setPopupData(recommendationList);  // 배열 저장
+      setPopupData(recommendationList);
       setShowPopup(true);
     };
   }, []);
@@ -28,7 +30,7 @@ const GameContainer = () => {
       parent: gameRef.current,
       physics: {
         default: "arcade",
-        arcade: { debug: false, gravity: { y: 1000 } }
+        arcade: { debug: true, gravity: { y: 1000 } }
       },
       scene: [IntroScene, MainScene, ChoiceScene, GameScene]
     };
@@ -41,6 +43,7 @@ const GameContainer = () => {
 
   return (
     <>
+      <Header />
       <div
         ref={gameRef}
         id="gameContainer"
@@ -49,28 +52,33 @@ const GameContainer = () => {
           height: "100%",
           overflow: "hidden",
           margin: "0 auto",
-          textAlign: "center"
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
         }}
       />
      {showPopup && popupData && (
         <div className="popup-container">
           <div className="popup" id="gameResultPopup">
-            <h3>🎵 추천 음악 리스트</h3>
+            <div className="playlist-title-box">
+              <h3>🎵 오늘의 Playlist</h3>
+            </div>
+            
             <ul>
               {popupData.map((track, idx) => (
                 <li key={track.id || idx}>
+                  <img src={track.album.images[0]?.url || ''}/>
                   <strong>{track.name}</strong> - {track.artists.map(a => a.name).join(', ')}
-                  <br />
-                  <a href={track.external_urls.spotify} target="_blank" rel="noopener noreferrer">
-                    ▶ Spotify 바로가기
-                  </a>
                 </li>
               ))}
             </ul>
-            <button onClick={() => setShowPopup(false)}>닫기</button>
+            <a href="../playlist">내 플레이리스트로 가기</a>
+            <button onClick={() => setShowPopup(false)}>X</button>
           </div>
         </div>
       )}
+      <Footer />
 
     </>
   );
