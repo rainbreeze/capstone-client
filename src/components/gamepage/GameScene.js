@@ -14,7 +14,7 @@ let genres = [
 
 const storedUserId = localStorage.getItem('userId');
 if (!storedUserId) {
-    //alert('로그인 후 다시 시도해주세요.');
+    alert('로그인 후 다시 시도해주세요.');
 }
 
 let score = 0;

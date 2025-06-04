@@ -30,7 +30,7 @@ const GameContainer = () => {
       parent: gameRef.current,
       physics: {
         default: "arcade",
-        arcade: { debug: true, gravity: { y: 1000 } }
+        arcade: { debug: false, gravity: { y: 1000 } }
       },
       scene: [IntroScene, MainScene, ChoiceScene, GameScene]
     };
