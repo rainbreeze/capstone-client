@@ -37,7 +37,6 @@ li {
     transform: translate(-50%, -50%);
     border-radius: 8px;
     width: 400px;
-    height: 80%;
     box-shadow: 10px 5px 5px rgba(153, 153, 153, 0.4);
     font-family: noto-sans;
     color: #000;
@@ -50,6 +49,7 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 300px;
 }
 
 #gameResultPopup button {

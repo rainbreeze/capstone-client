@@ -14,10 +14,11 @@ let genres = [
 
 const storedUserId = localStorage.getItem('userId');
 if (!storedUserId) {
-    //alert('로그인 후 다시 시도해주세요.');
+    alert('로그인 후 다시 시도해주세요.');
 }
 
 let score = 0;
+let lives = 3;
 let totalStages = 3;
 
 export default class GameScene extends Phaser.Scene {
@@ -50,10 +51,8 @@ export default class GameScene extends Phaser.Scene {
     init(data) {
         this.selectedCharacter = data.selectedCharacter;
         this.stageIndex = data.stageIndex || 0
-
         this.score = data.score || 0;
-
-        this.lives = data.lives || 3;
+        this.lives = lives;
 
     }
 
@@ -63,13 +62,13 @@ export default class GameScene extends Phaser.Scene {
         const mapKey = `map${this.stageIndex + 1}`;
 
         const map = this.make.tilemap({ key: mapKey });
-
-
         // 공통 코드
 
         const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
 
         this.isInvincible = false;
+        this.isGameOver = false;
+
 
 
         // 맵 레이어
@@ -120,7 +119,7 @@ export default class GameScene extends Phaser.Scene {
         this.maxJump = 2;
 
         this.hearts = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < lives; i++) {
             const heart = this.add.image(700 + i * 30, 30, 'heart')
                 .setScrollFactor(0)
                 .setScale(0.5)
@@ -128,9 +127,6 @@ export default class GameScene extends Phaser.Scene {
                 .setSize(32, 32)
             this.hearts.push(heart);
         }
-
-
-
 
 
         // 오브젝트 레이어
@@ -156,7 +152,7 @@ export default class GameScene extends Phaser.Scene {
                     if (!this.isInvincible) {
                         console.log('스파이크 데미지!');
 
-                        this.lives -= 1;
+                        lives -= 1;
                         this.updateLivesUI();
 
 
@@ -178,7 +174,7 @@ export default class GameScene extends Phaser.Scene {
                             this.isInvincible = false;
                         });
 
-                        if (this.lives <= 0) {
+                        if (lives <= 0) {
                             this.gameOver();
                         }
                     }
@@ -270,7 +266,7 @@ export default class GameScene extends Phaser.Scene {
     updateLivesUI() {
         if (this.hearts) {
             this.hearts.forEach((heart, index) => {
-                heart.setVisible(index < this.lives);
+                heart.setVisible(index < lives);
             });
         }
     }
@@ -353,6 +349,9 @@ export default class GameScene extends Phaser.Scene {
     }
 
     gameOver() {
+        if (this.isGameOver) return;
+        this.isGameOver = true;
+
         this.controlsEnabled = false;
         this.player.setTint(0xff0000);
         this.player.anims.stop();
@@ -366,9 +365,10 @@ export default class GameScene extends Phaser.Scene {
             fill: '#fff'
         }).setOrigin(0.5);
 
-        this.time.delayedCall(2000, () => {
+        this.time.delayedCall(1000, () => {
             this.showSearchResult(result.name);
         });
     }
+
 
 }
