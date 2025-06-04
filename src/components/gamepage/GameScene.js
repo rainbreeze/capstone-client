@@ -13,9 +13,7 @@ let genres = [
 
 
 const storedUserId = localStorage.getItem('userId');
-if (!storedUserId) {
-    alert('로그인 후 다시 시도해주세요.');
-}
+
 
 let score = 0;
 let lives = 3;
@@ -59,6 +57,12 @@ export default class GameScene extends Phaser.Scene {
 
     create(data) {
 
+        if (!storedUserId) {
+            alert('로그인 후 다시 시도해주세요.');
+            window.location.href = '/';
+        }
+
+        console.log(storedUserId);
         const mapKey = `map${this.stageIndex + 1}`;
 
         const map = this.make.tilemap({ key: mapKey });
@@ -341,6 +345,7 @@ export default class GameScene extends Phaser.Scene {
         };
 
         try {
+            console.log(gameData.userId);
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/game/savegamedata`, gameData);
             this.showResultPopup(res.data.musicRecommendation);
         } catch (err) {
