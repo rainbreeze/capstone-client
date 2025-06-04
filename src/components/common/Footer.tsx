@@ -17,7 +17,6 @@ const FooterWrapper = styled.footer`
   font-family: Jua;
   text-align: center;
   padding: 3vh 0;
-  position: absolute;
   bottom: 0;
   width: 100%;
 `;
