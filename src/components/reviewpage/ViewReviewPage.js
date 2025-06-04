@@ -446,7 +446,7 @@ const LikeButton = styled.button`
   padding: 4px 8px;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   display: flex;
   justify-content: center;
   align-items: center;
