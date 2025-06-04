@@ -28,13 +28,11 @@ const LoginPage = () => {
                 const decodedToken = jwtDecode(token);  // 토큰 디코딩
                 const userIdFromToken = decodedToken.userId;  // 디코딩한 토큰에서 userId 추출
                 const userNameFromToken = decodedToken.userName;  // 가능
-                const profileImageFromToken = decodedToken.profileImage;  // 가능
                 console.log(decodedToken);  // userId, userName, profileImage 다 잘 나오나요?
 
                 // 사용자 ID를 localStorage에 저장
                 localStorage.setItem('userId', userIdFromToken);
                 localStorage.setItem('userName', userNameFromToken);
-                localStorage.setItem('profileImage', profileImageFromToken);
                 alert(response.data.message);  // 로그인 성공 시 메시지 표시
 
                 // 로그인 후 홈 페이지로 리디렉션

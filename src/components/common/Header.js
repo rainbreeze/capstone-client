@@ -55,7 +55,7 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('userId');
+        localStorage.clear();
         setUser(null);
     };
 
