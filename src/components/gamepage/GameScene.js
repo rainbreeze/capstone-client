@@ -90,7 +90,13 @@ export default class GameScene extends Phaser.Scene {
             char3: 'Char3'
         }[this.selectedCharacter];
 
-        this.player = this.physics.add.sprite(10, 352, imageName).setScale(0.3);
+
+
+        this.player = this.physics.add.sprite(10, 300, imageName).setScale(0.3);
+
+        this.player.body.setSize(48, 120);
+        this.player.body.setOffset(55, 110);
+
         this.player.body.setCollideWorldBounds(true);
 
         this.anims.create({
@@ -121,12 +127,9 @@ export default class GameScene extends Phaser.Scene {
 
             if (cls === 'Collision') {
                 if (cls === 'Collision') {
-                    const box = this.physics.add.staticImage(centerX, centerY)
-                        .setSize(width, height)
-                        .setOrigin(0.5)
-                        .setVisible(false);
-
-                    this.physics.add.collider(this.player, box);
+                    const zone = this.add.zone(centerX, centerY, width, height);
+                    this.physics.add.existing(zone, true); // true: static body
+                    this.physics.add.collider(this.player, zone);
                 }
             }
 
@@ -212,7 +215,6 @@ export default class GameScene extends Phaser.Scene {
             this.jumpCount = 0;
         }
 
-        // 점프 입력 (space 또는 up 모두 처리 가능)
         if (
             Phaser.Input.Keyboard.JustDown(this.spaceKey) ||
             Phaser.Input.Keyboard.JustDown(this.cursors.up)
@@ -271,7 +273,6 @@ export default class GameScene extends Phaser.Scene {
                     stageIndex: this.stageIndex + 1
                 });
             } else {
-                // 5스테이지 종료 후 결과 정리
                 const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
                 console.log('가장 많이 선택된 장르:', result.name);
                 this.showSearchResult(result.name);
@@ -281,32 +282,9 @@ export default class GameScene extends Phaser.Scene {
 
     showResultPopup(result) {
         this.controlsEnabled = false;
-        const centerX = this.player.x;
-        const centerY = this.player.y;
-
-        // 배경 박스
-        const bg = this.add.rectangle(400, 300, 300, 200, 0x000000, 0.8).setOrigin(0.5);
-
-        // 텍스트
-        const resultText = this.add.text(400, 270, result, {
-            fontSize: '20px',
-            color: '#ffffff',
-            align: 'center'
-        }).setOrigin(0.5);
-
-        // 닫기 버튼
-        const closeBtn = this.add.text(400, 330, '닫기', {
-            fontSize: '16px',
-            color: '#00ff00',
-            backgroundColor: '#222'
-        }).setOrigin(0.5).setInteractive();
-
-        closeBtn.on('pointerdown', () => {
-            popup.destroy(); // 팝업 제거
-        });
-
-        // 컨테이너로 묶기
-        const popup = this.add.container(0, 0, [bg, resultText, closeBtn]);
+        if (window.showGamePopup) {
+            window.showGamePopup(result); // 배열 전체 넘김
+        }
 
     }
 
