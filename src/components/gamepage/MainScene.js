@@ -56,7 +56,8 @@ class MainScene extends Phaser.Scene {
         const playBtn = this.add.image(centerX, centerY - 40, 'playButton').setInteractive();
         this.add.text(centerX - 60, centerY + 40, 'PLAY BEATS!', {
             fontSize: '20px',
-            fill: '#000000'
+            fill: '#000000',
+            fontFamily: 'noto-sans'
         });
         playBtn.setDisplaySize(100, 100);
         playBtn.on('pointerdown', () => {

@@ -80,7 +80,7 @@ export default class GameScene extends Phaser.Scene {
         this.scoreText = this.add.text(16, 16, 'Score: 0', {
             fontSize: '24px',
             fill: '#fff',
-            fontFamily: 'Jua'
+            fontFamily: 'noto-sans'
         }).setScrollFactor(0);
 
         // 캐릭터 선택 이미지
@@ -251,7 +251,7 @@ export default class GameScene extends Phaser.Scene {
 
     getTextStyle() {
         return {
-            fontFamily: 'Jua',
+            fontFamily: 'noto-sans',
             fontSize: '12px',
             fill: '#000',
             backgroundColor: '#fff',

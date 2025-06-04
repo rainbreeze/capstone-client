@@ -114,3 +114,9 @@ li {
     padding: 5px;
     font-weight: 700;
 }
+
+
+/* #root>div {
+    height: 100%;
+    overflow: scroll;
+} */
