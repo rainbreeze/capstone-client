@@ -93,7 +93,7 @@ const ProfileImageUploader = ({ userId }) => {
                     style={{
                         marginTop: '10px',
                         padding: '6px 12px',
-                        backgroundColor: '#4CAF50',
+                        backgroundColor: 'black',
                         color: '#fff',
                         border: 'none',
                         borderRadius: '4px',
@@ -111,7 +111,7 @@ const ProfileImageUploader = ({ userId }) => {
                     style={{
                         marginTop: '10px',
                         padding: '6px 12px',
-                        backgroundColor: '#4CAF50',
+                        backgroundColor: 'black',
                         color: '#fff',
                         border: 'none',
                         borderRadius: '4px',
