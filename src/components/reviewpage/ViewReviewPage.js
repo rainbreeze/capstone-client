@@ -7,146 +7,154 @@ import ReviewCommentModal from './ReviewCommentModal'; // import 위치 적절�
 
 
 function ViewReviewPage() {
-    const [reviews, setReviews] = useState([]);
-    const [error, setError] = useState(null);
-    const [likedReviews, setLikedReviews] = useState([]);
-    const [selectedReviewId, setSelectedReviewId] = useState(null);
-    const handleCommentClick = (reviewId) => {
-        setSelectedReviewId(reviewId);  // 모달 열기
-    };
-    const handleCloseModal = () => {
-        setSelectedReviewId(null);
-    };
-    const handleShare = (reviewId) => {
-        const reviewUrl = `${window.location.origin}/review/${reviewId}`;
-        navigator.clipboard.writeText(reviewUrl)
-            .then(() => alert('리뷰 URL이 복사되었습니다!'))
-            .catch(() => alert('복사에 실패했습니다.'));
-    };
+  const [reviews, setReviews] = useState([]);
+  const [error, setError] = useState(null);
+  const [likedReviews, setLikedReviews] = useState([]);
+  const [selectedReviewId, setSelectedReviewId] = useState(null);
 
-    useEffect(() => {
-        const storedProfileImage = localStorage.getItem('profileImage') || '';
-        console.log('프로필 이미지:', storedProfileImage);
-    }, []);
+  const getProfileImage = (path) => {
+    if (!path) return '/images/header/profile.png';
+    const isFullUrl = path.startsWith('http') || path.startsWith('/');
+    const prefix = path.startsWith('/') ? '' : '/uploads/';
+    return `${process.env.REACT_APP_API_URL}${isFullUrl ? '' : prefix}${path}`;
+  };
 
-    const handleLike = async (reviewId) => {
-        const alreadyLiked = likedReviews.includes(reviewId);
-        const endpoint = alreadyLiked ? 'unLike' : 'like';
+  const handleCommentClick = (reviewId) => {
+    setSelectedReviewId(reviewId);  // 모달 열기
+  };
+  const handleCloseModal = () => {
+    setSelectedReviewId(null);
+  };
+  const handleShare = (reviewId) => {
+    const reviewUrl = `${window.location.origin}/review/${reviewId}`;
+    navigator.clipboard.writeText(reviewUrl)
+      .then(() => alert('리뷰 URL이 복사되었습니다!'))
+      .catch(() => alert('복사에 실패했습니다.'));
+  };
 
-        try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/${endpoint}`);
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
-            setReviews(response.data);
-            setLikedReviews((prev) =>
-                alreadyLiked ? prev.filter((id) => id !== reviewId) : [...prev, reviewId]
-            );
-        } catch (err) {
-            console.error('좋아요 처리 실패:', err);
-            setError('좋아요 처리 중 문제가 발생했습니다.');
+  useEffect(() => {
+    const storedProfileImage = localStorage.getItem('profileImage') || '';
+    console.log('프로필 이미지:', storedProfileImage);
+  }, []);
+
+  const handleLike = async (reviewId) => {
+    const alreadyLiked = likedReviews.includes(reviewId);
+    const endpoint = alreadyLiked ? 'unLike' : 'like';
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/reviews/${reviewId}/${endpoint}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
+      setReviews(response.data);
+      setLikedReviews((prev) =>
+        alreadyLiked ? prev.filter((id) => id !== reviewId) : [...prev, reviewId]
+      );
+    } catch (err) {
+      console.error('좋아요 처리 실패:', err);
+      setError('좋아요 처리 중 문제가 발생했습니다.');
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllReviews = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
+        if (Array.isArray(response.data)) {
+          setReviews(response.data);
+        } else {
+          throw new Error("리뷰 데이터 형식이 올바르지 않습니다.");
         }
+      } catch (err) {
+        console.error('전체 리뷰 조회 실패:', err);
+        setError('리뷰를 불러오는 데 실패했습니다.');
+      }
     };
+    fetchAllReviews();
+  }, []);
 
-    useEffect(() => {
-        const fetchAllReviews = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
-                if (Array.isArray(response.data)) {
-                    setReviews(response.data);
-                } else {
-                    throw new Error("리뷰 데이터 형식이 올바르지 않습니다.");
-                }
-            } catch (err) {
-                console.error('전체 리뷰 조회 실패:', err);
-                setError('리뷰를 불러오는 데 실패했습니다.');
-            }
-        };
-        fetchAllReviews();
-    }, []);
-
-    return (
-        <>
-            <Header />
-            <ImageContainer>
-                <HeaderImage
-                    src="images/review/top_banner.png"
-                    alt="헤더 배경 이미지"
+  return (
+    <>
+      <Header />
+      <ImageContainer>
+        <HeaderImage
+          src="images/review/top_banner.png"
+          alt="헤더 배경 이미지"
+        />
+        <OverlayText>
+          음악 위에 남겨진 마음들, <br />
+          천천히 읽어보세요.
+        </OverlayText>
+        <ListenHereText>감상 가능한 곳</ListenHereText>
+        <LogoContainer>
+          <Logo src="images/playlist/logo1.png" alt="YouTube" />
+          <Logo src="images/playlist/logo2.png" alt="Spotify" />
+        </LogoContainer>
+      </ImageContainer>
+      <ButtonSection>
+        <RealTimeButton onClick={() => alert('실시간 리뷰 클릭!')}>
+          최신
+        </RealTimeButton>
+      </ButtonSection>
+      <Container>
+        {reviews.length === 0 ? (
+          <Text>리뷰가 아직 없습니다.</Text>
+        ) : (
+          reviews.map((review) => (
+            <ReviewCard key={review.review_id}>
+              <LeftSection>
+                <ProfileBoxVertical>
+                  <ProfileImage
+                    src={getProfileImage(review.user_profile)}
+                    alt="profile"
+                  />
+                  <ProfileName>{review.user_name}</ProfileName>
+                  <CreatedAt>{review.created_at.slice(0, 16).replace('T', ' ')}</CreatedAt>
+                </ProfileBoxVertical>
+                <AlbumImage
+                  src={review.album_image_url}
+                  alt="Album"
                 />
-                <OverlayText>
-                    음악 위에 남겨진 마음들, <br />
-                    천천히 읽어보세요.
-                </OverlayText>
-                <ListenHereText>감상 가능한 곳</ListenHereText>
-                <LogoContainer>
-                    <Logo src="images/playlist/logo1.png" alt="YouTube" />
-                    <Logo src="images/playlist/logo2.png" alt="Spotify" />
-                </LogoContainer>
-            </ImageContainer>
-            <ButtonSection>
-                <RealTimeButton onClick={() => alert('실시간 리뷰 클릭!')}>
-                    최신
-                </RealTimeButton>
-            </ButtonSection>
-            <Container>
-                {reviews.length === 0 ? (
-                    <Text>리뷰가 아직 없습니다.</Text>
-                ) : (
-                    reviews.map((review) => (
-                        <ReviewCard key={review.review_id}>
-                            <LeftSection>
-                                <ProfileBoxVertical>
-                                    <ProfileImage
-                                        src={'/images/header/profile.png'}
-                                        alt="Profile"
-                                    />
-                                    <ProfileName>{review.user_name}</ProfileName>
-                                    <CreatedAt>{review.created_at.slice(0, 16).replace('T', ' ')}</CreatedAt>
-                                </ProfileBoxVertical>
-                                <AlbumImage
-                                    src={review.album_image_url}
-                                    alt="Album"
-                                />
-                                <SongName>{review.playlist_music_name}</SongName>
-                            </LeftSection>
+                <SongName>{review.playlist_music_name}</SongName>
+              </LeftSection>
 
-                            <RightSection>
-                                <RatingBox>
-                                    <Rating>{'★'.repeat(review.rating)}</Rating>
-                                </RatingBox>
-                                <CommentBox>{review.comment}</CommentBox>
-                                <Divider />
-                                <BottomSection>
-                                    <BottomLeftSection>
-                                        <LikeButton
-                                            active={likedReviews.includes(review.review_id)}
-                                            onClick={() => handleLike(review.review_id)}
-                                        >
-                                            <span className="material-icons-outlined">thumb_up</span>
-                                        </LikeButton>
-                                        <LikeButton onClick={() => handleCommentClick(review.review_id)}>
-                                            <span className="material-icons-outlined">chat</span>
-                                        </LikeButton>
-                                        <LikeButton onClick={() => handleShare(review.review_id)} title="공유하기">
-                                            <span className="material-icons-outlined">share</span>
-                                        </LikeButton>
-                                    </BottomLeftSection>
-                                    <BottomLeftSection>
-                                        <SmallGrayText>좋아요 {review.like_count}</SmallGrayText>
-                                        <SmallGrayText>댓글 {review.comment_count}</SmallGrayText>
-                                    </BottomLeftSection>
-                                </BottomSection>
-                            </RightSection>
-                        </ReviewCard>
-                    ))
-                )}
+              <RightSection>
+                <RatingBox>
+                  <Rating>{'★'.repeat(review.rating)}</Rating>
+                </RatingBox>
+                <CommentBox>{review.comment}</CommentBox>
+                <Divider />
+                <BottomSection>
+                  <BottomLeftSection>
+                    <LikeButton
+                      active={likedReviews.includes(review.review_id)}
+                      onClick={() => handleLike(review.review_id)}
+                    >
+                      <span className="material-icons-outlined">thumb_up</span>
+                    </LikeButton>
+                    <LikeButton onClick={() => handleCommentClick(review.review_id)}>
+                      <span className="material-icons-outlined">chat</span>
+                    </LikeButton>
+                    <LikeButton onClick={() => handleShare(review.review_id)} title="공유하기">
+                      <span className="material-icons-outlined">share</span>
+                    </LikeButton>
+                  </BottomLeftSection>
+                  <BottomLeftSection>
+                    <SmallGrayText>좋아요 {review.like_count}</SmallGrayText>
+                    <SmallGrayText>댓글 {review.comment_count}</SmallGrayText>
+                  </BottomLeftSection>
+                </BottomSection>
+              </RightSection>
+            </ReviewCard>
+          ))
+        )}
 
-                {error && <ErrorText>{error}</ErrorText>}
-            </Container>
-            {selectedReviewId && (
-                <ReviewCommentModal reviewId={selectedReviewId} onClose={handleCloseModal} />
-            )}
-            <Footer />
-        </>
-    );
+        {error && <ErrorText>{error}</ErrorText>}
+      </Container>
+      {selectedReviewId && (
+        <ReviewCommentModal reviewId={selectedReviewId} onClose={handleCloseModal} />
+      )}
+      <Footer />
+    </>
+  );
 }
 
 // Styled Components
