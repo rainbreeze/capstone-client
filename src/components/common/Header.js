@@ -10,6 +10,7 @@ const Header = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [user, setUser] = useState(null);
     const [userName, setuserName] = useState(null);
+    const [profileImage, setProfileImage] = useState(null);  // 추가
 
     const location = useLocation();
     const transparentPaths = ['/playlist', '/viewreview'];
@@ -18,9 +19,20 @@ const Header = () => {
     useEffect(() => {
         const loggedUserId = localStorage.getItem('userId');
         const loggeduserName = localStorage.getItem('userName');
+        const loggedProfileImage = localStorage.getItem('profileImage');
+
         if (loggedUserId) {
-            setUser({ userId: loggedUserId});
-            setuserName({userName: loggeduserName});
+            setUser({ userId: loggedUserId });
+            setuserName({ userName: loggeduserName });
+
+            if (loggedProfileImage) {
+                const fullImageUrl = loggedProfileImage.startsWith('http') || loggedProfileImage.startsWith('/')
+                    ? `${process.env.REACT_APP_API_URL}${loggedProfileImage.startsWith('/') ? '' : '/uploads/'}${loggedProfileImage}`
+                    : `${process.env.REACT_APP_API_URL}/uploads/${loggedProfileImage}`;
+                setProfileImage(fullImageUrl);
+            } else {
+                setProfileImage(null);
+            }
         }
     }, []);
 
@@ -125,7 +137,10 @@ const Header = () => {
             <Overlay open={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
             <Sidebar open={isSidebarOpen} onClick={(e) => e.stopPropagation()}>
                 <SidebarBanner>
-                    <ProfileImage src="/images/header/profile.png" alt="Profile" />
+                    <ProfileImage
+                        src={profileImage ? profileImage : "/images/header/profile.png"}
+                        alt="Profile"
+                    />
                     <TextBox>
                         <UserName>{user ? `안녕하세요, ${userName.userName}님` : '게스트'}</UserName>
                         <WelcomeText>음악과 게임을 즐겨보세요.</WelcomeText>
