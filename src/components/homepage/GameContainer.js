@@ -68,7 +68,7 @@ const GameContainer = () => {
             <ul>
               {popupData.map((track, idx) => (
                 <li key={track.id || idx}>
-                  <img src={track.album.images[0]?.url || ''}/>
+                  <img src={track.album.images[0]?.url || ''} alt={track.name} />
                   <strong>{track.name}</strong> - {track.artists.map(a => a.name).join(', ')}
                 </li>
               ))}
