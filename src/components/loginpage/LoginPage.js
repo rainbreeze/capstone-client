@@ -53,7 +53,7 @@ const LoginPage = () => {
                 <h1 style={styles.h1}>로그인</h1>
                 <form onSubmit={handleLoginSubmit}>
                     <div style={styles.inputGroup}>
-                        <label style={styles.label}>아 이 디</label>
+                        <label style={styles.label}>아이디</label>
                         <input
                             type="text"
                             value={userId}
@@ -80,8 +80,10 @@ const LoginPage = () => {
 
 const styles = {
     h1: {
-        fontSize: '4vw',
-        fontFamily: 'Jua',
+        fontSize: '3vw',
+        fontFamily: 'Noto Sans KR',
+        marginTop: '22vh',
+        marginBottom: '4vh'
     },
     container: {
         padding: '20px',
@@ -91,10 +93,12 @@ const styles = {
         marginBottom: '10px',
     },
     label: {
-        fontFamily: 'Jua',
+        fontFamily: 'Noto Sans KR',
         fontSize: '2vw',
         display: 'block',
         marginBottom: '1vh',
+        fontWeight: '600',
+        margin: '2vh'
     },
     input: {
         padding: '10px',
@@ -106,14 +110,16 @@ const styles = {
         border: '1px solid #ccc',
     },
     submitButton: {
-        backgroundColor: '#1ED760',
+        backgroundColor: 'black',
         color: '#fff',
         border: 'none',
         padding: '10px 20px',
         fontSize: '16px',
         cursor: 'pointer',
         borderRadius: '5px',
-        fontFamily: 'Jua'
+        fontFamily: 'Noto Sans KR',
+        marginTop: '4vh',
+        marginBottom: '16vh'
     },
 };
 

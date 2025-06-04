@@ -151,9 +151,9 @@ const RegisterPage = () => {
                         <React.Fragment key={s}>
                             <div style={{
                                 ...styles.stepCircle,
-                                backgroundColor: step >= s ? '#1ED760' : '#fff',
+                                backgroundColor: step >= s ? 'black' : '#fff',
                                 color: step >= s ? '#fff' : '#ccc',
-                                borderColor: step >= s ? '#1ED760' : '#ccc'
+                                borderColor: step >= s ? 'black' : '#ccc'
                             }}>
                                 {s}
                             </div>
@@ -196,8 +196,10 @@ const RegisterPage = () => {
 
 const styles = {
     h1: {
-        fontSize: '4vw',
-        fontFamily: 'Jua',
+        fontSize: '3vw',
+        fontFamily: 'Noto Sans KR',
+        marginTop: '22vh',
+        marginBottom: '4vh',
     },
     container: {
         padding: '20px',
@@ -207,29 +209,33 @@ const styles = {
         marginBottom: '10px',
     },
     label: {
-        fontFamily: 'Jua',
+        fontFamily: 'Noto Sans KR',
         fontSize: '2vw',
         display: 'block',
         marginBottom: '1vh',
+        fontWeight: '600',
+        margin: '2vh',
     },
     input: {
         padding: '10px',
         marginTop: '5px',
         width: '300px',
         fontSize: '16px',
-        fontFamily: 'Jua',
+        fontFamily: 'Noto Sans KR',
         borderRadius: '5px',
         border: '1px solid #ccc',
     },
     submitButton: {
-        backgroundColor: '#1ED760',
+        backgroundColor: 'black',
         color: '#fff',
         border: 'none',
         padding: '10px 20px',
         fontSize: '16px',
         cursor: 'pointer',
         borderRadius: '5px',
-        fontFamily: 'Jua'
+        fontFamily: 'Noto Sans KR',
+        marginTop: '4vh',
+        marginBottom: '16vh',
     },
     stepIndicatorWrapper: {
         display: 'flex',
@@ -248,7 +254,7 @@ const styles = {
         alignItems: 'center',
         fontWeight: 'bold',
         fontSize: '16px',
-        fontFamily: 'Jua',
+        fontFamily: 'Noto Sans KR',
         transition: 'all 0.3s ease',
     },
     stepLine: {
