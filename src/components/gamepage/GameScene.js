@@ -11,6 +11,50 @@ let genres = [
     { name: 'R&B', count: 0 },
 ];
 
+const randomQuestions = [{
+        // tempo
+        question: "어떤 색의 장미로 꽃다발을 만들래?",
+        options: [
+            { text: "파란 장미", genres: ["hiphop", "R&B", "pop", "rap"] },
+            { text: "빨간 장미", genres: ["rock", "edm", "latin"] }
+        ]
+    },
+    // valence
+    {
+        question: "12시 vs 00시",
+        options: [
+            { text: "12시", genres: ["rock", "rap", "latin", "hiphop", "R&B"] },
+            { text: "00시", genres: ["edm", "pop"] }
+        ]
+    },
+    // danceablity
+    {
+        question: "나를 나타내는 단어는?",
+        options: [
+            { text: "Calm", genres: ["rock", "edm", "pop", "R&B"] },
+            { text: "Hype", genres: ["rap", "hiphop", "latin"] }
+        ]
+    },
+    // liveness
+    {
+        question: "어떤 상황에서 더 음악이 듣고싶은가요?",
+        options: [
+            { text: "집에서 혼자 편안히 쉴 때", genres: ["rock", "R&B", "pop", "latin"] },
+            { text: "친구들과 함께 놀고있을 때", genres: ["rap", "edm", "hiphop"] }
+        ]
+    }
+];
+
+const fixedQuestion = {
+    question: "지금 하나를 고른다면?",
+    options: [
+        { text: "LP 판", year: 1980, },
+        { text: "카세트 플레이어", year: 2000 },
+        { text: "에어팟 맥스", year: 2020, }
+    ]
+};
+
+
 
 const storedUserId = localStorage.getItem('userId');
 
@@ -51,19 +95,18 @@ export default class GameScene extends Phaser.Scene {
         this.stageIndex = data.stageIndex || 0
         this.score = data.score || 0;
         this.lives = lives;
-
+        this.selectedYear = data.selectedYear || 2025
     }
 
 
     create(data) {
 
+        // 로그인 해야지 이용 가능
         if (!storedUserId) {
-            // alert('로그인 후 다시 시도해주세요.');
-            // window.location.href = '/';
-            storedUserId = 'rainbreeze2';
+            alert('로그인 후 다시 시도해주세요.');
+            window.location.href = '/';
         }
 
-        console.log(storedUserId);
         const mapKey = `map${this.stageIndex + 1}`;
 
         const map = this.make.tilemap({ key: mapKey });
@@ -89,14 +132,6 @@ export default class GameScene extends Phaser.Scene {
             fill: '#fff',
             fontFamily: 'noto-sans'
         }).setScrollFactor(0);
-
-        // 캐릭터 선택 이미지
-        // let imageName = {
-        //     char1: 'Char1',
-        //     char2: 'Char2',
-        //     char3: 'Char3'
-        // }[this.selectedCharacter];
-
 
 
         this.player = this.physics.add.sprite(10, 300, 'char1').setScale(0.3);
@@ -281,39 +316,79 @@ export default class GameScene extends Phaser.Scene {
         return shuffled.slice(0, n);
     }
 
+    // 랜덤 질문
+    getRandomQuestion() {
+        const q = Phaser.Utils.Array.GetRandom(randomQuestions);
+        return q;
+    }
+
+
     showChoiceButtons() {
         this.controlsEnabled = false;
+        const mapKey = `map${this.stageIndex + 1}`;
+        const map = this.make.tilemap({ key: mapKey });
 
-        const choices = this.getRandomGenres(2);
+        let questionObj;
+        if (this.stageIndex === 2) {
+            questionObj = fixedQuestion;
+        } else {
+            questionObj = Phaser.Utils.Array.GetRandom(randomQuestions);
+        }
 
-        const centerX = this.player.x;
-        const centerY = this.player.y;
+        const { question, options } = questionObj;
 
-        const option1 = this.add.text(centerX - 50, centerY, choices[0].name, this.getTextStyle()).setOrigin(0.5).setInteractive();
-        const option2 = this.add.text(centerX + 50, centerY, choices[1].name, this.getTextStyle()).setOrigin(0.5).setInteractive();
+        const centerX = map.widthInPixels / 2;
+        const centerY = map.heightInPixels / 2;
 
-        this.choiceGroup = this.add.group([option1, option2]);
-        this.setButtonEvents(option1, choices[0].name);
-        this.setButtonEvents(option2, choices[1].name);
+        const questionText = this.add.text(centerX, centerY - 60, question, {
+            fontSize: '16px',
+            fontFamily: 'noto-sans',
+            fill: '#fff',
+            backgroundColor: '#333',
+            padding: { x: 20, y: 8 }
+        }).setOrigin(0.5);
+
+        this.choiceGroup = this.add.group([questionText]);
+
+        const totalOptions = options.length;
+        const spacing = 160; // 버튼 간 간격
+
+        options.forEach((opt, idx) => {
+            const btn = this.add.text(0, 0, opt.text, this.getTextStyle()).setInteractive();
+            const offset = (idx - (totalOptions - 1) / 2) * spacing;
+            btn.setPosition(centerX + offset, centerY).setOrigin(0.5);
+
+            this.choiceGroup.add(btn);
+            this.setButtonEvents(btn, opt);
+        });
     }
+
+
+
 
     getTextStyle() {
         return {
             fontFamily: 'noto-sans',
-            fontSize: '12px',
+            fontSize: '14px',
             fill: '#000',
             backgroundColor: '#fff',
-            padding: { x: 10, y: 10 }
+            padding: { x: 15, y: 15 }
         };
     }
 
-    setButtonEvents(btn, value) {
+    setButtonEvents(btn, genreObj) {
         btn.on('pointerdown', () => {
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
-            console.log('choice genre: ', value);
 
-            genres.find(g => g.name === value).count += 1;
+            if (genreObj.genres) {
+                genreObj.genres.forEach(name => {
+                    const g = genres.find(g => g.name === name);
+                    if (g) g.count += 1;
+                });
+            } else if (genreObj.year) {
+                this.selectedYear = genreObj.year;
+            }
 
             if (this.stageIndex < totalStages - 1) {
                 this.scene.restart({
@@ -323,10 +398,13 @@ export default class GameScene extends Phaser.Scene {
             } else {
                 const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
                 console.log('가장 많이 선택된 장르:', result.name);
+                console.log('년도: ', this.selectedYear);
                 this.showSearchResult(result.name);
             }
         });
     }
+
+
 
     showResultPopup(result) {
         this.controlsEnabled = false;
@@ -342,7 +420,7 @@ export default class GameScene extends Phaser.Scene {
             userId: storedUserId,
             score: score,
             genre: genre,
-            year: 2005,
+            year: this.selectedYear,
         };
 
         try {
