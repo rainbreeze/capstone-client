@@ -87,17 +87,6 @@
                     "y": 272
                 },
                 {
-                    "height": 32,
-                    "id": 9,
-                    "name": "ground",
-                    "rotation": 0,
-                    "type": "Collision",
-                    "visible": true,
-                    "width": 800,
-                    "x": 0,
-                    "y": 352
-                },
-                {
                     "height": 48,
                     "id": 10,
                     "name": "spike 1",
@@ -118,6 +107,28 @@
                     "width": 48,
                     "x": 432,
                     "y": 304
+                },
+                {
+                    "height": 32,
+                    "id": 17,
+                    "name": "Ground",
+                    "rotation": 0,
+                    "type": "Collision",
+                    "visible": true,
+                    "width": 128,
+                    "x": 0,
+                    "y": 352
+                },
+                {
+                    "height": 32,
+                    "id": 18,
+                    "name": "Ground",
+                    "rotation": 0,
+                    "type": "Collision",
+                    "visible": true,
+                    "width": 608,
+                    "x": 192,
+                    "y": 352
                 }
             ],
             "opacity": 1,
@@ -128,7 +139,7 @@
         }
     ],
     "nextlayerid": 4,
-    "nextobjectid": 17,
+    "nextobjectid": 19,
     "orientation": "orthogonal",
     "renderorder": "right-down",
     "tiledversion": "1.11.2",
