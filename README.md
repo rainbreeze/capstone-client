@@ -11,16 +11,16 @@ Beatopia는 Beat + Utopia의 합성어로, 자신이 즐기는 음악을 추천�
 
 
 
-# 프로젝트 구성
+# 프로젝트 구성 / 기술 스택
 
 FrontEnd = Phaser3 + React JS + bootstrap <br />
 BackEnd = nodeJS + express / MySQL <br />
 
-최종 branch: master <br />
+**최종 branch**: master <br />
 
-# 기술 스택
 
-![image.png](attachment:cfc2fbcd-bc1f-4aeb-b340-be6c8085690d:image.png)
+![image](https://github.com/user-attachments/assets/c558a283-fcc2-44a5-a230-00445b254b90)
+
 
 **커뮤니티 기능**은 클라이언트-서버 아키텍처를 기반으로, **React**, **Node.js**, **MySQL**을 사용하여 구현하였습니다. 배포는 **Railway**와 **Netlify**를 활용하여 수행했습니다. <br />
 
