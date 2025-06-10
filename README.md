@@ -18,6 +18,16 @@ BackEnd = nodeJS + express / MySQL <br />
 
 최종 branch: master <br />
 
+# 기술 스택
+
+![image.png](attachment:cfc2fbcd-bc1f-4aeb-b340-be6c8085690d:image.png)
+
+**커뮤니티 기능**은 클라이언트-서버 아키텍처를 기반으로, **React**, **Node.js**, **MySQL**을 사용하여 구현하였습니다. 배포는 **Railway**와 **Netlify**를 활용하여 수행했습니다. <br />
+
+**게임 기능**은 **JavaScript**와 **Phaser.js** 라이브러리를 사용하여 클라이언트 측에서 구현하였으며, 서버와의 원활한 연동을 통해 실시간 상호작용을 구현했습니다. <br />
+
+**음악 추천 알고리즘**은 **Spotify API**와 **JavaScript**를 활용하여 개발되었으며, 추후에는 해당 알고리즘에 머신러닝 모델을 적용하여 추천 정확도를 높일 예정입니다. 이를 위해 데이터를 기반으로 모델을 학습시킬 계획입니다. <br />
+
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
