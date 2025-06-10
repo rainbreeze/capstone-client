@@ -14,7 +14,9 @@ Beatopia는 Beat + Utopia의 합성어로, 자신이 즐기는 음악을 추천�
 # 프로젝트 구성
 
 FrontEnd = Phaser3 + React JS + bootstrap <br />
-BackEnd = nodeJS + express / MySQL
+BackEnd = nodeJS + express / MySQL <br />
+
+최종 branch: master <br />
 
 
 
