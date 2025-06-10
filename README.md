@@ -37,32 +37,8 @@ https://sweng.site/
 
 # 프로젝트 구조
 
-CAPSTONE-CLIENT/
-├── public/
-│   └── assets/
-│       ├── images/             # 게임 및 앱에 쓰이는 각종 이미지
-│       │   ├── Character1.png, bullet.png, heart.png, note.png 등
-│       ├── tilemaps/           # Tiled로 만든 맵 JSON
-│       │   ├── section01.json, section02.json, section03.json
-│       └── tilesets/           # Tiled에서 사용하는 타일셋 이미지
-│           ├── clean_16x16_tileset.png, music_box_64x64.png
-├── src/
-│   ├── components/
-│   │   ├── common/             # 공통 UI 컴포넌트 (Footer, Header)
-│   │   ├── gamepage/           # Phaser 게임 씬 관련 코드
-│   │   │   ├── IntroScene.js, MainScene.js, GameScene.js, ChoiceScene.js
-│   │   ├── homepage/           # 홈 화면 페이지
-│   │   ├── loginpage/
-│   │   ├── mypage/
-│   │   ├── playlistpage/
-│   │   ├── registerpage/
-│   │   ├── reviewpage/
-│   │   ├── testpage/
-│   ├── App.js                  # 라우팅 및 전역 뼈대
-│   ├── index.js                # 엔트리 포인트
-├── .env
-├── package.json
-├── tsconfig.json
+<img width="792" alt="image" src="https://github.com/user-attachments/assets/b77c270d-35f8-4ff7-b4d3-2c3bde3296ad" />
+
 
 
 # 주요 기능
