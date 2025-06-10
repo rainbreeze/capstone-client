@@ -48,13 +48,11 @@ const randomQuestions = [{
 const fixedQuestion = {
     question: "지금 하나를 고른다면?",
     options: [
-        { text: "LP 판", year: 1980, },
-        { text: "카세트 플레이어", year: 2000 },
-        { text: "에어팟 맥스", year: 2020, }
+        { text: "LP 판", year: '1950-1980', },
+        { text: "카세트 플레이어", year: '1981-2005' },
+        { text: "에어팟 맥스", year: '2006-2025', }
     ]
 };
-
-
 
 const storedUserId = localStorage.getItem('userId');
 
@@ -76,6 +74,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('noteImage', 'assets/images/note.png');
         this.load.image('spikeImage', 'assets/images/spike.png');
         this.load.image('heart', 'assets/images/heart.png');
+        this.load.image('bullet', 'assets/images/bullet.png');
+
 
 
         this.load.tilemapTiledJSON('map1', 'assets/tilemaps/section01.json');
@@ -108,6 +108,8 @@ export default class GameScene extends Phaser.Scene {
         }
 
         const mapKey = `map${this.stageIndex + 1}`;
+
+        console.log(this.stageIndex);
 
         const map = this.make.tilemap({ key: mapKey });
         // 공통 코드
@@ -177,9 +179,46 @@ export default class GameScene extends Phaser.Scene {
 
             if (cls === 'Collision') {
                 const zone = this.add.zone(centerX, centerY, width, height);
-                this.physics.add.existing(zone, true); // true: static body
+                this.physics.add.existing(zone, true);
                 this.physics.add.collider(this.player, zone);
             }
+
+            if (this.stageIndex === 2 && cls === 'bullet') {
+                this.bullet = this.physics.add.image(centerX, centerY, 'bullet')
+                    .setScale(0.2)
+                    .setVisible(false)
+                    .setActive(false);
+
+                this.bullet.refreshBody();
+                this.bullet.bulletActivated = false;
+
+                this.physics.add.overlap(this.player, this.bullet, () => {
+                    if (!this.isInvincible) {
+                        console.log('bullet touch!');
+                        lives -= 1;
+                        this.updateLivesUI();
+                        this.isInvincible = true;
+
+                        this.tweens.add({
+                            targets: this.player,
+                            alpha: 0.3,
+                            duration: 100,
+                            yoyo: true,
+                            repeat: 5,
+                            onComplete: () => this.player.setAlpha(1)
+                        });
+
+                        this.time.delayedCall(1000, () => {
+                            this.isInvincible = false;
+                        });
+
+                        if (lives <= 0) {
+                            this.gameOver();
+                        }
+                    }
+                });
+            }
+
 
             if (cls === 'spike') {
                 const spike = this.physics.add.staticImage(centerX, centerY, 'spikeImage')
@@ -263,6 +302,8 @@ export default class GameScene extends Phaser.Scene {
 
         this.choiceShown = false;
 
+        console.log('this.bullet:', this.bullet);
+
     }
 
     update() {
@@ -301,6 +342,20 @@ export default class GameScene extends Phaser.Scene {
                 this.player.anims.play('char1_jump', true);
             }
         }
+
+        if (this.bullet) {
+            if (!this.bullet.bulletActivated) {
+                const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.bullet.x, this.bullet.y);
+                if (distance < 150) {
+                    console.log('bullet 활성화!');
+                    this.bullet.bulletActivated = true;
+                    this.bullet.setVisible(true).setActive(true);
+                }
+            } else {
+                this.physics.moveToObject(this.bullet, this.player, 80);
+            }
+        }
+
     }
 
     updateLivesUI() {

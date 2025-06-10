@@ -129,6 +129,17 @@
                     "width": 608,
                     "x": 192,
                     "y": 352
+                },
+                {
+                    "height": 48,
+                    "id": 19,
+                    "name": "bullet",
+                    "rotation": 0,
+                    "type": "bullet",
+                    "visible": true,
+                    "width": 80,
+                    "x": 592,
+                    "y": 304
                 }
             ],
             "opacity": 1,
@@ -139,7 +150,7 @@
         }
     ],
     "nextlayerid": 4,
-    "nextobjectid": 19,
+    "nextobjectid": 20,
     "orientation": "orthogonal",
     "renderorder": "right-down",
     "tiledversion": "1.11.2",
@@ -160,7 +171,7 @@
         {
             "columns": 4,
             "firstgid": 257,
-            "image": "../tilesets/music_box_64x64.png",
+            "image": "..\/tilesets\/music_box_64x64.png",
             "imageheight": 64,
             "imagewidth": 64,
             "margin": 0,

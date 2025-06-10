@@ -47,8 +47,8 @@ class MainScene extends Phaser.Scene {
 
 
         //임시 설정창
-        const settingBtn = this.add.image(700, centerY + 100, 'settingButton').setInteractive();
-        settingBtn.setDisplaySize(100, 100)
+        // const settingBtn = this.add.image(700, centerY + 100, 'settingButton').setInteractive();
+        // settingBtn.setDisplaySize(100, 100)
 
 
         //임시 버튼 스타일
