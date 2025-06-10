@@ -40,8 +40,20 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 +) 추후 스테이지가 추가될 예정이며, 사용자의 걸음 방향, 점프 횟수, 빠르게 달리기 등을 통해 머신러닝으로 데이터를 추가 수집 및 추천장르를 정의할 예정입니다.
 
+## 2. Home Page
+![홈](https://github.com/user-attachments/assets/80c89b22-4902-48ca-ac2a-5908bfc7572e)
 
+## 3. Playlist Page
+![내음악](https://github.com/user-attachments/assets/3800cb58-51fa-4e9c-b312-94aae58e0515)
 
+## 4. Review Page
+![감상평](https://github.com/user-attachments/assets/cab38a70-0005-46ce-8f1a-2993886024dd)
+
+## 5. Login/Register Page
+![로그인_회원가입](https://github.com/user-attachments/assets/bbb4a576-bdab-4b9d-8df8-5f889a164104)
+
+## 6. Myinfo Page
+![내정보](https://github.com/user-attachments/assets/78b715b9-e75d-4181-993d-39464cdc9a0f)
 
 
 ## 프로젝트 실행 방법
