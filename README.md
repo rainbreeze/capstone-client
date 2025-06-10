@@ -10,7 +10,6 @@ Beatopia는 Beat + Utopia의 합성어로, 자신이 즐기는 음악을 추천�
 
 
 
-
 # 프로젝트 구성 / 기술 스택
 
 FrontEnd = Phaser3 + React JS + bootstrap <br />
@@ -31,6 +30,40 @@ BackEnd = nodeJS + express / MySQL <br />
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+# 최종 배포 사이트
+
+https://sweng.site/ 
+
+# 프로젝트 구조
+
+CAPSTONE-CLIENT/
+├── public/
+│   └── assets/
+│       ├── images/             # 게임 및 앱에 쓰이는 각종 이미지
+│       │   ├── Character1.png, bullet.png, heart.png, note.png 등
+│       ├── tilemaps/           # Tiled로 만든 맵 JSON
+│       │   ├── section01.json, section02.json, section03.json
+│       └── tilesets/           # Tiled에서 사용하는 타일셋 이미지
+│           ├── clean_16x16_tileset.png, music_box_64x64.png
+├── src/
+│   ├── components/
+│   │   ├── common/             # 공통 UI 컴포넌트 (Footer, Header)
+│   │   ├── gamepage/           # Phaser 게임 씬 관련 코드
+│   │   │   ├── IntroScene.js, MainScene.js, GameScene.js, ChoiceScene.js
+│   │   ├── homepage/           # 홈 화면 페이지
+│   │   ├── loginpage/
+│   │   ├── mypage/
+│   │   ├── playlistpage/
+│   │   ├── registerpage/
+│   │   ├── reviewpage/
+│   │   ├── testpage/
+│   ├── App.js                  # 라우팅 및 전역 뼈대
+│   ├── index.js                # 엔트리 포인트
+├── .env
+├── package.json
+├── tsconfig.json
+
 
 # 주요 기능
 
@@ -82,59 +115,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-# 그 외 npm 명령어 (참고용)
 
-`npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-`npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-`npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 시연 영상
