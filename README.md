@@ -2,7 +2,8 @@
 
 Beatopia는 Beat + Utopia의 합성어로, 자신이 즐기는 음악을 추천받고 자유롭게 공유할 수 있다는 의미를 담았습니다. <br />
 
-![ChatGPT Image 2025년 6월 11일 오전 07_44_40](https://github.com/user-attachments/assets/77f84180-73bd-4985-8eb7-8d6f81057f9b)
+<img src="https://github.com/user-attachments/assets/d6b9a0a9-4b6f-4a6e-bb9e-9db63c3596f0" width="400">
+
 *실제 로고는 아니며 서비스의 이해를 돕기위한 이미지입니다. 
 
 
