@@ -42,19 +42,26 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## 2. Home Page
 ![홈](https://github.com/user-attachments/assets/80c89b22-4902-48ca-ac2a-5908bfc7572e)
-
+- 웹의 홈페이지입니다. 유저 친화적인 인터페이스로, 헤더와 사이드바, 배너, 랭킹 컴포넌트 등등을 관리합니다.
+  
 ## 3. Playlist Page
 ![내음악](https://github.com/user-attachments/assets/3800cb58-51fa-4e9c-b312-94aae58e0515)
-
+- 게임을 통해서 생성한 사용자 맞춤 플레이 리스트를 관리하는 페이지입니다.
+- 각 플레이리스트들을 클릭하면 디테일 모달이 열리며, 해당 섹션에서 트랙 선택 및 SPOTIFY에서 듣기, 리뷰 작성이 가능합니다.
+  
 ## 4. Review Page
 ![감상평](https://github.com/user-attachments/assets/cab38a70-0005-46ce-8f1a-2993886024dd)
+- 플레이 리스트 페이지에서 생성된 감상평들을 감상하고, 댓글 및 답글 좋아요 링크 등과 같은 기능을 사용 할 수 있는 페이지입니다.
+- 감상평에 댓글 버튼을 누르면, 댓글 모달이 열리며 거기서 댓글쓰기, 답글쓰기 같은 이벤트 처리가 가능합니다.
 
 ## 5. Login/Register Page
 ![로그인_회원가입](https://github.com/user-attachments/assets/bbb4a576-bdab-4b9d-8df8-5f889a164104)
+- 회원의 기본 정보를 관리할 수 있게 서버 데이터베이스와 연동하여 회원관리를 하는 페이지입니다.
+- 회원가입은 총 3단계로 진행하며, password인증 이메일 형식 인증 등이 적용됩니다.
 
 ## 6. Myinfo Page
 ![내정보](https://github.com/user-attachments/assets/78b715b9-e75d-4181-993d-39464cdc9a0f)
-
+- 사용자에 프로필을 등록할 수 있고, 사용자 정보를 간략하게 확인할 수 있는 페이지입니다.
 
 ## 프로젝트 실행 방법
 
