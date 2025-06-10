@@ -94,3 +94,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 
 ## 시연 영상
+
+시연 영상의 크기가 너무 커 직접 등록이 불가능해 구글 드라이브의 링크로 첨부합니다.
+
+https://drive.google.com/file/d/1p9JjIHDY9mvltfq0VpMXUSWOusg6vk0B/view?usp=sharing
