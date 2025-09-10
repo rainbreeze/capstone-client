@@ -3,7 +3,7 @@ import Header from '../common/Header';
 import Footer from '../common/Footer';
 
 const TempPage = () => {
-    const pdfUrl = "https://drive.google.com/file/d/1physI-5jIF3XxK85-g4JJAvk6iw58SKO/preview"
+    const pdfUrl = "https://drive.google.com/file/d/1MS-pz98EVlA2nZjhuiYh574uz-8twWe_/preview"
     return (
         <div>
             <Header />
