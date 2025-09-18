@@ -9,7 +9,6 @@ import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
 import ViewReviewPage from './components/reviewpage/ViewReviewPage';
 import MyPage from "./components/mypage/MyPage";
-import TempPage from "./components/temppage/TempPage";
 
 function App() {
   return (
@@ -24,7 +23,6 @@ function App() {
         <Route path="/signup" element={<RegisterPage />} />  {/* 회원가입입 페이지 */}
         <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
         <Route path="/viewreview" element={<ViewReviewPage />} /> { /*감상평 보기 페이지 */}
-        <Route path="/temp" element={<TempPage />} /> { /*임시 페이지 */}
       </Routes>
     </Router>
   );

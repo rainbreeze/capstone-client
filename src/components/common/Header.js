@@ -94,11 +94,6 @@ const Header = () => {
                             테스트
                         </NavLink>
                     </NavItem>
-                    <NavItem scrolled={scrolled}>
-                        <NavLink as={Link} to="/temp">
-                            발표자료
-                        </NavLink>
-                    </NavItem>
                 </NavList>
             </NavLeft>
 
