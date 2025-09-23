@@ -60,6 +60,11 @@ const storedUserId = localStorage.getItem('userId');
 let score = 0;
 let lives = 3;
 let totalStages = 3;
+let totaljumpCount = 0;
+let stepCount = 0;
+let sprintCount = 0;
+let playTime = null;
+
 
 export default class GameScene extends Phaser.Scene {
 
@@ -93,6 +98,7 @@ export default class GameScene extends Phaser.Scene {
     init(data) {
         this.selectedCharacter = data.selectedCharacter;
         this.stageIndex = data.stageIndex || 0
+        this.stageStartTime = null;
         this.score = data.score || 0;
         this.lives = lives;
         this.selectedYear = data.selectedYear || 2025
@@ -119,6 +125,11 @@ export default class GameScene extends Phaser.Scene {
         this.isInvincible = false;
         this.isGameOver = false;
 
+
+        this.stageStartTime = Date.now();
+        console.log(this.stageStartTime);
+
+        this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
 
 
         // 맵 레이어
@@ -156,6 +167,10 @@ export default class GameScene extends Phaser.Scene {
             frameRate: 4,
             repeat: 0
         });
+
+        //걸음수 계산을 위한 위치저장
+        this.lastX = this.player.x;
+        console.log(this.lastX);
 
         this.jumpCount = 0;
         this.maxJump = 2;
@@ -309,9 +324,24 @@ export default class GameScene extends Phaser.Scene {
     update() {
         if (!this.controlsEnabled) return;
 
-        const speed = 300;
+        let speed = 200;
         const jumpPower = 400;
         const body = this.player.body;
+
+        const moved = Math.abs(this.player.x - this.lastX);
+
+        if (moved >= 10) { // 10px 움직일 때마다 1 step으로 간주
+            stepCount += 1;
+            this.lastX = this.player.x; // 기준점 갱신
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+            sprintCount += 1;
+            console.log('sprintCount: ', sprintCount)
+        }
+        if (this.shiftKey.isDown) {
+            speed = 350;
+        }
 
         // 좌우 이동
         body.setVelocityX(0);
@@ -336,6 +366,8 @@ export default class GameScene extends Phaser.Scene {
             Phaser.Input.Keyboard.JustDown(this.spaceKey) ||
             Phaser.Input.Keyboard.JustDown(this.cursors.up)
         ) {
+            totaljumpCount += 1;
+            console.log('totaljumpCount', totaljumpCount);
             if (this.jumpCount < this.maxJump) {
                 this.player.setVelocityY(-jumpPower);
                 this.jumpCount += 1;
@@ -433,6 +465,11 @@ export default class GameScene extends Phaser.Scene {
 
     setButtonEvents(btn, genreObj) {
         btn.on('pointerdown', () => {
+
+            const stageEndTime = Date.now();
+            playTime = Math.floor((stageEndTime - this.stageStartTime) / 1000);
+
+
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
 
@@ -444,6 +481,8 @@ export default class GameScene extends Phaser.Scene {
             } else if (genreObj.year) {
                 this.selectedYear = genreObj.year;
             }
+
+            this.sendStageStatData(genreObj.genre, stepCount, totaljumpCount, sprintCount, playTime, true)
 
             if (this.stageIndex < totalStages - 1) {
                 this.scene.restart({
@@ -469,6 +508,25 @@ export default class GameScene extends Phaser.Scene {
 
     }
 
+    async sendStageStatData(genre, steps, jumps, sprints, playTime, cleared) {
+        const gameStats = {
+            userId: storedUserId,
+            stage: this.stageIndex,
+            answer: genre,
+            steps: steps,
+            jumps: jumps,
+            sprints: sprints,
+            playTime: playTime,
+            cleared: cleared
+        }
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/game/saveStageStats`, gameStats);
+            console.log('게임 스테이지 스탯 데이터 저장 성공', res.data);
+        } catch (err) {
+            console.log('데이터 전송 실패', err);
+        }
+    }
+
 
     async showSearchResult(genre) {
         const gameData = {
@@ -487,7 +545,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    gameOver() {
+    gameOver(genreObj) {
         if (this.isGameOver) return;
         this.isGameOver = true;
 
@@ -497,6 +555,11 @@ export default class GameScene extends Phaser.Scene {
 
         const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
         console.log('가장 많이 선택된 장르:', result.name);
+
+        const stageEndTime = Date.now();
+        playTime = Math.floor((stageEndTime - this.stageStartTime) / 1000);
+
+        this.sendStageStatData(genreObj.genre, stepCount, totaljumpCount, sprintCount, playTime, false)
 
         this.add.text(400, 200, 'Game Over', {
             fontSize: '32px',
