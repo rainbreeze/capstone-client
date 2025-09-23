@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
+import {useNavigate} from 'react-router-dom';
 
 const LoginPage = () => {
     // 상태 설정
