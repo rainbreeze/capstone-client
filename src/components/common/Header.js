@@ -1,40 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
 import { FiSearch } from 'react-icons/fi';
-import { useLocation } from 'react-router-dom';
 
 const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [user, setUser] = useState(null);
-    const [userName, setuserName] = useState(null);
-    const [profileImage, setProfileImage] = useState(null);  // 추가
+    const [userName, setUserName] = useState(null); // ✅ 수정: setUserName으로 통일
+    const [profileImage, setProfileImage] = useState(null);
 
     const location = useLocation();
+    const navigate = useNavigate();
     const transparentPaths = ['/playlist', '/viewreview'];
     const isTransparentPage = transparentPaths.includes(location.pathname);
 
     useEffect(() => {
         const loggedUserId = localStorage.getItem('userId');
-        const loggeduserName = localStorage.getItem('userName');
+        const loggedUserName = localStorage.getItem('userName');
         const loggedProfileImage = localStorage.getItem('profileImage');
 
         if (loggedUserId) {
             setUser({ userId: loggedUserId });
-            setuserName({ userName: loggeduserName });
+            setUserName(loggedUserName); // ✅ 수정: 상태를 객체가 아닌 문자열로 바로 저장
 
             if (loggedProfileImage) {
-                const fullImageUrl = loggedProfileImage.startsWith('http') || loggedProfileImage.startsWith('/')
-                    ? `${process.env.REACT_APP_API_URL}${loggedProfileImage.startsWith('/') ? '' : '/uploads/'}${loggedProfileImage}`
-                    : `${process.env.REACT_APP_API_URL}/uploads/${loggedProfileImage}`;
+                const fullImageUrl = loggedProfileImage.startsWith('http')
+                    ? loggedProfileImage
+                    : `${process.env.REACT_APP_API_URL}${loggedProfileImage}`;
                 setProfileImage(fullImageUrl);
             } else {
                 setProfileImage(null);
             }
+        } else {
+            setUser(null);
+            setUserName(null);
+            setProfileImage(null);
         }
-    }, []);
+    }, [location.pathname]); // ✅ URL 경로가 변경될 때마다 훅 재실행
 
     useEffect(() => {
         const handleScroll = () => {
@@ -57,6 +61,9 @@ const Header = () => {
     const handleLogout = () => {
         localStorage.clear();
         setUser(null);
+        setUserName(null);
+        setProfileImage(null);
+        navigate('/');
     };
 
     return (
@@ -133,7 +140,6 @@ const Header = () => {
                 </NavList>
             </NavRight>
 
-            {/* 항상 렌더링하는 오버레이와 사이드바 */}
             <Overlay open={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
             <Sidebar open={isSidebarOpen} onClick={(e) => e.stopPropagation()}>
                 <SidebarBanner>
@@ -142,7 +148,7 @@ const Header = () => {
                         alt="Profile"
                     />
                     <TextBox>
-                        <UserName>{user ? `안녕하세요, ${userName.userName}님` : '게스트'}</UserName>
+                        <UserName>{userName ? `안녕하세요, ${userName}님` : '게스트'}</UserName>
                         <WelcomeText>음악과 게임을 즐겨보세요.</WelcomeText>
                     </TextBox>
                 </SidebarBanner>
@@ -216,28 +222,27 @@ export default Header;
 
 // 스타일 컴포넌트
 
-// 여기 추가
 const WelcomeText = styled.div`
-    font-size: 1.5vw;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
-    margin-top: 0.3vw;
+  font-size: 1.5vw;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  margin-top: 0.3vw;
 `;
 
 const SidebarBanner = styled.div`
-    width: 100%;
-    height: 18vh;
-    background-image: url('/images/header/banner_bg.png'); /* 배경 이미지 경로 */
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: start;
-    padding: 0 4vw;
-    box-sizing: border-box;
-    color: white;
-    border-top-left-radius: 10px; 
+  width: 100%;
+  height: 18vh;
+  background-image: url('/images/header/banner_bg.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+  padding: 0 4vw;
+  box-sizing: border-box;
+  color: white;
+  border-top-left-radius: 10px;
 `;
 
 const TextBox = styled.div`
@@ -247,19 +252,19 @@ const TextBox = styled.div`
 `;
 
 const ProfileImage = styled.img`
-    width: 10vh;
-    height: 10vh;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: center;  /* 이미지 중앙을 기준으로 자르기 */
-    margin-right: 1.5vw;
-    border: 2px solid white;
-    display: block;           /* inline 이미지 여백 제거 */
+  width: 10vh;
+  height: 10vh;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  margin-right: 1.5vw;
+  border: 2px solid white;
+  display: block;
 `;
 
 const UserName = styled.div`
-    font-size: 2.5vw;
-    font-weight: bold;
+  font-size: 2.5vw;
+  font-weight: bold;
 `;
 
 
@@ -318,7 +323,7 @@ const HeaderWrapper = styled.header`
   transition: background-color 0.3s ease;
 
   background-color: ${({ transparent, scrolled }) =>
-        transparent ? 'transparent' : 'white'};
+          transparent ? 'transparent' : 'white'};
 `;
 
 const Logo = styled.img`
@@ -379,26 +384,26 @@ const NavLink = styled.a`
   transition: 0.7s ease;
 
   ${props =>
-        props.isLogout &&
-        `
+          props.isLogout &&
+          `
     color: black !important;
   `}
 
   ${props =>
-        props.isFirst &&
-        `
+          props.isFirst &&
+          `
     color: black !important;
   `}
 
   ${props =>
-        props.isSignup &&
-        `
+          props.isSignup &&
+          `
     color: black !important;
   `}
 
   @media (max-width: 768px) {
-    font-size: 2.5vw;
-  }
+  font-size: 2.5vw;
+}
 `;
 
 const NavItem = styled.li`
@@ -430,8 +435,8 @@ const Sidebar = styled.div`
   z-index: 100;
   transform: translateX(${props => (props.open ? '0' : '100%')});
   transition: transform 0.3s ease-in-out;
-    border-top-left-radius: 10px;  /* 왼쪽 상단 둥글게 */
-    border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 `;
 
 const SidebarList = styled.ul`

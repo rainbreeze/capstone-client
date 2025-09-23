@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';  // jwt-decode 패키지에서 named import로 수정
-import Header from '../common/Header';  // Header 컴포넌트 추가
-import Footer from '../common/Footer';  // Footer 컴포넌트 추가
-import { useNavigate } from 'react-router-dom';  // 리디렉션을 위한 useNavigate 추가
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     // 상태 설정
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate();  // 페이지 리디렉션을 위한 navigate
+    const navigate = useNavigate();
+
+    const handleKakaoLogin = () => {
+        const REST_API_KEY = 'b0abcbdd05b3cc529063683c1a4e5003';
+        const REDIRECT_URI = 'http://localhost:3001/login/kakao/callback';
+        const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+        window.location.href = kakaoAuthUrl;
+    };
 
     // 로그인 폼 제출 함수
     const handleLoginSubmit = async (e) => {
@@ -20,60 +25,57 @@ const LoginPage = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, loginData);
 
-            if (response.data.message === '로그인 성공!') {  // 여기서 응답 메시지 확인
-                const token = response.data.token;  // 서버에서 받은 토큰
-                localStorage.setItem('token', token);  // 토큰을 localStorage에 저장
+            if (response.data.message === '로그인 성공!') {
+                const token = response.data.token;
+                localStorage.setItem('token', token);
 
-                // JWT 토큰 디코딩하여 사용자 ID 추출
-                const decodedToken = jwtDecode(token);  // 토큰 디코딩
-                const userIdFromToken = decodedToken.userId;  // 디코딩한 토큰에서 userId 추출
-                const userNameFromToken = decodedToken.userName;  // 가능
-                console.log(decodedToken);  // userId, userName, profileImage 다 잘 나오나요?
+                const decodedToken = jwtDecode(token);
+                const userIdFromToken = decodedToken.userId;
+                const userNameFromToken = decodedToken.userName;
+                console.log(decodedToken);
 
-                // 사용자 ID를 localStorage에 저장
                 localStorage.setItem('userId', userIdFromToken);
                 localStorage.setItem('userName', userNameFromToken);
-                alert(response.data.message);  // 로그인 성공 시 메시지 표시
+                alert(response.data.message);
 
-                // 로그인 후 홈 페이지로 리디렉션
-                navigate('/');  // 또는 다른 리디렉션 경로로 이동
+                navigate('/');
             } else {
                 alert('로그인 실패: 아이디나 비밀번호를 확인하세요.');
             }
         } catch (error) {
-            console.error('로그인 실패:', error);  // 오류를 콘솔에 출력
+            console.error('로그인 실패:', error);
             alert('로그인 실패: 서버 오류');
         }
     };
 
     return (
-        <div>
-            <Header />  {/* Header 컴포넌트 추가 */}
-            <div style={styles.container}>
-                <h1 style={styles.h1}>로그인</h1>
-                <form onSubmit={handleLoginSubmit}>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>아이디</label>
-                        <input
-                            type="text"
-                            value={userId}
-                            onChange={(e) => setUserId(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>비밀번호</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
+        <div style={styles.container}>
+            <h1 style={styles.h1}>로그인</h1>
+            <form onSubmit={handleLoginSubmit}>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>아이디</label>
+                    <input
+                        type="text"
+                        value={userId}
+                        onChange={(e) => setUserId(e.target.value)}
+                        style={styles.input}
+                    />
+                </div>
+                <div style={styles.inputGroup}>
+                    <label style={styles.label}>비밀번호</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={styles.input}
+                    />
+                </div>
+                {/* 폼 제출 버튼과 카카오 로그인 버튼을 감싸는 컨테이너 추가 */}
+                <div style={styles.buttonContainer}>
                     <button type="submit" style={styles.submitButton}>로그인</button>
-                </form>
-            </div>
-            <Footer />  {/* Footer 컴포넌트 추가 */}
+                    <button type="button" onClick={handleKakaoLogin} style={styles.kakaoLoginButton}>카카오 로그인</button>
+                </div>
+            </form>
         </div>
     );
 };
@@ -109,6 +111,14 @@ const styles = {
         borderRadius: '5px',
         border: '1px solid #ccc',
     },
+    // Flexbox를 사용하여 버튼들을 가로로 정렬
+    buttonContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '4vh',
+        marginBottom: '16vh',
+    },
     submitButton: {
         backgroundColor: 'black',
         color: '#fff',
@@ -118,8 +128,18 @@ const styles = {
         cursor: 'pointer',
         borderRadius: '5px',
         fontFamily: 'Noto Sans KR',
-        marginTop: '4vh',
-        marginBottom: '16vh'
+        marginRight: '1vh', // 버튼 사이 간격 추가
+    },
+    kakaoLoginButton: {
+        backgroundColor: '#FEE500',
+        color: '#000',
+        border: 'none',
+        padding: '10px 20px',
+        fontSize: '16px',
+        cursor: 'pointer',
+        borderRadius: '5px',
+        fontFamily: 'Noto Sans KR',
+        marginLeft: '1vh', // 버튼 사이 간격 추가
     },
 };
 
