@@ -94,6 +94,11 @@ const Header = () => {
                             테스트
                         </NavLink>
                     </NavItem>
+                                        <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/test2">
+                            테스트
+                        </NavLink>
+                    </NavItem>
                 </NavList>
             </NavLeft>
 

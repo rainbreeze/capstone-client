@@ -9,6 +9,7 @@ import RegisterPage from './components/registerpage/RegisterPage'
 import GameContainer from './components/homepage/GameContainer';
 import ViewReviewPage from './components/reviewpage/ViewReviewPage';
 import MyPage from "./components/mypage/MyPage";
+import TestPage2 from './components/testpage2/TestPage2';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/signup" element={<RegisterPage />} />  {/* 회원가입입 페이지 */}
         <Route path="/game" element={<GameContainer />} /> { /*게임 페이지 */}
         <Route path="/viewreview" element={<ViewReviewPage />} /> { /*감상평 보기 페이지 */}
+        <Route path="/test2" element={<TestPage2 />} />  {/* 테스트 페이지 2*/}
       </Routes>
     </Router>
   );
