@@ -1,69 +1,110 @@
 import Phaser from "phaser"
 import axios from 'axios';
 
-let genres = [
-    { name: 'rock', count: 0 },
-    { name: 'rap', count: 0 },
-    { name: 'edm', count: 0 },
-    { name: 'latin', count: 0 },
-    { name: 'pop', count: 0 },
-    { name: 'hiphop', count: 0 },
-    { name: 'R&B', count: 0 },
-];
 
+//장르 결정할 api
+let dataset = [
+    { name: 'danceablity', avg: 0.5, min: 0, max: 0 },
+    { name: 'energy', avg: 0.5, min: 0, max: 1 },
+    { name: 'key,', avg: 5, min: -1, max: 11 },
+    { name: 'loudness', avg: -20, min: -60, max: 0 },
+    { name: 'mode', avg: 1, min: 0, max: 1 }, // 0 아니면 1
+    { name: 'speechiness', avg: 0.4, min: 0, max: 1 },
+    { name: 'acousticness', avg: 0.4, min: 0, max: 1 },
+    { name: 'instrumentalness', avg: 0.2, min: 0, max: 1 },
+    { name: 'liveness', avg: 0.2, min: 0, max: 1 },
+    { name: 'valence', avg: 0.5, min: 0, max: 1 },
+    { name: 'tempo', avg: 120, min: 0, max: 200 } //bpm 기준이기 때문에 max 값을 임의로 200으로 설정
+]
+
+
+//질문 리스트 -> 랜덤으로 각 스테이지 말미에 등장
 const randomQuestions = [{
-        // tempo
-        question: "어떤 색의 장미로 꽃다발을 만들래?",
-        options: [
-            { text: "파란 장미", genres: ["hiphop", "R&B", "pop", "rap"] },
-            { text: "빨간 장미", genres: ["rock", "edm", "latin"] }
-        ]
-    },
-    // valence
-    {
-        question: "12시 vs 00시",
-        options: [
-            { text: "12시", genres: ["rock", "rap", "latin", "hiphop", "R&B"] },
-            { text: "00시", genres: ["edm", "pop"] }
-        ]
-    },
-    // danceablity
-    {
-        question: "나를 나타내는 단어는?",
-        options: [
-            { text: "Calm", genres: ["rock", "edm", "pop", "R&B"] },
-            { text: "Hype", genres: ["rap", "hiphop", "latin"] }
-        ]
-    },
-    // liveness
-    {
-        question: "어떤 상황에서 더 음악이 듣고싶은가요?",
-        options: [
-            { text: "집에서 혼자 편안히 쉴 때", genres: ["rock", "R&B", "pop", "latin"] },
-            { text: "친구들과 함께 놀고있을 때", genres: ["rap", "edm", "hiphop"] }
-        ]
-    }
-];
-
-const fixedQuestion = {
-    question: "지금 하나를 고른다면?",
+    // tempo
+    question: "지금 눈앞에 꽃잎이 흩날린다면, 어떤 속도로 흘러가고 있을까",
     options: [
-        { text: "LP 판", year: '1950-1980', },
-        { text: "카세트 플레이어", year: '1981-2005' },
-        { text: "에어팟 맥스", year: '2006-2025', }
+        { text: "천천히, 바람결 따라 부드럽게.", effect: { tempo: -5 } },
+        { text: "빠르게, 휘몰아치듯 활기차게.", effect: { tempo: +5 } }
     ]
-};
+}, {
+    //energy
+    question: "한여름 오후, 너는 어떤 풍경 속에 있어?",
+    options: [
+        { text: "천천히, 바람결 따라 부드럽게.", effect: { energy: -0.1 } },
+        { text: "빠르게, 휘몰아치듯 활기차게.", effect: { energy: +0.1 } }
+    ]
+}, {
+    //danceability
+    question: "바람이 분다. 너는 어떻게 하고싶어?",
+    options: [
+        { text: "빠르게 집에 들어가 휴식을 취한다.", effect: { danceability: -0.1 } },
+        { text: "바람을 느끼며 러닝을 뛰고싶다.", effect: { danceability: +0.1 } }
+    ]
+}, {
+    //key
+    question: "하늘을 물들이는 색깔을 고른다면?",
+    options: [
+        { text: "흐릿한 보라빛 저녁하늘", effect: { key: -1 } },
+        { text: "밝은 노을빛 오렌지 하늘", effect: { key: +1 } }
+    ]
+}, {
+    //loudness
+    question: "숲속에서 들리는 소리는 어떤 크기로 울리고 있을까?",
+    options: [
+        { text: "잔잔하고 속삭이듯 들려온다.", effect: { loudness: -5 } },
+        { text: "커다랗게 울려 퍼져 나를 휘감는다.", effect: { loudness: +5 } }
+    ]
+}, {
+    //mode
+    question: "오늘의 하루를 한 장면으로 표현한다면?",
+    options: [
+        { text: "어두운·감성적인 분위기", effect: { mode: 0 } },
+        { text: "밝고 따뜻한 분위기", effect: { mode: 1 } }
+    ]
+}, {
+    //speechiness
+    question: "책장 속에서 한 권을 뽑는다면?",
+    options: [
+        { text: "그림이 가득한 화보집.", effect: { speechiness: -0.1 } },
+        { text: "대화가 빼곡한 소설책.", effect: { speechiness: +0.1 } }
+    ]
+}, {
+    //instrumentalness
+    question: "너에게 위로가 필요한 날, 어떤 소리가 위로가 될까?",
+    options: [
+        { text: "흐릿한 보라빛 저녁하늘", effect: { instrumentalness: -0.1 } },
+        { text: "밝은 노을빛 오렌지 하늘", effect: { instrumentalness: +0.1 } }
+    ]
+}, {
+    //liveness
+    question: "좋아하는 영화를 다시 볼 수 있다면 어디서?",
+    options: [
+        { text: "집에서 넷플릭스로", effect: { liveness: -0.1 } },
+        { text: "영화는 영화관에서!", effect: { liveness: +0.1 } }
+    ]
+}, {
+    //valence
+    question: "오늘 너의 마음을 비유한다면?",
+    options: [
+        { text: "슬프고 어두움", effect: { valence: -0.1 } },
+        { text: "밝고 즐거움", effect: { valence: +0.1 } }
+    ]
+}];
 
 const storedUserId = localStorage.getItem('userId');
 
 
+//스코어에 따라서 추천 곡 수가 달라져야함 -> 이거 확인
 let score = 0;
 let lives = 3;
-let totalStages = 3;
+let totalStages = 5;
 let totaljumpCount = 0;
 let stepCount = 0;
 let sprintCount = 0;
 let playTime = null;
+let stageStartTime = Date.now();
+console.log(stageStartTime);
+
 
 
 export default class GameScene extends Phaser.Scene {
@@ -75,38 +116,41 @@ export default class GameScene extends Phaser.Scene {
     preload() {
         // 맵 생성에 필요한 이미지
         this.load.image('clean_16x16_tileset', 'assets/tilesets/clean_16x16_tileset.png');
+        this.load.image('clean_tileset_ver2', 'assets/tilesets/clean_tileset_ver2.png');
         this.load.image('music_box_64x64', 'assets/tilesets/music_box_64x64.png');
         this.load.image('noteImage', 'assets/images/note.png');
         this.load.image('spikeImage', 'assets/images/spike.png');
+        this.load.image('noteImage2', 'assets/images/note_2.png');
+        this.load.image('spikeImage2', 'assets/images/spike_2.png');
+        this.load.image('ground_night', 'assets/images/ground_night.png');
         this.load.image('heart', 'assets/images/heart.png');
+        this.load.image('heart_w', 'assets/images/heart_white.png');
         this.load.image('bullet', 'assets/images/bullet.png');
-
 
 
         this.load.tilemapTiledJSON('map1', 'assets/tilemaps/section01.json');
         this.load.tilemapTiledJSON('map2', 'assets/tilemaps/section02.json');
         this.load.tilemapTiledJSON('map3', 'assets/tilemaps/section03.json');
+        this.load.tilemapTiledJSON('map4', 'assets/tilemaps/section04.json');
+        this.load.tilemapTiledJSON('map5', 'assets/tilemaps/section05.json');
 
-
+        //캐릭터 스프라이트 시트
         this.load.spritesheet('char1', 'assets/images/sprite_char1.png', {
             frameWidth: 165,
             frameHeight: 249,
-            spacing: 2
+            spacing: 1
         });
     }
 
     init(data) {
         this.selectedCharacter = data.selectedCharacter;
         this.stageIndex = data.stageIndex || 0
-        this.stageStartTime = null;
         this.score = data.score || 0;
         this.lives = lives;
         this.selectedYear = data.selectedYear || 2025
     }
 
-
     create(data) {
-
         // 로그인 해야지 이용 가능
         if (!storedUserId) {
             alert('로그인 후 다시 시도해주세요.');
@@ -114,30 +158,36 @@ export default class GameScene extends Phaser.Scene {
         }
 
         const mapKey = `map${this.stageIndex + 1}`;
-
-        console.log(this.stageIndex);
-
+        console.log(this.stageIndex + 1);
         const map = this.make.tilemap({ key: mapKey });
+
+        let tileset;
         // 공통 코드
 
-        const tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
+        //스테이지 4,5는 맵 바뀜
+        if (this.stageIndex + 1 > 3) {
+            tileset = map.addTilesetImage('clean_tileset_ver2', 'clean_tileset_ver2');
+        } else {
+            tileset = map.addTilesetImage('clean_16x16_tileset', 'clean_16x16_tileset');
+        }
 
         this.isInvincible = false;
         this.isGameOver = false;
 
 
-        this.stageStartTime = Date.now();
-        console.log(this.stageStartTime);
 
         this.shiftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+
+
+        //맵과 관련된 셋, 설정들 -> 맵이 추가되었기 때문에 이부분 확인해서 수정 필요 -> 타일셋 이름이나 맵 이름이 다르다면 스테이지 따라서 맞출것
 
 
         // 맵 레이어
         map.createLayer('Tile Layer 1', tileset, 0, 0);
         this.mapColliders = {};
+        //충돌레이어 구분 필요
         const objectLayer = map.getObjectLayer('Collision Layer');
         console.log('objectLayer', objectLayer);
-
 
 
         this.scoreText = this.add.text(16, 16, 'Score: 0', {
@@ -146,7 +196,7 @@ export default class GameScene extends Phaser.Scene {
             fontFamily: 'noto-sans'
         }).setScrollFactor(0);
 
-
+        //캐릭터 더 추가할건지에 대한 고민이 필요함
         this.player = this.physics.add.sprite(10, 300, 'char1').setScale(0.3);
 
         this.player.body.setSize(48, 120);
@@ -154,6 +204,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.player.body.setCollideWorldBounds(true);
 
+        //만약 캐릭터가 늘어난다면 이 부분을 어떻게 수정할건지?
         this.anims.create({
             key: 'char1_walk',
             frames: this.anims.generateFrameNumbers('char1', { start: 0, end: 2 }),
@@ -177,7 +228,13 @@ export default class GameScene extends Phaser.Scene {
 
         this.hearts = [];
         for (let i = 0; i < lives; i++) {
-            const heart = this.add.image(700 + i * 30, 30, 'heart')
+            let heart;
+            if (this.stageIndex + 1 > 3) {
+                heart = this.add.image(700 + i * 30, 30, 'heart_w')
+            } else {
+                heart = this.add.image(700 + i * 30, 30, 'heart')
+            }
+            heart
                 .setScrollFactor(0)
                 .setScale(0.5)
                 .setDisplaySize(32, 32)
@@ -186,7 +243,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
 
-        // 오브젝트 레이어
+        // 오브젝트 레이어 -> 맵 추가를 위해서 반드시 봐야 할 부분
         objectLayer.objects.forEach(obj => {
             const { x, y, width, height, type: cls } = obj;
             const centerX = x + width / 2;
@@ -198,6 +255,7 @@ export default class GameScene extends Phaser.Scene {
                 this.physics.add.collider(this.player, zone);
             }
 
+            //불렛 없음, 빼고 bomb을 넣을 것
             if (this.stageIndex === 2 && cls === 'bullet') {
                 this.bullet = this.physics.add.image(centerX, centerY, 'bullet')
                     .setScale(0.2)
@@ -236,7 +294,13 @@ export default class GameScene extends Phaser.Scene {
 
 
             if (cls === 'spike') {
-                const spike = this.physics.add.staticImage(centerX, centerY, 'spikeImage')
+                let spike;
+                if (this.stageIndex + 1 > 3) {
+                    spike = this.physics.add.staticImage(centerX, centerY, 'spikeImage2')
+                } else {
+                    spike = this.physics.add.staticImage(centerX, centerY, 'spikeImage');
+                }
+                spike
                     .setDisplaySize(32, 32)
                     .setSize(32, 32)
                     .setVisible(false);
@@ -248,7 +312,6 @@ export default class GameScene extends Phaser.Scene {
 
                         lives -= 1;
                         this.updateLivesUI();
-
 
                         this.isInvincible = true;
 
@@ -281,7 +344,13 @@ export default class GameScene extends Phaser.Scene {
             }
 
             if (cls === 'note') {
-                const note = this.physics.add.staticImage(centerX, centerY, 'noteImage').setDisplaySize(32, 32).setSize(32, 32).setVisible(true);
+                let note;
+                if (this.stageIndex + 1 > 3) {
+                    note = this.physics.add.staticImage(centerX, centerY, 'noteImage2')
+                } else {
+                    note = this.physics.add.staticImage(centerX, centerY, 'noteImage');
+                }
+                note.setDisplaySize(32, 32).setSize(32, 32).setVisible(true);
                 note.refreshBody();
                 this.physics.add.overlap(this.player, note, () => {
                     note.destroy();
@@ -310,6 +379,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+        //? 뭐더라 이거
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.player);
@@ -375,6 +445,7 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
+        //이 부분도 지울것
         if (this.bullet) {
             if (!this.bullet.bulletActivated) {
                 const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.bullet.x, this.bullet.y);
@@ -398,11 +469,6 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    getRandomGenres(n) {
-        const shuffled = [...genres].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, n);
-    }
-
     // 랜덤 질문
     getRandomQuestion() {
         const q = Phaser.Utils.Array.GetRandom(randomQuestions);
@@ -416,17 +482,15 @@ export default class GameScene extends Phaser.Scene {
         const map = this.make.tilemap({ key: mapKey });
 
         let questionObj;
-        if (this.stageIndex === 2) {
-            questionObj = fixedQuestion;
-        } else {
-            questionObj = Phaser.Utils.Array.GetRandom(randomQuestions);
-        }
+        questionObj = Phaser.Utils.Array.GetRandom(randomQuestions);
 
         const { question, options } = questionObj;
 
+        //버튼 크기 조절좀 할것
         const centerX = map.widthInPixels / 2;
         const centerY = map.heightInPixels / 2;
 
+        //텍스트 스타일 정리 및 조정 필요
         const questionText = this.add.text(centerX, centerY - 60, question, {
             fontSize: '16px',
             fontFamily: 'noto-sans',
@@ -440,6 +504,7 @@ export default class GameScene extends Phaser.Scene {
         const totalOptions = options.length;
         const spacing = 160; // 버튼 간 간격
 
+        //opt가 뭔지? 정리가 필요함
         options.forEach((opt, idx) => {
             const btn = this.add.text(0, 0, opt.text, this.getTextStyle()).setInteractive();
             const offset = (idx - (totalOptions - 1) / 2) * spacing;
@@ -451,8 +516,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
 
-
-
+    //텍스트 스타일 수정 필요
     getTextStyle() {
         return {
             fontFamily: 'noto-sans',
@@ -463,26 +527,23 @@ export default class GameScene extends Phaser.Scene {
         };
     }
 
-    setButtonEvents(btn, genreObj) {
-        btn.on('pointerdown', () => {
+    //옵션에 대한 avg 카운트 조정
+    applyOptEvent(effect) {
+        for (const key in effect) {
+            const changeValue = effect[key];
+        }
+    }
 
-            const stageEndTime = Date.now();
-            playTime = Math.floor((stageEndTime - this.stageStartTime) / 1000);
+    setButtonEvents(btn, opt) {
+        btn.on('pointerdown', () => {
 
 
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
 
-            if (genreObj.genres) {
-                genreObj.genres.forEach(name => {
-                    const g = genres.find(g => g.name === name);
-                    if (g) g.count += 1;
-                });
-            } else if (genreObj.year) {
-                this.selectedYear = genreObj.year;
+            if (opt.effect) {
+                this.applyOptEvent(opt.effect)
             }
-
-            this.sendStageStatData(genreObj.genre, stepCount, totaljumpCount, sprintCount, playTime, true)
 
             if (this.stageIndex < totalStages - 1) {
                 this.scene.restart({
@@ -490,29 +551,28 @@ export default class GameScene extends Phaser.Scene {
                     stageIndex: this.stageIndex + 1
                 });
             } else {
-                const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
-                console.log('가장 많이 선택된 장르:', result.name);
-                console.log('년도: ', this.selectedYear);
-                this.showSearchResult(result.name);
+                const stageEndTime = Date.now();
+                playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
+
+                const genre = this.sendStageStatData(dataset, stepCount, totaljumpCount, sprintCount, playTime, true);
+                this.showSearchResult(genre);
             }
         });
     }
 
-
-
     showResultPopup(result) {
-        this.controlsEnabled = false;
-        if (window.showGamePopup) {
-            window.showGamePopup(result); // 배열 전체 넘김
+            this.controlsEnabled = false;
+            if (window.showGamePopup) {
+                window.showGamePopup(result); // 배열 전체 넘김
+            }
         }
-
-    }
-
-    async sendStageStatData(genre, steps, jumps, sprints, playTime, cleared) {
+        //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
+        //1차 api 호출
+    async sendStageStatData(dataset, steps, jumps, sprints, playTime, cleared) {
         const gameStats = {
             userId: storedUserId,
             stage: this.stageIndex,
-            answer: genre,
+            answer: dataset,
             steps: steps,
             jumps: jumps,
             sprints: sprints,
@@ -520,20 +580,20 @@ export default class GameScene extends Phaser.Scene {
             cleared: cleared
         }
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/game/saveStageStats`, gameStats);
+            //res의 결과 값은 장르 이름으로 저장
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/saveStat/saveStageStats`, gameStats);
             console.log('게임 스테이지 스탯 데이터 저장 성공', res.data);
         } catch (err) {
             console.log('데이터 전송 실패', err);
         }
     }
 
-
+    //2차 api 호출
     async showSearchResult(genre) {
         const gameData = {
             userId: storedUserId,
             score: score,
-            genre: genre,
-            year: this.selectedYear,
+            genre: genre
         };
 
         try {
@@ -545,7 +605,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    gameOver(genreObj) {
+    gameOver(dataset) {
         if (this.isGameOver) return;
         this.isGameOver = true;
 
@@ -553,13 +613,10 @@ export default class GameScene extends Phaser.Scene {
         this.player.setTint(0xff0000);
         this.player.anims.stop();
 
-        const result = genres.reduce((prev, curr) => curr.count > prev.count ? curr : prev);
-        console.log('가장 많이 선택된 장르:', result.name);
-
         const stageEndTime = Date.now();
-        playTime = Math.floor((stageEndTime - this.stageStartTime) / 1000);
+        playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-        this.sendStageStatData(genreObj.genre, stepCount, totaljumpCount, sprintCount, playTime, false)
+        const genre = this.sendStageStatData(dataset, stepCount, totaljumpCount, sprintCount, playTime, false)
 
         this.add.text(400, 200, 'Game Over', {
             fontSize: '32px',
@@ -568,9 +625,8 @@ export default class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         this.time.delayedCall(1000, () => {
-            this.showSearchResult(result.name);
+            this.showSearchResult(genre);
         });
     }
-
 
 }
