@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import axios from 'axios';
+import WebFont from 'webfontloader';
 
 
 //장르 결정할 api
@@ -111,6 +112,7 @@ export default class GameScene extends Phaser.Scene {
 
     constructor() {
         super("GameScene");
+        this.fontsReady = false;
     }
 
     preload() {
@@ -151,6 +153,21 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create(data) {
+
+        //폰트 로드
+        if (WebFont.load) {
+            this.fontsReady = true;
+        } else {
+            // 폰트가 아직 로드되지 않았다면, 타이머를 설정하여 기다립니다.
+            this.time.addEvent({
+                delay: 100, // 0.1초마다 확인
+                callback: this.checkFonts,
+                callbackScope: this,
+                loop: true,
+                name: 'fontCheckTimer' // 타이머에 이름을 주면 관리하기 편합니다.
+            });
+        }
+
         // 로그인 해야지 이용 가능
         if (!storedUserId) {
             alert('로그인 후 다시 시도해주세요.');
@@ -192,8 +209,9 @@ export default class GameScene extends Phaser.Scene {
 
         this.scoreText = this.add.text(16, 16, 'Score: 0', {
             fontSize: '24px',
-            fill: '#fff',
-            fontFamily: 'noto-sans'
+            color: '#fff',
+            fontFamily: 'Galmuri7',
+            fontStyle: 700
         }).setScrollFactor(0);
 
         //캐릭터 더 추가할건지에 대한 고민이 필요함
@@ -461,6 +479,16 @@ export default class GameScene extends Phaser.Scene {
 
     }
 
+    checkFonts() {
+        // WebFontLoader의 active 콜백이 실행되어 window.WebFontLoaded가 true가 됐는지 확인
+        if (window.WebFontLoaded) {
+
+
+            // 더 이상 확인할 필요가 없으므로 타이머를 제거합니다.
+            this.time.removeEvent(this.time.getEventWithName('fontCheckTimer'));
+        }
+    }
+
     updateLivesUI() {
         if (this.hearts) {
             this.hearts.forEach((heart, index) => {
@@ -493,8 +521,9 @@ export default class GameScene extends Phaser.Scene {
         //텍스트 스타일 정리 및 조정 필요
         const questionText = this.add.text(centerX, centerY - 60, question, {
             fontSize: '16px',
-            fontFamily: 'noto-sans',
-            fill: '#fff',
+            fontFamily: 'Galmuri7',
+            fontStyle: 700,
+            color: '#fff',
             backgroundColor: '#333',
             padding: { x: 20, y: 8 }
         }).setOrigin(0.5);
@@ -519,9 +548,10 @@ export default class GameScene extends Phaser.Scene {
     //텍스트 스타일 수정 필요
     getTextStyle() {
         return {
-            fontFamily: 'noto-sans',
+            fontFamily: 'Galmuri7',
+            fontStyle: 700,
             fontSize: '14px',
-            fill: '#000',
+            color: '#000',
             backgroundColor: '#fff',
             padding: { x: 15, y: 15 }
         };
@@ -571,7 +601,6 @@ export default class GameScene extends Phaser.Scene {
     async sendStageStatData(dataset, steps, jumps, sprints, playTime, cleared) {
         const gameStats = {
             userId: storedUserId,
-            stage: this.stageIndex,
             answer: dataset,
             steps: steps,
             jumps: jumps,
@@ -581,7 +610,7 @@ export default class GameScene extends Phaser.Scene {
         }
         try {
             //res의 결과 값은 장르 이름으로 저장
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/saveStat/saveStageStats`, gameStats);
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/saveStat/saveGameStats`, gameStats);
             console.log('게임 스테이지 스탯 데이터 저장 성공', res.data);
         } catch (err) {
             console.log('데이터 전송 실패', err);
@@ -620,8 +649,9 @@ export default class GameScene extends Phaser.Scene {
 
         this.add.text(400, 200, 'Game Over', {
             fontSize: '32px',
-            fontFamily: 'noto-sans',
-            fill: '#fff'
+            fontFamily: 'Galmuri7',
+            fontStyle: 700,
+            color: '#fff'
         }).setOrigin(0.5);
 
         this.time.delayedCall(1000, () => {
