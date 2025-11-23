@@ -61,7 +61,7 @@ const Header = () => {
 
     return (
         <HeaderWrapper scrolled={scrolled} transparent={isTransparentPage && !scrolled}>
-            <Logo src="/images/logo_image.png" alt="Logo" />
+            <Logo src="/assets/images/logo_image2.png" alt="Logo" />
 
             <HamburgerMenu onClick={toggleSidebar}>
                 <FaBars size={24} color="#000" />

@@ -4,23 +4,6 @@ import Header from '../common/Header';
 import Footer from '../common/Footer';
 
 const TestPage2 = () => {
-
-    // --- hello API 상태 추가 ---
-    const [helloMessage, setHelloMessage] = useState('');
-    const [helloError, setHelloError] = useState('');
-
-    const callHelloApi = async () => {
-        setHelloError('');
-        setHelloMessage('');
-        try {
-            const apiUrl = `${process.env.REACT_APP_API_URL}/genreapi/hello`;
-            const res = await axios.get(apiUrl);
-            setHelloMessage(res.data.message);
-        } catch (err) {
-            setHelloError('Hello API 호출 실패: ' + err.message);
-        }
-    };
-
     const [formData, setFormData] = useState({
         danceability: 0.5,
         energy: 0.5,
@@ -170,14 +153,6 @@ const TestPage2 = () => {
             <Header />
             <div style={styles.container}>
                 <h1 style={styles.h1}>🎵 Genre Prediction Test</h1>
-                {/* ====== Hello API 테스트 버튼 & 결과 ====== */}
-                <div style={{ marginBottom: 40 }}>
-                    <button onClick={callHelloApi} style={{ padding: '10px 20px', fontSize: 16, cursor: 'pointer' }}>
-                        🌐 Call Hello API
-                    </button>
-                    {helloMessage && <p style={{ marginTop: 10, color: 'green' }}>{helloMessage}</p>}
-                    {helloError && <p style={{ marginTop: 10, color: 'red' }}>{helloError}</p>}
-                </div>
                 <form style={styles.form} onSubmit={(e) => { e.preventDefault(); handlePredict(); }}>
                     {Object.keys(formData).map((key) => (
                         <div key={key} style={styles.inputGroup}>
