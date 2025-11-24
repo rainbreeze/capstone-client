@@ -531,14 +531,17 @@ export default class GameScene extends Phaser.Scene {
 
         this.choiceGroup = this.add.group([questionText]);
 
-        const totalOptions = options.length;
-        const spacing = 160; // 버튼 간 간격
+        const total = options.length;
 
-        //opt가 뭔지? 정리가 필요함
+        // 각 버튼 간 간격 계산 (space-around 느낌)
+        const spacing = 250; // 원하는 간격값 직접 조절 가능
+        const startX = centerX - ((total - 1) * spacing) / 2; // 중앙 기준 좌우 분배
+
         options.forEach((opt, idx) => {
             const btn = this.add.text(0, 0, opt.text, this.getTextStyle()).setInteractive();
-            const offset = (idx - (totalOptions - 1) / 2) * spacing;
-            btn.setPosition(centerX + offset, centerY).setOrigin(0.5);
+
+            // flex처럼 좌우 균등하게 배치
+            btn.setPosition(startX + idx * spacing, centerY).setOrigin(0.5);
 
             this.choiceGroup.add(btn);
             this.setButtonEvents(btn, opt);
@@ -613,9 +616,6 @@ export default class GameScene extends Phaser.Scene {
             window.showGamePopup(result); // 배열 전체 넘김
         }
     }
-
-
-
 
     //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
     //1차 api 호출

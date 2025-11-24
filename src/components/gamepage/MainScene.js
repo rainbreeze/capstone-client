@@ -10,19 +10,11 @@ class MainScene extends Phaser.Scene {
 
     preload() {
         this.load.image('playButton', 'assets/images/play_button.png');
-        this.load.image('characterButton', 'assets/images/character_btn.png');
-        this.load.image('settingButton', 'assets/images/setting_btn.png');
-
     }
 
     init(data) {
         // 기본값 설정
         this.selectedChar = 'char1';
-
-        // 만약 ChoiceScene에서 선택 값이 넘어왔다면 덮어쓰기
-        if (data.selectedChar) {
-            this.selectedChar = data.selectedChar;
-        }
 
         console.log('[MainScene] 최종 캐릭터 선택:', this.selectedChar);
     }
@@ -48,24 +40,11 @@ class MainScene extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        console.log('char: ', this.selectedChar)
+        console.log('char: ', this.selectedChar);
 
 
+        //설명칸 추가
 
-        //캐릭터 선택창
-
-        const characterSceneBtn = this.add.image(100, centerY + 100, 'characterButton').setInteractive();
-        characterSceneBtn.setDisplaySize(100, 100)
-        characterSceneBtn.on('pointerdown', () => {
-            console.log('choice CharacterScene');
-            this.scene.start('ChoiceScene');
-            console.log('choice scene 실행됨..')
-        })
-
-
-        //임시 설정창
-        // const settingBtn = this.add.image(700, centerY + 100, 'settingButton').setInteractive();
-        // settingBtn.setDisplaySize(100, 100)
 
 
         //임시 버튼 스타일
