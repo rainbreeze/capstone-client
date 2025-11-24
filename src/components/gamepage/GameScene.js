@@ -5,7 +5,7 @@ import WebFont from 'webfontloader';
 
 //장르 결정할 api
 let dataset = [
-    { name: 'danceablity', avg: 0.5, min: 0, max: 0 },
+    { name: 'danceability', avg: 0.5, min: 0, max: 0 },
     { name: 'energy', avg: 0.5, min: 0, max: 1 },
     { name: 'key,', avg: 5, min: -1, max: 11 },
     { name: 'loudness', avg: -20, min: -60, max: 0 },
@@ -17,6 +17,7 @@ let dataset = [
     { name: 'valence', avg: 0.5, min: 0, max: 1 },
     { name: 'tempo', avg: 120, min: 0, max: 200 } //bpm 기준이기 때문에 max 값을 임의로 200으로 설정
 ]
+
 
 
 //질문 리스트 -> 랜덤으로 각 스테이지 말미에 등장
@@ -561,6 +562,14 @@ export default class GameScene extends Phaser.Scene {
     applyOptEvent(effect) {
         for (const key in effect) {
             const changeValue = effect[key];
+
+            const target = dataset.find(item => item.name === key);
+            if (target) {
+                target.avg += changeValue;
+
+                if (target.avg < target.min) target.avg = target.min;
+                if (target.avg > target.max) target.avg = target.max;
+            }
         }
     }
 
@@ -584,29 +593,43 @@ export default class GameScene extends Phaser.Scene {
                 const stageEndTime = Date.now();
                 playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-                const genre = this.sendStageStatData(dataset, stepCount, totaljumpCount, sprintCount, playTime, true);
-                this.showSearchResult(genre);
+                this.sendStageStatData(stepCount, totaljumpCount, sprintCount, playTime, true);
+                //서버에서 장르 내려오는걸로 수정되면 그때 변경
+                // this.showSearchResult(genre);
             }
         });
     }
 
+    createAnswerJSON() {
+        return dataset.map(item => ({
+            name: item.name,
+            avg: item.avg
+        }));
+    }
+
     showResultPopup(result) {
-            this.controlsEnabled = false;
-            if (window.showGamePopup) {
-                window.showGamePopup(result); // 배열 전체 넘김
-            }
+        this.controlsEnabled = false;
+        if (window.showGamePopup) {
+            window.showGamePopup(result); // 배열 전체 넘김
         }
-        //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
-        //1차 api 호출
-    async sendStageStatData(dataset, steps, jumps, sprints, playTime, cleared) {
+    }
+
+
+
+
+    //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
+    //1차 api 호출
+    async sendStageStatData(steps, jumps, sprints, playTime, cleared) {
+        const answerJSON = this.createAnswerJSON();
+
         const gameStats = {
             userId: storedUserId,
-            answer: dataset,
+            answer: JSON.stringify(answerJSON), //json
             steps: steps,
             jumps: jumps,
             sprints: sprints,
-            playTime: playTime,
-            cleared: cleared
+            playTime: playTime, //시간
+            cleared: cleared //boolean
         }
         try {
             //res의 결과 값은 장르 이름으로 저장
@@ -645,7 +668,7 @@ export default class GameScene extends Phaser.Scene {
         const stageEndTime = Date.now();
         playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-        const genre = this.sendStageStatData(dataset, stepCount, totaljumpCount, sprintCount, playTime, false)
+        const genre = this.sendStageStatData(stepCount, totaljumpCount, sprintCount, playTime, false)
 
         this.add.text(400, 200, 'Game Over', {
             fontSize: '32px',
