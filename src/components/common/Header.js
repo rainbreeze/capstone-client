@@ -68,7 +68,7 @@ const Header = () => {
 
     return (
         <HeaderWrapper scrolled={scrolled} transparent={isTransparentPage && !scrolled}>
-            <Logo src="/images/logo_image.png" alt="Logo" />
+            <Logo src="/assets/images/logo_image.png" alt="Logo" />
 
             <HamburgerMenu onClick={toggleSidebar}>
                 <FaBars size={24} color="#000" />
@@ -98,6 +98,11 @@ const Header = () => {
                     </NavItem>
                     <NavItem scrolled={scrolled}>
                         <NavLink as={Link} to="/test">
+                            테스트
+                        </NavLink>
+                    </NavItem>
+                                        <NavItem scrolled={scrolled}>
+                        <NavLink as={Link} to="/test2">
                             테스트
                         </NavLink>
                     </NavItem>

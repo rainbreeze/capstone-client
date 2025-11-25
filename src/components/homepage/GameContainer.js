@@ -11,6 +11,7 @@ const GameContainer = () => {
   const gameRef = useRef(null);
   const [showPopup, setShowPopup] = useState(false);
 
+
   // GameContainer.jsx 내부
   const [popupData, setPopupData] = useState(null);
 
