@@ -10,22 +10,52 @@ import GameContainer from './components/homepage/GameContainer';
 import ViewReviewPage from './components/reviewpage/ViewReviewPage';
 import MyPage from "./components/mypage/MyPage";
 import TestPage2 from './components/testpage2/TestPage2';
-import LandingPage from './components/landingpage/LandingPage'; // 랜딩 페이지 컴포넌트
+import LandingPage from './components/landingpage/LandingPage';
 
 function App() {
-    // 앱 실행 시 로그인 상태 관리
+    // 앱 실행 시 로그인 상태 관리 및 카카오 로그인 후처리
     useEffect(() => {
-        // 현재 백엔드에 토큰 검증 전용 API(/api/user/me)가 없으므로,
-        // 로컬 스토리지에 토큰이 존재하는지로만 로그인 유지 여부를 판단합니다.
-        const token = localStorage.getItem('token');
+        // 1. 쿠키 값을 읽어오는 함수
+        const getCookie = (name) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        };
 
+        // 2. 서버에서 설정한 쿠키 확인 (카카오 로그인 직후)
+        const tokenFromCookie = getCookie('token');
+        const userIdFromCookie = getCookie('userId');
+
+        if (tokenFromCookie && userIdFromCookie) {
+            // 쿠키에 정보가 있다면 로컬 스토리지로 옮김
+            localStorage.setItem('token', tokenFromCookie);
+            localStorage.setItem('userId', userIdFromCookie);
+
+            const userName = getCookie('userName');
+            if (userName) {
+                // 서버에서 인코딩해서 보냈으므로 디코딩
+                localStorage.setItem('userName', decodeURIComponent(userName));
+            }
+
+            const profileImage = getCookie('profileImage');
+            if (profileImage) {
+                localStorage.setItem('profileImage', profileImage);
+            }
+
+            // 3. 처리가 끝난 쿠키는 삭제 (충돌 방지 및 보안)
+            document.cookie = "token=; path=/; max-age=0";
+            document.cookie = "userId=; path=/; max-age=0";
+            document.cookie = "userName=; path=/; max-age=0";
+            document.cookie = "profileImage=; path=/; max-age=0";
+        }
+
+        // 4. 기존 토큰 유효성 체크 로직 (토큰 없으면 정보 삭제)
+        const token = localStorage.getItem('token');
         if (!token) {
-            // 토큰이 없으면 로그인 관련 정보 깨끗이 삭제
             localStorage.removeItem('userId');
             localStorage.removeItem('userName');
             localStorage.removeItem('profileImage');
         }
-        // 추후 백엔드에 토큰 검증 API가 개발되면 여기서 axios 호출을 추가하세요.
     }, []);
 
     return (

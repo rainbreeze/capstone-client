@@ -37,6 +37,14 @@ const LoginPage = () => {
             if (response.ok) {
                 // 성공: 토큰을 로컬 스토리지에 저장
                 localStorage.setItem('token', data.token);
+
+                // [수정됨] 사용자 정보를 로컬 스토리지에 저장 (Header.js에서 사용)
+                if (data.user) {
+                    localStorage.setItem('userId', data.user.userId);
+                    localStorage.setItem('userName', data.user.userName);
+                    localStorage.setItem('profileImage', data.user.profileImage || '');
+                }
+
                 // [중요] 로그인 성공 시 홈페이지(/home)로 이동
                 navigate('/home');
             } else {

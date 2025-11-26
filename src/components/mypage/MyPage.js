@@ -11,6 +11,7 @@ const MyPage = () => {
         const fetchUserInfo = async () => {
             try {
                 const userId = localStorage.getItem('userId');
+                // API 호출 (profileImage 포함)
                 const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/${userId}`);
                 setUserInfo(res.data);
             } catch (err) {
@@ -48,14 +49,16 @@ const MyPage = () => {
                     </h2>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '120px' }}>
-                        {/* 왼쪽: 프로필 이미지 */}
-                        <ProfileImageUploader userId={userInfo.userId} />
+                        {/* [수정됨] currentImage prop 추가하여 현재 이미지 전달 */}
+                        <ProfileImageUploader
+                            userId={userInfo.userId}
+                            currentImage={userInfo.profileImage}
+                        />
 
                         {/* 오른쪽: 사용자 정보 */}
                         <div style={{ lineHeight: '2', fontSize: '1.1rem', color: '#555' }}>
                             <p><strong>User Name:</strong> {userInfo.userName}</p>
                             <p><strong>User ID:</strong> {userInfo.userId}</p>
-                            <p><strong>Email:</strong> {userInfo.email}</p>
                             <p><strong>Joined:</strong> {new Date(userInfo.createdAt).toLocaleDateString()}</p>
                         </div>
                     </div>
