@@ -1,146 +1,122 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import './LoginPage.css';
 
 const LoginPage = () => {
-    // 상태 설정
-    const [userId, setUserId] = useState('');
-    const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleKakaoLogin = () => {
-        const REST_API_KEY = 'b0abcbdd05b3cc529063683c1a4e5003';
-        const REDIRECT_URI = 'http://localhost:3001/login/kakao/callback';
-        const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
-        window.location.href = kakaoAuthUrl;
-    };
+    // 이메일 형식 제한 없이 아이디를 받기 위해 변수명 userId 사용
+    const [userId, setUserId] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    // 로그인 폼 제출 함수
-    const handleLoginSubmit = async (e) => {
+    // 카카오 로그인 설정
+    const KAKAO_REST_API_KEY = 'b0abcbdd05b3cc529063683c1a4e5003';
+    const KAKAO_REDIRECT_URI = 'http://localhost:3001/login/kakao/callback';
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
+
+    const handleLogin = async (e) => {
         e.preventDefault();
-
-        const loginData = { userId, password };
+        setErrorMessage(''); // 에러 메시지 초기화
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, loginData);
+            // 서버로 로그인 요청 (포트 3001 가정)
+            const response = await fetch('http://localhost:3001/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    password: password,
+                }),
+            });
 
-            if (response.data.message === '로그인 성공!') {
-                const token = response.data.token;
-                localStorage.setItem('token', token);
+            const data = await response.json();
 
-                const decodedToken = jwtDecode(token);
-                const userIdFromToken = decodedToken.userId;
-                const userNameFromToken = decodedToken.userName;
-                console.log(decodedToken);
-
-                localStorage.setItem('userId', userIdFromToken);
-                localStorage.setItem('userName', userNameFromToken);
-                alert(response.data.message);
-
-                navigate('/');
+            if (response.ok) {
+                // 성공: 토큰을 로컬 스토리지에 저장
+                localStorage.setItem('token', data.token);
+                // [중요] 로그인 성공 시 홈페이지(/home)로 이동
+                navigate('/home');
             } else {
-                alert('로그인 실패: 아이디나 비밀번호를 확인하세요.');
+                // 실패: 서버에서 보낸 에러 메시지 표시
+                setErrorMessage(data.error || '로그인에 실패했습니다.');
             }
         } catch (error) {
-            console.error('로그인 실패:', error);
-            alert('로그인 실패: 서버 오류');
+            console.error('Login Error:', error);
+            setErrorMessage('서버와의 통신 중 오류가 발생했습니다.');
         }
     };
 
     return (
-        <div style={styles.container}>
-            <h1 style={styles.h1}>로그인</h1>
-            <form onSubmit={handleLoginSubmit}>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>아이디</label>
-                    <input
-                        type="text"
-                        value={userId}
-                        onChange={(e) => setUserId(e.target.value)}
-                        style={styles.input}
-                    />
+        <div className="login-container">
+            {/* 배경 애니메이션 */}
+            <div className="background-shapes">
+                <div className="shape"></div>
+                <div className="shape"></div>
+                <div className="shape"></div>
+            </div>
+
+            <div className="login-content">
+                <h2 className="login-title">LOGIN</h2>
+
+                <form className="login-form" onSubmit={handleLogin}>
+                    <div className="input-group">
+                        <label htmlFor="userId">ID</label>
+                        {/* type="text"로 설정하여 이메일 형식이 아니어도 입력 가능 */}
+                        <input
+                            type="text"
+                            id="userId"
+                            placeholder="Enter your ID"
+                            value={userId}
+                            onChange={(e) => setUserId(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="input-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {/* 에러 메시지 표시 영역 */}
+                    {errorMessage && <div className="error-message">{errorMessage}</div>}
+
+                    <button type="submit" className="login-button">
+                        로그인
+                    </button>
+                </form>
+
+                {/* 구분선 */}
+                <div className="divider">
+                    <span>OR</span>
                 </div>
-                <div style={styles.inputGroup}>
-                    <label style={styles.label}>비밀번호</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={styles.input}
-                    />
+
+                {/* 카카오 로그인 버튼 */}
+                <a href={KAKAO_AUTH_URL} className="kakao-button">
+                    <svg viewBox="0 0 32 32" width="20" height="20" fill="#3C1E1E">
+                        <path d="M16 4C9.925 4 5 8.04 5 13.025c0 3.235 2.096 6.075 5.253 7.64-.176.626-1.141 4.145-1.176 4.296-.06.24.088.468.307.468.12 0 .227-.054.348-.135 3.77-2.586 5.432-3.805 5.56-3.886.67.098 1.344.15 2.016.15 6.075 0 11-4.04 11-9.025S22.075 4 16 4z"/>
+                    </svg>
+                    카카오로 로그인
+                </a>
+
+                <div className="login-footer">
+                    <span>계정이 없으신가요?</span>
+                    <a href="/signup" onClick={(e) => { e.preventDefault(); navigate('/signup'); }}>
+                        회원가입 하러가기
+                    </a>
                 </div>
-                {/* 폼 제출 버튼과 카카오 로그인 버튼을 감싸는 컨테이너 추가 */}
-                <div style={styles.buttonContainer}>
-                    <button type="submit" style={styles.submitButton}>로그인</button>
-                    <button type="button" onClick={handleKakaoLogin} style={styles.kakaoLoginButton}>카카오 로그인</button>
-                </div>
-            </form>
+            </div>
         </div>
     );
-};
-
-const styles = {
-    h1: {
-        fontSize: '3vw',
-        fontFamily: 'Noto Sans KR',
-        marginTop: '22vh',
-        marginBottom: '4vh'
-    },
-    container: {
-        padding: '20px',
-        textAlign: 'center',
-    },
-    inputGroup: {
-        marginBottom: '10px',
-    },
-    label: {
-        fontFamily: 'Noto Sans KR',
-        fontSize: '2vw',
-        display: 'block',
-        marginBottom: '1vh',
-        fontWeight: '600',
-        margin: '2vh'
-    },
-    input: {
-        padding: '10px',
-        marginTop: '5px',
-        width: '300px',
-        fontSize: '16px',
-        fontFamily: 'Jua',
-        borderRadius: '5px',
-        border: '1px solid #ccc',
-    },
-    // Flexbox를 사용하여 버튼들을 가로로 정렬
-    buttonContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: '4vh',
-        marginBottom: '16vh',
-    },
-    submitButton: {
-        backgroundColor: 'black',
-        color: '#fff',
-        border: 'none',
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Noto Sans KR',
-        marginRight: '1vh', // 버튼 사이 간격 추가
-    },
-    kakaoLoginButton: {
-        backgroundColor: '#FEE500',
-        color: '#000',
-        border: 'none',
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Noto Sans KR',
-        marginLeft: '1vh', // 버튼 사이 간격 추가
-    },
 };
 
 export default LoginPage;
