@@ -11,13 +11,14 @@ function ViewReviewPage() {
   const [error, setError] = useState(null);
   const [likedReviews, setLikedReviews] = useState([]);
   const [selectedReviewId, setSelectedReviewId] = useState(null);
-
-  const getProfileImage = (path) => {
-    if (!path) return '/images/header/profile.png';
-    const isFullUrl = path.startsWith('http') || path.startsWith('/');
-    const prefix = path.startsWith('/') ? '' : '/uploads/';
-    return `${process.env.REACT_APP_API_URL}${isFullUrl ? '' : prefix}${path}`;
-  };
+  
+const getProfileImage = (path) => {
+  if (!path) return '/images/header/profile.png';
+  const decodedPath = decodeURIComponent(path); // <- URL 디코딩
+  const isFullUrl = decodedPath.startsWith('http') || decodedPath.startsWith('/');
+  const prefix = decodedPath.startsWith('/') ? '' : '/uploads/';
+  return isFullUrl ? decodedPath : `${process.env.REACT_APP_API_URL}${prefix}${decodedPath}`;
+};
 
   const handleCommentClick = (reviewId) => {
     setSelectedReviewId(reviewId);  // 모달 열기
