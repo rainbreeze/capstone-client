@@ -12,7 +12,8 @@ const LoginPage = () => {
 
     // 카카오 로그인 설정
     const KAKAO_REST_API_KEY = 'b0abcbdd05b3cc529063683c1a4e5003';
-    const KAKAO_REDIRECT_URI = 'http://localhost:3001/login/kakao/callback';
+    const KAKAO_REDIRECT_URI = `${process.env.REACT_APP_CLIENT_URL}/login/kakao/callback`;
+
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
 
     const handleLogin = async (e) => {
@@ -21,7 +22,7 @@ const LoginPage = () => {
 
         try {
             // 서버로 로그인 요청 (포트 3001 가정)
-            const response = await fetch('http://localhost:3001/login', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
