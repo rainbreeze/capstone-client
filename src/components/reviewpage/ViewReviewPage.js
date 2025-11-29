@@ -5,13 +5,12 @@ import Footer from '../common/Footer';
 import styled from 'styled-components';
 import ReviewCommentModal from './ReviewCommentModal'; // import 위치 적절히 조정
 
-
 function ViewReviewPage() {
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState(null);
   const [likedReviews, setLikedReviews] = useState([]);
   const [selectedReviewId, setSelectedReviewId] = useState(null);
-  
+
 const getProfileImage = (path) => {
   if (!path) return '/images/header/profile.png';
   const decodedPath = decodeURIComponent(path); // <- URL 디코딩
@@ -55,22 +54,29 @@ const getProfileImage = (path) => {
     }
   };
 
-  useEffect(() => {
-    const fetchAllReviews = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
-        if (Array.isArray(response.data)) {
-          setReviews(response.data);
-        } else {
-          throw new Error("리뷰 데이터 형식이 올바르지 않습니다.");
-        }
-      } catch (err) {
-        console.error('전체 리뷰 조회 실패:', err);
-        setError('리뷰를 불러오는 데 실패했습니다.');
+useEffect(() => {
+  const fetchAllReviews = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
+      if (Array.isArray(response.data)) {
+        const decodedReviews = response.data.map((review) => ({
+          ...review,
+          user_name: review.user_name.startsWith('%')
+            ? decodeURIComponent(review.user_name)
+            : review.user_name
+        }));
+        setReviews(decodedReviews);
+      } else {
+        throw new Error("리뷰 데이터 형식이 올바르지 않습니다.");
       }
-    };
-    fetchAllReviews();
-  }, []);
+    } catch (err) {
+      console.error('전체 리뷰 조회 실패:', err);
+      setError('리뷰를 불러오는 데 실패했습니다.');
+    }
+  };
+  fetchAllReviews();
+}, []);
+
 
   return (
     <>
