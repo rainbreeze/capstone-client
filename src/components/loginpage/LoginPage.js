@@ -12,7 +12,7 @@ const LoginPage = () => {
 
     // 카카오 로그인 설정
     const KAKAO_REST_API_KEY = 'b0abcbdd05b3cc529063683c1a4e5003';
-    const KAKAO_REDIRECT_URI = `${process.env.REACT_APP_CLIENT_URL}/login/kakao/callback`;
+    const KAKAO_REDIRECT_URI = `${process.env.REACT_APP_API_URL}/login/kakao/callback`;
 
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
 
