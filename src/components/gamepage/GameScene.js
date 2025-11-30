@@ -405,7 +405,7 @@ export default class GameScene extends Phaser.Scene {
             Phaser.Input.Keyboard.KeyCodes.SPACE
         );
 
-        //? 뭐더라 이거
+
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         this.cameras.main.startFollow(this.player);
@@ -414,6 +414,10 @@ export default class GameScene extends Phaser.Scene {
         this.choiceShown = false;
 
         console.log("this.bullet:", this.bullet);
+
+        //질문 섞기
+        this.questionsPool = Phaser.Utils.Array.Shuffle([...randomQuestions]);
+
     }
 
     update() {
@@ -509,8 +513,7 @@ export default class GameScene extends Phaser.Scene {
 
     // 랜덤 질문
     getRandomQuestion() {
-        const q = Phaser.Utils.Array.GetRandom(randomQuestions);
-        return q;
+        return this.questionsPool.pop();
     }
 
     showChoiceButtons() {
@@ -519,7 +522,7 @@ export default class GameScene extends Phaser.Scene {
         const map = this.make.tilemap({ key: mapKey });
 
         let questionObj;
-        questionObj = Phaser.Utils.Array.GetRandom(randomQuestions);
+        questionObj = this.getRandomQuestion();
 
         const { question, options } = questionObj;
 
@@ -578,7 +581,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     setButtonEvents(btn, opt) {
-        btn.on("pointerdown", () => {
+        btn.on("pointerdown", async() => {
             this.choiceGroup.clear(true, true);
             this.controlsEnabled = true;
 
@@ -595,7 +598,7 @@ export default class GameScene extends Phaser.Scene {
                 const stageEndTime = Date.now();
                 playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-                const formData = this.sendStageStatData(
+                const formData = await this.sendStageStatData(
                     choice,
                     stepCount,
                     totaljumpCount,
@@ -663,6 +666,7 @@ export default class GameScene extends Phaser.Scene {
         });
 
         console.log("payload 동작");
+        console.log('payload: ', payload);
         const res = await axios.post(apiUrl, payload);
         const predictedGenre = res.data.predicted_genre;
         console.log("예측 장르:", predictedGenre);
@@ -686,7 +690,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    gameOver() {
+    async gameOver() {
         if (this.isGameOver) return;
         this.isGameOver = true;
 
@@ -697,14 +701,7 @@ export default class GameScene extends Phaser.Scene {
         const stageEndTime = Date.now();
         playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-        const formData = this.sendStageStatData(
-            choice,
-            stepCount,
-            totaljumpCount,
-            sprintCount,
-            playTime,
-            false
-        );
+
 
         this.add
             .text(400, 200, "Game Over", {
@@ -714,6 +711,16 @@ export default class GameScene extends Phaser.Scene {
                 color: "#fff",
             })
             .setOrigin(0.5);
+
+
+        const formData = await this.sendStageStatData(
+            choice,
+            stepCount,
+            totaljumpCount,
+            sprintCount,
+            playTime,
+            false
+        );
 
         this.time.delayedCall(1000, () => {
             this.showSearchResult(formData);
