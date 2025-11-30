@@ -2,33 +2,9 @@ import Phaser from "phaser";
 import axios from "axios";
 import WebFont from "webfontloader";
 
-//장르 결정할 api
-let dataset = [
-    { name: "danceability", avg: 0.5, min: 0, max: 1 },
-    { name: "energy", avg: 0.5, min: 0, max: 1 },
-    { name: "key,", avg: 5, min: -1, max: 11 },
-    { name: "loudness", avg: -20, min: -60, max: 0 },
-    { name: "mode", avg: 1, min: 0, max: 1 }, // 0 아니면 1
-    { name: "speechiness", avg: 0.4, min: 0, max: 1 },
-    { name: "acousticness", avg: 0.4, min: 0, max: 1 },
-    { name: "instrumentalness", avg: 0.2, min: 0, max: 1 },
-    { name: "liveness", avg: 0.2, min: 0, max: 1 },
-    { name: "valence", avg: 0.5, min: 0, max: 1 },
-    { name: "tempo", avg: 120, min: 0, max: 200 }, //bpm 기준이기 때문에 max 값을 임의로 200으로 설정
-];
+//빈 choice 배열
+let choice = [];
 
-// dataset → formData 변환 함수
-function convertDatasetToFormData(dataset) {
-    const formData = {};
-
-    dataset.forEach((item) => {
-        // avg 값을 그대로 사용, key 이름에 쉼표 제거
-        const key = item.name.replace(",", "");
-        formData[key] = item.avg;
-    });
-
-    return formData;
-}
 
 //질문 리스트 -> 랜덤으로 각 스테이지 말미에 등장
 const randomQuestions = [{
@@ -598,17 +574,7 @@ export default class GameScene extends Phaser.Scene {
 
     //옵션에 대한 avg 카운트 조정
     applyOptEvent(effect) {
-        for (const key in effect) {
-            const changeValue = effect[key];
-
-            const target = dataset.find((item) => item.name === key);
-            if (target) {
-                target.avg += changeValue;
-
-                if (target.avg < target.min) target.avg = target.min;
-                if (target.avg > target.max) target.avg = target.max;
-            }
-        }
+        choice.push(effect);
     }
 
     setButtonEvents(btn, opt) {
@@ -629,7 +595,8 @@ export default class GameScene extends Phaser.Scene {
                 const stageEndTime = Date.now();
                 playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-                const genre = this.sendStageStatData(
+                const formData = this.sendStageStatData(
+                    choice,
                     stepCount,
                     totaljumpCount,
                     sprintCount,
@@ -637,17 +604,11 @@ export default class GameScene extends Phaser.Scene {
                     true
                 );
                 //서버에서 장르 내려오는걸로 수정되면 그때 변경
-                this.showSearchResult(genre);
+                this.showSearchResult(formData);
             }
         });
     }
 
-    createAnswerJSON() {
-        return dataset.map((item) => ({
-            name: item.name,
-            avg: item.avg,
-        }));
-    }
 
     showResultPopup(result) {
         this.controlsEnabled = false;
@@ -656,83 +617,43 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    // 게임 스텟 기반으로 dataset avg 값 조정 함수
-    adjustDatasetByStats(steps, jumps, sprints, playTime) {
 
-            // steps 30마다 0.05 증가
-            const stepIncrement = Math.floor(steps / 30) * 0.05;
-            const dance = dataset.find((item) => item.name === "danceability");
-            if (dance) {
-                dance.avg = Math.min(dance.avg + stepIncrement, dance.max);
-            }
+    //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
+    //1차 api 호출
+    async sendStageStatData(choice, steps, jumps, sprints, playTime, cleared) {
+        //choice 배열 출력
+        console.log(choice);
 
-            // jumps 5마다 0.05 증가
-            const jumpIncrement = Math.floor(jumps / 5) * 0.05;
-            const energy = dataset.find((item) => item.name === "energy");
-            if (energy) {
-                energy.avg = Math.min(energy.avg + jumpIncrement, energy.max);
-            }
-
-            // sprints 5마다 5BPM 증가
-            const sprintIncrement = Math.floor(sprints / 5) * 5;
-            const tempo = dataset.find((item) => item.name === "tempo");
-            if (tempo) {
-                tempo.avg = Math.min(tempo.avg + sprintIncrement, tempo.max);
-            }
-
-            // playTime 60초마다 0.05 증가
-            const playTimeIncrement = Math.floor(playTime / 30) * 0.05;
-            const valence = dataset.find((item) => item.name === "valence");
-            if (valence) {
-                valence.avg = Math.min(valence.avg + playTimeIncrement, valence.max);
-            }
-
-        }
-        //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
-        //1차 api 호출
-    async sendStageStatData(steps, jumps, sprints, playTime, cleared) {
-        // 변경 전 dataset 출력
-        console.log("=== 변경 전 dataset ===");
-        console.table(dataset.map((item) => ({ name: item.name, avg: item.avg })));
-
-        // 스텟 기반 dataset 조정
-        this.adjustDatasetByStats(steps, jumps, sprints, playTime);
-
-        // 변경 후 dataset 출력
-        console.log("=== 변경 후 dataset ===");
-        console.table(dataset.map((item) => ({ name: item.name, avg: item.avg })));
-
-        const answerJSON = this.createAnswerJSON();
-        this.adjustDatasetByStats(steps, jumps, sprints, playTime);
         const gameStats = {
             userId: storedUserId,
-            answer: JSON.stringify(answerJSON), //json
+            answer: choice,
             steps: steps,
             jumps: jumps,
             sprints: sprints,
             playTime: playTime, //시간
             cleared: cleared, //boolean
         };
-        console.log("게임 스텟 동작");
+
         console.log("게임 스테이지 스텟 데이터:", gameStats);
 
-        /* 해당 API에서 오류가 계속 나서, 일단 게임데이터 -> 수치 조정 작업을 클라쪽으로 이관.
-            try {
-                //res의 결과 값은 장르 이름으로 저장
-                const res = await axios.post(`${process.env.REACT_APP_API_URL}/saveStat/saveGameStats`, gameStats);
-                console.log('게임 스테이지 스탯 데이터 저장 성공', res.data);
-            } catch (err) {
-                console.log('데이터 전송 실패', err);
-            }
-            */
+        try {
+            //res의 결과 값은 장르 이름으로 저장
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/saveStat/saveGameStats`, gameStats);
+            console.log('게임 스테이지 스탯 데이터 저장 성공', res.data);
+            console.log(res.data.formData);
+
+            return res.data.formData;
+        } catch (err) {
+            console.log('데이터 전송 실패', err);
+        }
+
 
     }
 
     //2차 api 호출
 
-    async showSearchResult(genre) {
+    async showSearchResult(formData) {
         console.log("showsearch 동직");
-        const formData = convertDatasetToFormData(dataset);
         const apiUrl = `${process.env.REACT_APP_API_URL}/genreapi/predict`;
 
         // payload에 숫자형으로 넣기
@@ -765,7 +686,7 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    gameOver(dataset) {
+    gameOver() {
         if (this.isGameOver) return;
         this.isGameOver = true;
 
@@ -776,7 +697,8 @@ export default class GameScene extends Phaser.Scene {
         const stageEndTime = Date.now();
         playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-        const genre = this.sendStageStatData(
+        const formData = this.sendStageStatData(
+            choice,
             stepCount,
             totaljumpCount,
             sprintCount,
@@ -794,7 +716,7 @@ export default class GameScene extends Phaser.Scene {
             .setOrigin(0.5);
 
         this.time.delayedCall(1000, () => {
-            this.showSearchResult(genre);
+            this.showSearchResult(formData);
         });
     }
 }
