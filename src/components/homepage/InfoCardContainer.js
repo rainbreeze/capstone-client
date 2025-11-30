@@ -19,13 +19,6 @@ const InfoCardSection = () => {
             image: '/images/homepage/card_2.png',
             to: '/viewreview',
         },
-        {
-            title: '랭킹',
-            sentence1: '가장 인기 있는 음악과',
-            sentence2: '사용자 랭킹을 확인해보세요.',
-            image: '/images/homepage/card_3.png',
-            to: '/ranking',
-        },
     ];
 
     return (
@@ -45,7 +38,6 @@ const InfoCardSection = () => {
                         <CardContent>
                             <CardTitle>{title}</CardTitle>
                             <CardSentence>{sentence1}</CardSentence>
-                            <CardSentence>{sentence2}</CardSentence>
                         </CardContent>
                     </Card>
                 </StyledLink>
@@ -72,7 +64,7 @@ const SectionWrapper = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-  width: 30%;
+  width: 45%;
   text-decoration: none;
 
   @media (max-width: 768px) {
