@@ -87,8 +87,6 @@ class MainScene extends Phaser.Scene {
         // WebFontLoader의 active 콜백이 실행되어 window.WebFontLoaded가 true가 됐는지 확인
         if (window.WebFontLoaded) {
 
-
-            // 더 이상 확인할 필요가 없으므로 타이머를 제거합니다.
             this.time.removeEvent(this.time.getEventWithName('fontCheckTimer'));
         }
     }
@@ -96,11 +94,12 @@ class MainScene extends Phaser.Scene {
 
     openHelpPopup() {
         console.log('openHelpPopup 작동')
+
         this.showHelpPopup = true;
 
         this.input.keyboard.enabled = false;
 
-        this.modalBlocker = this.add.rectangle(0, 0, 800, 400, 0x000000, 0.001)
+        this.modalBlocker = this.add.rectangle(0, 0, 1400, 800, 0x000000, 0.001)
             .setOrigin(0)
             .setInteractive();
 
@@ -111,7 +110,7 @@ class MainScene extends Phaser.Scene {
         this.helpPopupContainer.setDepth(100);
 
         // 배경(반투명)
-        const bg = this.add.rectangle(0, 0, 600, 300, 0x000000, 0.6)
+        const bg = this.add.rectangle(0, 0, 1000, 500, 0x000000, 0.6)
             .setStrokeStyle(2, 0xffffff);
 
         // 텍스트

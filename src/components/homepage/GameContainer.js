@@ -27,7 +27,7 @@ const GameContainer = () => {
     const config = {
       type: Phaser.AUTO,
       width: 800,
-      height: 400,
+     height: 400,
       parent: gameRef.current,
       physics: {
         default: "arcade",

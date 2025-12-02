@@ -589,7 +589,10 @@ export default class GameScene extends Phaser.Scene {
                 this.applyOptEvent(opt.effect);
             }
 
+
+
             if (this.stageIndex < totalStages - 1) {
+
                 this.scene.restart({
                     selectedCharacter: this.selectedCharacter,
                     stageIndex: this.stageIndex + 1,
@@ -598,16 +601,15 @@ export default class GameScene extends Phaser.Scene {
                 const stageEndTime = Date.now();
                 playTime = Math.floor((stageEndTime - stageStartTime) / 1000);
 
-                const formData = await this.sendStageStatData(
+                await this.sendStageStatData(
                     choice,
+                    score,
                     stepCount,
                     totaljumpCount,
                     sprintCount,
                     playTime,
                     true
                 );
-                //서버에서 장르 내려오는걸로 수정되면 그때 변경
-                this.showSearchResult(formData);
             }
         });
     }
@@ -623,13 +625,14 @@ export default class GameScene extends Phaser.Scene {
 
     //매 스테이지 끝나고가 아니라 전체 스테이지 끝나고 -> 로직 수정 확인하기
     //1차 api 호출
-    async sendStageStatData(choice, steps, jumps, sprints, playTime, cleared) {
+    async sendStageStatData(choice, score, steps, jumps, sprints, playTime, cleared) {
         //choice 배열 출력
         console.log(choice);
 
         const gameStats = {
             userId: storedUserId,
             answer: choice,
+            score: score,
             steps: steps,
             jumps: jumps,
             sprints: sprints,
@@ -644,50 +647,15 @@ export default class GameScene extends Phaser.Scene {
             const res = await axios.post(`${process.env.REACT_APP_API_URL}/saveStat/saveGameStats`, gameStats);
             console.log('게임 스테이지 스탯 데이터 저장 성공', res.data);
             console.log(res.data.formData);
+            console.log('예측장르: ', res.data.predictedGenre);
+            console.log('플레이리스트: ', res.data.playlist);
 
-            return res.data.formData;
+            this.showResultPopup(res.data.playlist);
         } catch (err) {
             console.log('데이터 전송 실패', err);
         }
 
 
-    }
-
-    //2차 api 호출
-
-    async showSearchResult(formData) {
-        console.log("showsearch 동직");
-        const apiUrl = `${process.env.REACT_APP_API_URL}/genreapi/predict`;
-
-        // payload에 숫자형으로 넣기
-        const payload = {};
-        Object.keys(formData).forEach((key) => {
-            payload[key] = parseFloat(formData[key]);
-        });
-
-        console.log("payload 동작");
-        console.log('payload: ', payload);
-        const res = await axios.post(apiUrl, payload);
-        const predictedGenre = res.data.predicted_genre;
-        console.log("예측 장르:", predictedGenre);
-
-        const gameData = {
-            userId: storedUserId,
-            score: score,
-            genre: predictedGenre,
-        };
-
-        try {
-            console.log('세이브 게임 데이터 동작')
-            console.log(gameData.userId);
-            const res = await axios.post(
-                `${process.env.REACT_APP_API_URL}/game/savegamedata`,
-                gameData
-            );
-            this.showResultPopup(res.data.musicRecommendation);
-        } catch (err) {
-            console.error("Spotify API 호출 실패:", err);
-        }
     }
 
     async gameOver() {
@@ -713,17 +681,14 @@ export default class GameScene extends Phaser.Scene {
             .setOrigin(0.5);
 
 
-        const formData = await this.sendStageStatData(
+        await this.sendStageStatData(
             choice,
+            score,
             stepCount,
             totaljumpCount,
             sprintCount,
             playTime,
             false
         );
-
-        this.time.delayedCall(1000, () => {
-            this.showSearchResult(formData);
-        });
     }
 }

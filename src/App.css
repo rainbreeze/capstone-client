@@ -6,7 +6,7 @@
 
 #gameContainer canvas {
     display: block;
-    width: 80% !important;
+    width: 100% !important;
 }
 
 html,
