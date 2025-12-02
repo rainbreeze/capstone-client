@@ -45,7 +45,7 @@ body {
 }
 
 .shape:nth-child(1) { width: 600px; height: 600px; top: -100px; left: -100px; animation-duration: 12s; }
-.shape:nth-child(2) { width: 400px; height: 400px; bottom: 50px; right: -50px; animation-duration: 15s; animation-delay: 1s; background: radial-gradient(circle, rgba(100, 100, 255, 0.2) 0%, rgba(0,0,0,0) 70%); }
+.shape:nth-child(2) { width: 400px; height: 400px; bottom: 50px; right: -50px; animation-duration: 15s; animation-delay: 1s; background: radial-gradient(circle, rgba(29, 185, 84, 0.4) 0%, rgba(0,0,0,0) 70%); }
 .shape:nth-child(3) { width: 200px; height: 200px; top: 40%; left: 80%; animation-duration: 8s; animation-delay: 2s; }
 
 .landing-content {

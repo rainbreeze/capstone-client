@@ -8,7 +8,7 @@ const Header = () => {
     const [scrolled, setScrolled] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [user, setUser] = useState(null);
-    const [userName, setUserName] = useState(null); // ✅ 수정: setUserName으로 통일
+    const [userName, setUserName] = useState(null);
     const [profileImage, setProfileImage] = useState(null);
 
     const location = useLocation();
@@ -23,7 +23,7 @@ const Header = () => {
 
         if (loggedUserId) {
             setUser({ userId: loggedUserId });
-            setUserName(loggedUserName); // ✅ 수정: 상태를 객체가 아닌 문자열로 바로 저장
+            setUserName(loggedUserName);
 
             if (loggedProfileImage) {
                 const fullImageUrl = loggedProfileImage.startsWith('http')
@@ -38,7 +38,7 @@ const Header = () => {
             setUserName(null);
             setProfileImage(null);
         }
-    }, [location.pathname]); // ✅ URL 경로가 변경될 때마다 훅 재실행
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -70,8 +70,9 @@ const Header = () => {
         <HeaderWrapper scrolled={scrolled} transparent={isTransparentPage && !scrolled}>
             <Logo src="/assets/images/logo_image.png" alt="Logo" />
 
+            {/* 햄버거 메뉴 아이콘 흰색으로 변경 */}
             <HamburgerMenu onClick={toggleSidebar}>
-                <FaBars size={24} color="#000" />
+                <FaBars size={24} color="#FFFFFF" />
             </HamburgerMenu>
 
             <NavLeft>
@@ -101,7 +102,7 @@ const Header = () => {
                             테스트
                         </NavLink>
                     </NavItem>
-                                        <NavItem scrolled={scrolled}>
+                    <NavItem scrolled={scrolled}>
                         <NavLink as={Link} to="/test2">
                             테스트
                         </NavLink>
@@ -289,8 +290,8 @@ const Overlay = styled.div`
 const SearchContainer = styled.div`
   display: flex;
   align-items: center;
-  background-color: rgba(200, 200, 200, 0.3);
-  border: 1px solid rgba(180, 180, 180, 0.4);
+  background-color: rgba(255, 255, 255, 0.1); /* 배경색 투명한 흰색으로 변경 */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* 테두리 밝게 변경 */
   border-radius: 6px;
   padding: 0.4vh 0.8vw;
   height: 4.5vh;
@@ -300,17 +301,17 @@ const SearchInput = styled.input`
   background: transparent;
   border: none;
   outline: none;
-  color: #333;
+  color: #FFFFFF; /* 입력 텍스트 흰색 */
   font-size: 0.9vw;
   font-family: 'Noto Sans KR', sans-serif;
   margin-left: 0.5vw;
   ::placeholder {
-    color: #888;
+    color: #B3B3B3; /* 플레이스홀더 밝은 회색 */
   }
 `;
 
 const SearchIcon = styled(FiSearch)`
-  color: #888;
+  color: #B3B3B3; /* 돋보기 아이콘 밝은 회색 */
   font-size: 1.3vw;
 `;
 
@@ -324,18 +325,19 @@ const HeaderWrapper = styled.header`
   justify-content: flex-start;
   align-items: center;
   padding: 0 2%;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* 하단 테두리 은은하게 */
   transition: background-color 0.3s ease;
 
   background-color: ${({ transparent, scrolled }) =>
-          transparent ? 'transparent' : 'white'};
+          transparent ? 'transparent' : '#191414'}; /* 배경색 다크 테마 적용 */
 `;
 
 const Logo = styled.img`
-  height: 80%;
-  width: auto;
+  height: 300px; 
+  width: auto; /* 비율 유지 */
   display: flex;
   margin-left: 5%;
+  object-fit: contain; /* 이미지가 찌그러지지 않게 함 */
 `;
 
 const HamburgerMenu = styled.div`
@@ -382,28 +384,15 @@ const NavList = styled.ul`
 
 const NavLink = styled.a`
   text-decoration: none;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(255, 255, 255, 0.7); /* 기본 글씨색: 밝은 회색 */
   font-size: 1vw;
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: 700;
-  transition: 0.7s ease;
+  transition: 0.3s ease;
 
-  ${props =>
-          props.isLogout &&
-          `
-    color: black !important;
-  `}
-
-  ${props =>
-          props.isFirst &&
-          `
-    color: black !important;
-  `}
-
-  ${props =>
-          props.isSignup &&
-          `
-    color: black !important;
+  /* 특정 조건일 때 강제로 색상을 덮어쓰던 코드들을 수정 */
+  ${props => (props.isLogout || props.isFirst || props.isSignup) && `
+    color: rgba(255, 255, 255, 0.9) !important;
   `}
 
   @media (max-width: 768px) {
@@ -422,7 +411,7 @@ const NavItem = styled.li`
 
   &:hover {
     a {
-      color: black;
+      color: #FFFFFF; /* 호버 시 완전한 흰색 */
     }
   }
 `;
@@ -433,7 +422,7 @@ const Sidebar = styled.div`
   right: 0;
   width: 45vw;
   height: 100%;
-  background-color: white;
+  background-color: #191414; /* 사이드바 배경도 다크 테마 */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -458,17 +447,17 @@ const SidebarItem = styled.li`
   padding: 2.5vh 0;
   text-align: left;
   color: #fff;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.5);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1); /* 사이드바 구분선 색상 변경 */
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: #2a2a2a; /* 호버 배경색 변경 */
     a {
-      color: black;
+      color: #1DB954; /* 호버 시 Spotify Green 포인트 */
       font-weight: 900;
     }
   }
 
   &:first-child {
-    border-top: 1.5px solid rgba(0,0,0,0.5);
+    border-top: 1.5px solid rgba(255, 255, 255, 0.1);
   }
 `;

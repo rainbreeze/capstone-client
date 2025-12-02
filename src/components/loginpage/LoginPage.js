@@ -46,7 +46,10 @@ const LoginPage = () => {
                     localStorage.setItem('profileImage', data.user.profileImage || '');
                 }
 
-                // [중요] 로그인 성공 시 홈페이지(/home)로 이동
+                // [중요] 로그인 성공 시 Header 업데이트를 위한 이벤트 발생
+                window.dispatchEvent(new Event('auth-change'));
+
+                // 로그인 성공 시 홈페이지(/home)로 이동
                 navigate('/home');
             } else {
                 // 실패: 서버에서 보낸 에러 메시지 표시

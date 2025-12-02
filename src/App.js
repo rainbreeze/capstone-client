@@ -47,6 +47,9 @@ function App() {
             document.cookie = "userId=; path=/; max-age=0";
             document.cookie = "userName=; path=/; max-age=0";
             document.cookie = "profileImage=; path=/; max-age=0";
+
+            // [중요] Header 등 다른 컴포넌트에게 로그인 상태가 변경되었음을 알림
+            window.dispatchEvent(new Event('auth-change'));
         }
 
         // 4. 기존 토큰 유효성 체크 로직 (토큰 없으면 정보 삭제)
@@ -55,6 +58,8 @@ function App() {
             localStorage.removeItem('userId');
             localStorage.removeItem('userName');
             localStorage.removeItem('profileImage');
+            // 로그아웃 상태 알림 (혹시 모를 동기화)
+            window.dispatchEvent(new Event('auth-change'));
         }
     }, []);
 

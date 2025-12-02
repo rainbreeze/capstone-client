@@ -1,18 +1,30 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const StartGameContainer = () => (
-  <ImageContainer>
-    <ContentWrapper>
-      <Title>게임을 통해 음악을 추천 받으세요</Title>
-      <Subtitle>게임과 음악을 통해, 나 자신을 알아가고 공유할 수 있는 공간</Subtitle>
-      <StartButton to="/game">게임 하러가기</StartButton>
-    </ContentWrapper>
-  </ImageContainer>
+    <ImageContainer>
+        {/* 배경 애니메이션 원 */}
+        <BackgroundShape1 />
+        <BackgroundShape2 />
+
+        <ContentWrapper>
+            <Title>게임을 통해 음악을 추천 받으세요</Title>
+            <Subtitle>게임과 음악을 통해, 나 자신을 알아가고 공유할 수 있는 공간</Subtitle>
+            <StartButton to="/game">게임 하러가기</StartButton>
+        </ContentWrapper>
+    </ImageContainer>
 );
 
 export default StartGameContainer;
+
+// ========== Keyframes ==========
+
+const float = keyframes`
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+  100% { transform: translate(0, 0); }
+`;
 
 // ========== Styled Components ==========
 
@@ -20,22 +32,12 @@ const ImageContainer = styled.div`
   position: relative;
   margin-top: 8vh;
   display: flex;
-  justify-content: center;  /* 중앙 정렬 */
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 70vh;
-  background-image: url('/images/homepage/game_bg.png');
-  background-size: 100% 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(0,0,0,0.6);
-    z-index: 1;
-  }
+  background-color: #191414;
+  overflow: hidden; /* 원이 컨테이너 밖으로 나가지 않게 함 */
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -49,7 +51,35 @@ const ContentWrapper = styled.div`
   color: white;
   max-width: 800px;
   padding: 0 20px;
-  z-index: 2;
+  z-index: 10; /* 배경 원보다 위에 오도록 설정 */
+`;
+
+/* 공통 Shape 스타일 */
+const Shape = styled.div`
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: ${float} 10s infinite ease-in-out;
+  pointer-events: none; /* 마우스 이벤트 방해 금지 */
+`;
+
+const BackgroundShape1 = styled(Shape)`
+  width: 500px;
+  height: 500px;
+  top: -150px;
+  left: -100px;
+  background: radial-gradient(circle, rgba(29, 185, 84, 0.3) 0%, rgba(0,0,0,0) 70%);
+  animation-duration: 12s;
+`;
+
+const BackgroundShape2 = styled(Shape)`
+  width: 300px;
+  height: 300px;
+  bottom: 50px;
+  right: -50px;
+  background: radial-gradient(circle, rgba(29, 185, 84, 0.3) 0%, rgba(0,0,0,0) 70%);
+  animation-duration: 15s;
+  animation-delay: 1s;
 `;
 
 const Title = styled.h1`
@@ -86,12 +116,14 @@ const StartButton = styled(Link)`
   padding: 0.8rem 2.5rem;
   border-radius: 5px;
   text-decoration: none;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color:rgba(0, 0, 0,0.5);
-      color: rgba(255,255,255,1);
-      font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-weight: 700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
   }
 
   @media (max-width: 768px) {
