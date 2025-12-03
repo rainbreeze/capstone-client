@@ -30,7 +30,7 @@ const float = keyframes`
 
 const ImageContainer = styled.div`
   position: relative;
-  margin-top: 8vh;
+  margin-top: 7vh;
   display: flex;
   justify-content: center;
   align-items: center;
