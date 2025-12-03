@@ -19,8 +19,8 @@ const randomQuestions = [{
         //energy
         question: "한여름 오후, 너는 어떤 풍경 속에 있어?",
         options: [
-            { text: "천천히, 바람결 따라 부드럽게.", effect: { energy: -0.1 } },
-            { text: "빠르게, 휘몰아치듯 활기차게.", effect: { energy: +0.1 } },
+            { text: "잔잔한 호숫가 앞에.", effect: { energy: -0.1 } },
+            { text: "태양 아래 뛰어노는 축제 속에.", effect: { energy: +0.1 } },
         ],
     },
     {
@@ -72,8 +72,8 @@ const randomQuestions = [{
         //instrumentalness
         question: "너에게 위로가 필요한 날, 어떤 소리가 위로가 될까?",
         options: [
-            { text: "흐릿한 보라빛 저녁하늘", effect: { instrumentalness: -0.1 } },
-            { text: "밝은 노을빛 오렌지 하늘", effect: { instrumentalness: +0.1 } },
+            { text: "잔잔한 말과 목소리", effect: { instrumentalness: -0.1 } },
+            { text: "말 없이 울려퍼지는 피아노 소리", effect: { instrumentalness: +0.1 } },
         ],
     },
     {
@@ -94,6 +94,8 @@ const randomQuestions = [{
     },
 ];
 
+
+
 const storedUserId = localStorage.getItem("userId");
 
 //스코어에 따라서 추천 곡 수가 달라져야함 -> 이거 확인
@@ -105,9 +107,13 @@ let stepCount = 0;
 let sprintCount = 0;
 let playTime = null;
 let stageStartTime = Date.now();
+//질문 섞기
+let questionsPool = Phaser.Utils.Array.Shuffle([...randomQuestions]);
 console.log(stageStartTime);
 
 export default class GameScene extends Phaser.Scene {
+
+
     constructor() {
         super("GameScene");
         this.fontsReady = false;
@@ -179,6 +185,7 @@ export default class GameScene extends Phaser.Scene {
         const mapKey = `map${this.stageIndex + 1}`;
         console.log(this.stageIndex + 1);
         const map = this.make.tilemap({ key: mapKey });
+
 
         let tileset;
         // 공통 코드
@@ -388,11 +395,15 @@ export default class GameScene extends Phaser.Scene {
                     .staticImage(centerX, centerY, "music_box_64x64")
                     .setDisplaySize(48, 48);
                 this.physics.add.overlap(this.player, musicBox, () => {
-                    if (!this.choiceShown) {
+                    if (!this.choiceShown && lives > 0) {
                         this.choiceShown = true;
                         score += 1000;
                         this.scoreText.setText(`Score: ${score}`);
                         this.showChoiceButtons();
+                    }
+
+                    if (lives <= 0) {
+                        this.gameOver();
                     }
                 });
             }
@@ -415,8 +426,7 @@ export default class GameScene extends Phaser.Scene {
 
         console.log("this.bullet:", this.bullet);
 
-        //질문 섞기
-        this.questionsPool = Phaser.Utils.Array.Shuffle([...randomQuestions]);
+
 
     }
 
@@ -513,7 +523,7 @@ export default class GameScene extends Phaser.Scene {
 
     // 랜덤 질문
     getRandomQuestion() {
-        return this.questionsPool.pop();
+        return questionsPool.pop();
     }
 
     showChoiceButtons() {
