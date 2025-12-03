@@ -80,7 +80,7 @@ const LoginPage = () => {
                         <input
                             type="text"
                             id="userId"
-                            placeholder="Enter your ID"
+                            placeholder="아이디를 입력하세요"
                             value={userId}
                             onChange={(e) => setUserId(e.target.value)}
                             required
@@ -92,7 +92,7 @@ const LoginPage = () => {
                         <input
                             type="password"
                             id="password"
-                            placeholder="Password"
+                            placeholder="비밀번호를 입력하세요"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required

@@ -70,7 +70,6 @@ const Header = () => {
         <HeaderWrapper scrolled={scrolled} transparent={isTransparentPage && !scrolled}>
             <Logo src="/assets/images/logo_image.png" alt="Logo" />
 
-            {/* 햄버거 메뉴 아이콘 흰색으로 변경 */}
             <HamburgerMenu onClick={toggleSidebar}>
                 <FaBars size={24} color="#FFFFFF" />
             </HamburgerMenu>
@@ -78,7 +77,8 @@ const Header = () => {
             <NavLeft>
                 <NavList>
                     <NavItem scrolled={scrolled}>
-                        <NavLink as={Link} to="/" isFirst>
+                        {/* ▼▼▼ [수정됨] 로그인 여부에 따라 링크 경로 변경 (/home or /) ▼▼▼ */}
+                        <NavLink as={Link} to={user ? "/home" : "/"} isFirst>
                             홈
                         </NavLink>
                     </NavItem>
@@ -97,6 +97,8 @@ const Header = () => {
                             감상평
                         </NavLink>
                     </NavItem>
+                    {/* 테스트 항목 주석 처리 유지 */}
+                    {/*
                     <NavItem scrolled={scrolled}>
                         <NavLink as={Link} to="/test">
                             테스트
@@ -107,6 +109,7 @@ const Header = () => {
                             테스트
                         </NavLink>
                     </NavItem>
+                    */}
                 </NavList>
             </NavLeft>
 
@@ -174,11 +177,16 @@ const Header = () => {
                             랭킹
                         </NavLink>
                     </SidebarItem>
+
+                    {/* 사이드바 테스트 항목 주석 처리 유지 */}
+                    {/*
                     <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                         <NavLink as={Link} to="/test">
                             테스트
                         </NavLink>
                     </SidebarItem>
+                    */}
+
                     <SidebarItem onClick={() => setIsSidebarOpen(false)}>
                         <NavLink as={Link} to="/playlist">
                             음악
@@ -290,8 +298,8 @@ const Overlay = styled.div`
 const SearchContainer = styled.div`
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.1); /* 배경색 투명한 흰색으로 변경 */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* 테두리 밝게 변경 */
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   padding: 0.4vh 0.8vw;
   height: 4.5vh;
@@ -301,17 +309,17 @@ const SearchInput = styled.input`
   background: transparent;
   border: none;
   outline: none;
-  color: #FFFFFF; /* 입력 텍스트 흰색 */
+  color: #FFFFFF;
   font-size: 0.9vw;
   font-family: 'Noto Sans KR', sans-serif;
   margin-left: 0.5vw;
   ::placeholder {
-    color: #B3B3B3; /* 플레이스홀더 밝은 회색 */
+    color: #B3B3B3;
   }
 `;
 
 const SearchIcon = styled(FiSearch)`
-  color: #B3B3B3; /* 돋보기 아이콘 밝은 회색 */
+  color: #B3B3B3;
   font-size: 1.3vw;
 `;
 
@@ -325,19 +333,19 @@ const HeaderWrapper = styled.header`
   justify-content: flex-start;
   align-items: center;
   padding: 0 2%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* 하단 테두리 은은하게 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: background-color 0.3s ease;
 
   background-color: ${({ transparent, scrolled }) =>
-          transparent ? 'transparent' : '#191414'}; /* 배경색 다크 테마 적용 */
+          transparent ? 'transparent' : '#191414'};
 `;
 
 const Logo = styled.img`
-  height: 300px; 
-  width: auto; /* 비율 유지 */
+  height: 300px;
+  width: auto;
   display: flex;
   margin-left: 5%;
-  object-fit: contain; /* 이미지가 찌그러지지 않게 함 */
+  object-fit: contain;
 `;
 
 const HamburgerMenu = styled.div`
@@ -384,13 +392,12 @@ const NavList = styled.ul`
 
 const NavLink = styled.a`
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.7); /* 기본 글씨색: 밝은 회색 */
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1vw;
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: 700;
   transition: 0.3s ease;
 
-  /* 특정 조건일 때 강제로 색상을 덮어쓰던 코드들을 수정 */
   ${props => (props.isLogout || props.isFirst || props.isSignup) && `
     color: rgba(255, 255, 255, 0.9) !important;
   `}
@@ -401,7 +408,7 @@ const NavLink = styled.a`
 `;
 
 const NavItem = styled.li`
-  padding: 0 1.5vw;
+  padding: 1.5vw;
   height: 100%;
   display: flex;
   align-items: center;
@@ -411,7 +418,7 @@ const NavItem = styled.li`
 
   &:hover {
     a {
-      color: #FFFFFF; /* 호버 시 완전한 흰색 */
+      color: #FFFFFF;
     }
   }
 `;
@@ -422,7 +429,7 @@ const Sidebar = styled.div`
   right: 0;
   width: 45vw;
   height: 100%;
-  background-color: #191414; /* 사이드바 배경도 다크 테마 */
+  background-color: #191414;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -447,12 +454,12 @@ const SidebarItem = styled.li`
   padding: 2.5vh 0;
   text-align: left;
   color: #fff;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1); /* 사이드바 구분선 색상 변경 */
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
 
   &:hover {
-    background-color: #2a2a2a; /* 호버 배경색 변경 */
+    background-color: #2a2a2a;
     a {
-      color: #1DB954; /* 호버 시 Spotify Green 포인트 */
+      color: #1DB954;
       font-weight: 900;
     }
   }

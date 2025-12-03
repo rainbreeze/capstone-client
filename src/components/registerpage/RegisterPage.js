@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import styled, { keyframes } from 'styled-components';
 import Header from '../common/Header';
-import Footer from '../common/Footer';
 
 const RegisterPage = () => {
     const [step, setStep] = useState(1);
@@ -78,61 +78,63 @@ const RegisterPage = () => {
         switch (step) {
             case 1:
                 return (
-                    <>
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>이   름</label>
-                            <input
+                    <StepContent>
+                        <InputGroup>
+                            <Label>이 름</Label>
+                            <Input
                                 type="text"
                                 value={userName}
                                 onChange={(e) => setUserName(e.target.value)}
-                                style={styles.input}
+                                placeholder="이름을 입력하세요"
                             />
-                        </div>
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>아이디</label>
-                            <input
+                        </InputGroup>
+                        <InputGroup>
+                            <Label>아이디</Label>
+                            <Input
                                 type="text"
                                 value={userId}
                                 onChange={(e) => setUserId(e.target.value)}
-                                style={styles.input}
+                                placeholder="아이디를 입력하세요"
                             />
-                        </div>
-                    </>
+                        </InputGroup>
+                    </StepContent>
                 );
             case 2:
                 return (
-                    <div style={styles.inputGroup}>
-                        <label style={styles.label}>이메일</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            style={styles.input}
-                        />
-                    </div>
+                    <StepContent>
+                        <InputGroup>
+                            <Label>이메일</Label>
+                            <Input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="example@email.com"
+                            />
+                        </InputGroup>
+                    </StepContent>
                 );
             case 3:
                 return (
-                    <>
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>비밀번호</label>
-                            <input
+                    <StepContent>
+                        <InputGroup>
+                            <Label>비밀번호</Label>
+                            <Input
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                style={styles.input}
+                                placeholder="비밀번호 입력"
                             />
-                        </div>
-                        <div style={styles.inputGroup}>
-                            <label style={styles.label}>재 입 력</label>
-                            <input
+                        </InputGroup>
+                        <InputGroup>
+                            <Label>재입력</Label>
+                            <Input
                                 type="password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                style={styles.input}
+                                placeholder="비밀번호 확인"
                             />
-                        </div>
-                    </>
+                        </InputGroup>
+                    </StepContent>
                 );
             default:
                 return null;
@@ -140,129 +142,248 @@ const RegisterPage = () => {
     };
 
     return (
-        <div>
+        <PageWrapper>
             <Header />
-            <div style={styles.container}>
-                <h1 style={styles.h1}>회원가입</h1>
 
-                {/* 프로그레스 */}
-                <div style={styles.stepIndicatorWrapper}>
-                    {[1, 2, 3].map((s, index) => (
-                        <React.Fragment key={s}>
-                            <div style={{
-                                ...styles.stepCircle,
-                                backgroundColor: step >= s ? 'black' : '#fff',
-                                color: step >= s ? '#fff' : '#ccc',
-                                borderColor: step >= s ? 'black' : '#ccc'
-                            }}>
-                                {s}
-                            </div>
-                            {index < 2 && (
-                                <div style={{
-                                    ...styles.stepLine,
-                                    backgroundColor: step > s ? '#1ED760' : '#ccc'
-                                }} />
+            <MainContainer>
+                {/* 배경 애니메이션 요소 */}
+                <BackgroundShapes>
+                    <Shape />
+                    <Shape />
+                    <Shape />
+                </BackgroundShapes>
+
+                <GlassContainer>
+                    <Title>JOIN US</Title>
+
+                    {/* 프로그레스 바 (숫자 제거됨) */}
+                    <StepIndicatorWrapper>
+                        {[1, 2, 3].map((s, index) => (
+                            <React.Fragment key={s}>
+                                {/* 숫자 {s}를 지웠습니다 */}
+                                <StepCircle active={step >= s} />
+                                {index < 2 && (
+                                    <StepLine active={step > s} />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </StepIndicatorWrapper>
+
+                    <Form onSubmit={handleRegisterSubmit}>
+                        {renderStepContent()}
+
+                        <ButtonDataWrapper>
+                            {step > 1 && (
+                                <ActionButton type="button" onClick={handleBack} secondary>
+                                    이전
+                                </ActionButton>
                             )}
-                        </React.Fragment>
-                    ))}
-                </div>
-
-                <form onSubmit={handleRegisterSubmit}>
-                    {renderStepContent()}
-
-                    <div style={{ marginTop: '20px' }}>
-                        {step > 1 && (
-                            <button type="button" onClick={handleBack} style={{ ...styles.submitButton, marginRight: '10px' }}>
-                                이전
-                            </button>
-                        )}
-                        {step < 3 && (
-                            <button type="button" onClick={handleNext} style={styles.submitButton}>
-                                다음
-                            </button>
-                        )}
-                        {step === 3 && (
-                            <button type="submit" style={styles.submitButton}>
-                                회원가입
-                            </button>
-                        )}
-                    </div>
-                </form>
-            </div>
-            <Footer />
-        </div>
+                            {step < 3 ? (
+                                <ActionButton type="button" onClick={handleNext}>
+                                    다음
+                                </ActionButton>
+                            ) : (
+                                <ActionButton type="submit">
+                                    완료
+                                </ActionButton>
+                            )}
+                        </ButtonDataWrapper>
+                    </Form>
+                </GlassContainer>
+            </MainContainer>
+        </PageWrapper>
     );
 };
 
-const styles = {
-    h1: {
-        fontSize: '3vw',
-        fontFamily: 'Noto Sans KR',
-        marginTop: '22vh',
-        marginBottom: '4vh',
-    },
-    container: {
-        padding: '20px',
-        textAlign: 'center',
-    },
-    inputGroup: {
-        marginBottom: '10px',
-    },
-    label: {
-        fontFamily: 'Noto Sans KR',
-        fontSize: '2vw',
-        display: 'block',
-        marginBottom: '1vh',
-        fontWeight: '600',
-        margin: '2vh',
-    },
-    input: {
-        padding: '10px',
-        marginTop: '5px',
-        width: '300px',
-        fontSize: '16px',
-        fontFamily: 'Noto Sans KR',
-        borderRadius: '5px',
-        border: '1px solid #ccc',
-    },
-    submitButton: {
-        backgroundColor: 'black',
-        color: '#fff',
-        border: 'none',
-        padding: '10px 20px',
-        fontSize: '16px',
-        cursor: 'pointer',
-        borderRadius: '5px',
-        fontFamily: 'Noto Sans KR',
-        marginTop: '4vh',
-        marginBottom: '16vh',
-    },
-    stepIndicatorWrapper: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: '20px',
-        gap: '10px',
-    },
-    stepCircle: {
-        width: '32px',
-        height: '32px',
-        borderRadius: '50%',
-        border: '2px solid #ccc',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontWeight: 'bold',
-        fontSize: '16px',
-        fontFamily: 'Noto Sans KR',
-        transition: 'all 0.3s ease',
-    },
-    stepLine: {
-        width: '40px',
-        height: '2px',
-        backgroundColor: '#ccc',
-        transition: 'background-color 0.3s ease',
-    },
-};
-
 export default RegisterPage;
+
+// ========== Animations ==========
+
+const float = keyframes`
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+  100% { transform: translate(0, 0); }
+`;
+
+const slideUp = keyframes`
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+// ========== Styled Components ==========
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #191414; /* Spotify Black */
+  overflow: hidden;
+  font-family: 'Noto Sans KR', sans-serif;
+`;
+
+const MainContainer = styled.div`
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8vh 20px;
+  background: radial-gradient(circle at 50% -20%, #2a2a2a, #191414);
+  overflow: hidden;
+`;
+
+const BackgroundShapes = styled.div`
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+`;
+
+const Shape = styled.div`
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(29, 185, 84, 0.3) 0%, rgba(0,0,0,0) 70%);
+  animation: ${float} 10s infinite ease-in-out;
+  opacity: 0.6;
+
+  &:nth-child(1) { width: 600px; height: 600px; top: -100px; left: -100px; animation-duration: 12s; }
+  &:nth-child(2) { width: 400px; height: 400px; bottom: 50px; right: -50px; animation-duration: 15s; animation-delay: 1s; }
+  &:nth-child(3) { width: 300px; height: 300px; top: 30%; right: 20%; animation-duration: 14s; animation-delay: 2s; }
+`;
+
+const GlassContainer = styled.div`
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 500px;
+  padding: 50px 40px;
+
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: ${slideUp} 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+
+  @media (max-width: 480px) {
+    padding: 30px 20px;
+  }
+`;
+
+const Title = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 30px;
+  letter-spacing: -1px;
+`;
+
+const StepIndicatorWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 10px; /* 간격 살짝 조정 */
+`;
+
+const StepCircle = styled.div`
+  /* 크기를 줄여서 '점(Dot)' 형태로 변경 */
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  /* 숫자가 없으므로 배경색으로 활성화 상태 구분 */
+  background-color: ${props => props.active ? '#1DB954' : 'rgba(255,255,255,0.2)'};
+
+  /* 활성화 시 빛나는 효과 추가 */
+  box-shadow: ${props => props.active ? '0 0 10px rgba(29, 185, 84, 0.8)' : 'none'};
+`;
+
+const StepLine = styled.div`
+  width: 40px;
+  height: 2px;
+  /* 선 색상도 배경과 어우러지게 조정 */
+  background-color: ${props => props.active ? '#1DB954' : 'rgba(255,255,255,0.1)'};
+  transition: background-color 0.3s ease;
+`;
+
+const Form = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StepContent = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const InputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+`;
+
+const Label = styled.label`
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 8px;
+  font-weight: 500;
+  margin-left: 5px;
+`;
+
+const Input = styled.input`
+  padding: 15px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s ease;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    border-color: #1DB954;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+  }
+`;
+
+const ButtonDataWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 40px;
+`;
+
+const ActionButton = styled.button`
+  flex: 1;
+  padding: 15px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  background-color: ${props => props.secondary ? 'rgba(255,255,255,0.1)' : '#1DB954'};
+  color: ${props => props.secondary ? '#fff' : '#000'};
+
+  &:hover {
+    transform: translateY(-2px);
+    background-color: ${props => props.secondary ? 'rgba(255,255,255,0.2)' : '#1ed760'};
+    box-shadow: ${props => props.secondary ? 'none' : '0 4px 15px rgba(29, 185, 84, 0.4)'};
+  }
+`;

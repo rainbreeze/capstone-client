@@ -10,7 +10,7 @@ const StartGameContainer = () => (
 
         <ContentWrapper>
             <Title>게임을 통해 음악을 추천 받으세요</Title>
-            <Subtitle>게임과 음악을 통해, 나 자신을 알아가고 공유할 수 있는 공간</Subtitle>
+            <Subtitle>게임과 음악을 통해 나 자신을 알아가고 공유할 수 있는 공간</Subtitle>
             <StartButton to="/game">게임 하러가기</StartButton>
         </ContentWrapper>
     </ImageContainer>
@@ -37,7 +37,7 @@ const ImageContainer = styled.div`
   width: 100%;
   height: 70vh;
   background-color: #191414;
-  overflow: hidden; /* 원이 컨테이너 밖으로 나가지 않게 함 */
+  overflow: hidden;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -47,11 +47,18 @@ const ImageContainer = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
+
+  /* Flexbox로 중앙 정렬 유지 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   text-align: center;
   color: white;
-  max-width: 800px;
+  width: 100%;
   padding: 0 20px;
-  z-index: 10; /* 배경 원보다 위에 오도록 설정 */
+  z-index: 10;
 `;
 
 /* 공통 Shape 스타일 */
@@ -60,7 +67,7 @@ const Shape = styled.div`
   border-radius: 50%;
   opacity: 0.6;
   animation: ${float} 10s infinite ease-in-out;
-  pointer-events: none; /* 마우스 이벤트 방해 금지 */
+  pointer-events: none;
 `;
 
 const BackgroundShape1 = styled(Shape)`
@@ -85,9 +92,14 @@ const BackgroundShape2 = styled(Shape)`
 const Title = styled.h1`
   font-size: 3.5vw;
   font-weight: 800;
-  margin-bottom: 1rem;
+
+  /* 간격을 줄이기 위해 margin-bottom을 1rem -> 0.2rem으로 수정 */
+  margin-bottom: 0.2rem;
+
   font-family: "Noto Sans KR", sans-serif;
-  white-space: nowrap;
+  word-break: keep-all;
+  text-align: center;
+  width: 100%;
 
   @media (max-width: 768px) {
     font-size: 6vw;
@@ -96,6 +108,10 @@ const Title = styled.h1`
 
 const Subtitle = styled.p`
   font-size: 1.5vw;
+
+  /* 위쪽 여백 제거하여 Title과 더 가깝게 배치 */
+  margin-top: 0.5rem;
+
   margin-bottom: 2.5rem;
   font-weight: 500;
   font-family: "Noto Sans KR", sans-serif;
@@ -106,6 +122,7 @@ const Subtitle = styled.p`
 `;
 
 const StartButton = styled(Link)`
+  margin-top: 2rem;
   display: inline-block;
   background-color: transparent;
   color: rgba(255,255,255,0.9);

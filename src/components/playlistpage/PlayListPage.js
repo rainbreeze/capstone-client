@@ -76,25 +76,9 @@ const PlayListPage = () => {
     return (
         <div>
             <Header />
-            <div style={styles.imageContainer}>
-                <img
-                    src="images/playlist/top_banner.png"
-                    alt="헤더 배경 이미지"
-                    style={styles.headerImage}
-                />
-                <div style={styles.overlayText}>
-                    내가 만든 음악으로,<br />
-                    세상과 함께 듣고 나누세요.
-                </div>
-                <div style={styles.listenHereText}>감상 가능한 곳</div>
-                <div style={styles.logoContainer}>
-                    <img src="images/playlist/logo1.png" alt="YouTube" style={styles.logo} />
-                    <img src="images/playlist/logo2.png" alt="Spotify" style={styles.logo} />
-                </div>
-            </div>
 
             <div style={styles.container}>
-                <h1 style={styles.h1}>내 음악</h1>
+                <h1 style={styles.h1}>PLAYLIST</h1>
                 <div style={styles.cardListContainer}>
                     {playlists.map((playlist) => {
                         const firstMusic = playlist.musics[0];
@@ -150,35 +134,6 @@ const PlayListPage = () => {
 };
 
 const styles = {
-    imageContainer: {
-        position: 'relative',
-        width: '100%',
-        height: '72vh',
-        overflow: 'hidden',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-    },
-    headerImage: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        userSelect: 'none',
-        pointerEvents: 'none',
-    },
-    overlayText: {
-        position: 'absolute',
-        bottom: '8vh',
-        left: '12vw',
-        color: 'white',
-        fontSize: '2vw',
-        fontWeight: '600',
-        textShadow: '2px 2px 6px rgba(0,0,0,0.7)',
-        lineHeight: '1.4',
-        maxWidth: '60vw',
-        fontFamily: 'Noto Sans KR',
-    },
     listenHereText: {
         position: 'absolute',
         bottom: '95px',
@@ -211,7 +166,10 @@ const styles = {
     h1: {
         fontSize: '2.5vw',
         fontWeight: '700',
-        marginBottom: '20px',
+        marginBottom: '30px',
+        marginTop: '100px',
+        color: '#fff',
+
     },
     cardListContainer: {
         display: 'grid',
