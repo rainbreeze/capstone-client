@@ -42,6 +42,7 @@ const LoginPage = () => {
                 // [수정됨] 사용자 정보를 로컬 스토리지에 저장 (Header.js에서 사용)
                 if (data.user) {
                     localStorage.setItem('userId', data.user.userId);
+                    console.log('testUserId: ',localStorage.getItem('userId'));
                     localStorage.setItem('userName', data.user.userName);
                     localStorage.setItem('profileImage', data.user.profileImage || '');
                 }
