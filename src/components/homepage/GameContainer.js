@@ -10,6 +10,14 @@ import Footer from "../common/Footer"
 const GameContainer = () => {
   const gameRef = useRef(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [userId,setUserId] = useState(false);
+
+  useState(() => {
+      const storedUserId = localStorage.getItem('userId');
+      if (storedUserId) {
+          setUserId(storedUserId); 
+      }
+  }, []);
 
 
   // GameContainer.jsx 내부
@@ -24,6 +32,10 @@ const GameContainer = () => {
 
 
   useEffect(() => {
+    if (!userId) {
+      alert("로그인 후 다시 시도해주세요.");
+      window.location.href = "/";
+    } 
     const config = {
       type: Phaser.AUTO,
       width: 800,
@@ -33,8 +45,12 @@ const GameContainer = () => {
         default: "arcade",
         arcade: { debug: false, gravity: { y: 1000 } }
       },
+      sceneConfig: {
+          userId: userId,
+      },
       scene: [IntroScene, MainScene, ChoiceScene, GameScene]
     };
+
 
     const game = new Phaser.Game(config);
     return () => {
@@ -45,6 +61,7 @@ const GameContainer = () => {
   return (
     <>
       <Header />
+
       <div
         ref={gameRef}
         id="gameContainer"

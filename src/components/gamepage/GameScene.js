@@ -96,7 +96,7 @@ const randomQuestions = [{
 
 
 
-const storedUserId = localStorage.getItem("userId");
+
 
 //스코어에 따라서 추천 곡 수가 달라져야함 -> 이거 확인
 let score = 0;
@@ -158,7 +158,7 @@ export default class GameScene extends Phaser.Scene {
         this.stageIndex = data.stageIndex || 0;
         this.score = data.score || 0;
         this.lives = lives;
-        this.selectedYear = data.selectedYear || 2025;
+        this.userId = this.sys.game.config.sceneConfig.userId;
     }
 
     create(data) {
@@ -177,10 +177,6 @@ export default class GameScene extends Phaser.Scene {
         }
 
         // 로그인 해야지 이용 가능
-        if (!storedUserId) {
-            alert("로그인 후 다시 시도해주세요.");
-            window.location.href = "/";
-        }
 
         const mapKey = `map${this.stageIndex + 1}`;
         console.log(this.stageIndex + 1);
@@ -217,8 +213,8 @@ export default class GameScene extends Phaser.Scene {
         console.log("objectLayer", objectLayer);
 
         this.scoreText = this.add
-            .text(16, 16, "Score: 0", {
-                fontSize: "24px",
+            .text(16, 16, `Score: ${score}`, {
+                fontSize: "18px",
                 color: "#fff",
                 fontFamily: "Galmuri7",
                 fontStyle: 700,
@@ -543,7 +539,7 @@ export default class GameScene extends Phaser.Scene {
         //텍스트 스타일 정리 및 조정 필요
         const questionText = this.add
             .text(centerX, centerY - 60, question, {
-                fontSize: "16px",
+                fontSize: "12px",
                 fontFamily: "Galmuri7",
                 fontStyle: 700,
                 color: "#fff",
@@ -640,7 +636,7 @@ export default class GameScene extends Phaser.Scene {
         console.log(choice);
 
         const gameStats = {
-            userId: storedUserId,
+            userId: this.userId,
             answer: choice,
             score: score,
             steps: steps,
@@ -683,7 +679,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.add
             .text(400, 200, "Game Over", {
-                fontSize: "32px",
+                fontSize: "28px",
                 fontFamily: "Galmuri7",
                 fontStyle: 700,
                 color: "#fff",

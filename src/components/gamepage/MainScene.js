@@ -49,7 +49,7 @@ class MainScene extends Phaser.Scene {
         this.openHelpPopup();
 
         this.helpBtn = this.add.text(750, 20, '?', {
-            fontSize: '24px',
+            fontSize: '18px',
             color: '#666',
             fontStyle: 700,
             fontFamily: 'Galmuri7',
@@ -65,7 +65,7 @@ class MainScene extends Phaser.Scene {
 
         const playBtn = this.add.image(centerX, centerY - 40, 'playButton').setInteractive();
         this.add.text(centerX - 60, centerY + 40, 'PLAY BEATS!', {
-            fontSize: '24px',
+            fontSize: '18px',
             color: '#000000',
             fontStyle: 700,
             fontFamily: 'Galmuri7'

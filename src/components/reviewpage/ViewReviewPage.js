@@ -315,6 +315,7 @@ const RatingBox = styled.div`
 const Rating = styled.p`
   font-size: 1.5rem;
   color: #f39c12;
+  margin-right: 10px;
   font-family: 'Noto Sans KR', sans-serif; /* Jua 대신 Noto Sans KR로 통일 */
 `;
 
@@ -355,29 +356,44 @@ const BottomLeftSection = styled.div`
 
 const LikeButton = styled.button`
   background-color: ${(props) => (props.active ? '#f1c40f' : 'white')};
-  color: ${(props) => (props.active ? 'white' : '#ddd')};
+
+  /* ▼ 수정: 비활성 상태일 때 색상을 진하게 변경 (#ddd -> #555) */
+  color: ${(props) => (props.active ? 'white' : '#555')};
+
   font-family: 'Noto Sans KR', sans-serif;
   font-size: 1.2rem;
   padding: 4px 8px;
+  margin-top: 7px;
+
+  /* ▼ 수정: 테두리를 추가하여 버튼 영역을 명확하게 표시 */
+  border: 1px solid #ddd;
+
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: all 0.2s ease;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 2vw;
-  width: 2vw;
-  border: none;
-  outline: none;
-`;
 
+  /* ▼ 수정: 크기를 px 단위로 고정하거나 조금 더 키움 (기존 2vw -> 40px) */
+  height: 40px;
+  width: 40px;
+
+  outline: none;
+
+  /* ▼ 추가: 마우스 호버 시 배경색 변경 효과 */
+  &:hover {
+    background-color: ${(props) => (props.active ? '#d4ac0d' : '#f0f0f0')};
+    border-color: ${(props) => (props.active ? '#d4ac0d' : '#bbb')};
+  }
+`;
 const SmallGrayText = styled.p`
   color: gray;
-  font-size: 0.6vw;
+  font-size: 0.8vw;
   font-family: 'Noto Sans KR', sans-serif;
   cursor: default;
   user-select: none;
-  margin-right: 8px;
+  margin-right: 12px;
   display: flex;
   align-items: center;
   gap: 4px;

@@ -94,7 +94,7 @@ const Header = () => {
                     </NavItem>
                     <NavItem scrolled={scrolled}>
                         <NavLink as={Link} to="/viewreview">
-                            감상평
+                            리뷰
                         </NavLink>
                     </NavItem>
                     {/* 테스트 항목 주석 처리 유지 */}
@@ -393,7 +393,7 @@ const NavList = styled.ul`
 const NavLink = styled.a`
   text-decoration: none;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1vw;
+  font-size: 1.1vw;
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: 700;
   transition: 0.3s ease;
