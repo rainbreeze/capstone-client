@@ -158,7 +158,7 @@ export default class GameScene extends Phaser.Scene {
         this.stageIndex = data.stageIndex || 0;
         this.score = data.score || 0;
         this.lives = lives;
-        this.userId = this.sys.game.config.sceneConfig.userId;
+        this.userId = localStorage.getItem('userId');
     }
 
     create(data) {
