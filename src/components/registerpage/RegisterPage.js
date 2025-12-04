@@ -48,6 +48,13 @@ const RegisterPage = () => {
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
 
+        // ▼▼▼ [수정] 마지막 단계(3단계)가 아니면 '다음' 단계로 이동만 하고 함수 종료 ▼▼▼
+        if (step < 3) {
+            handleNext();
+            return;
+        }
+
+        // 기존 유효성 검사 로직 (마지막 단계에서만 실행됨)
         if (!userName || !userId || !email || !password || !confirmPassword) {
             alert('모든 항목을 입력해주세요.');
             return;

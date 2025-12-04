@@ -65,6 +65,7 @@ const ProfileImageUploader = ({ userId, currentImage }) => {
                     onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                 />
             </ImageWrapper>
+            {/*}
             <UploadButton htmlFor="imageUpload">
                 이미지 변경
             </UploadButton>
@@ -74,6 +75,7 @@ const ProfileImageUploader = ({ userId, currentImage }) => {
                 accept="image/*"
                 onChange={handleImageUpload}
             />
+            */}
         </UploaderContainer>
     );
 };
