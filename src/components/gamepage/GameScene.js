@@ -213,7 +213,7 @@ export default class GameScene extends Phaser.Scene {
         console.log("objectLayer", objectLayer);
 
         this.scoreText = this.add
-            .text(16, 16, "Score: 0", {
+            .text(16, 16, `Score: ${score}`, {
                 fontSize: "24px",
                 color: "#fff",
                 fontFamily: "Galmuri7",
