@@ -214,7 +214,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.scoreText = this.add
             .text(16, 16, `Score: ${score}`, {
-                fontSize: "24px",
+                fontSize: "18px",
                 color: "#fff",
                 fontFamily: "Galmuri7",
                 fontStyle: 700,
@@ -539,7 +539,7 @@ export default class GameScene extends Phaser.Scene {
         //텍스트 스타일 정리 및 조정 필요
         const questionText = this.add
             .text(centerX, centerY - 60, question, {
-                fontSize: "16px",
+                fontSize: "12px",
                 fontFamily: "Galmuri7",
                 fontStyle: 700,
                 color: "#fff",
@@ -679,7 +679,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.add
             .text(400, 200, "Game Over", {
-                fontSize: "32px",
+                fontSize: "28px",
                 fontFamily: "Galmuri7",
                 fontStyle: 700,
                 color: "#fff",
