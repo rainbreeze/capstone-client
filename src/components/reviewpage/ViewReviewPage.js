@@ -179,41 +179,6 @@ const PageTitle = styled.h1`
   }
 `;
 
-const ButtonSection = styled.div`
-  padding: 2vh 10vw;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  margin-top: 0;
-
-  @media (max-width: 768px) {
-    padding: 2vh 5vw;
-  }
-`;
-
-const RealTimeButton = styled.button`
-  padding: 10px 20px;
-  font-size: 1vw;
-  font-family: 'Noto Sans KR', sans-serif;
-  font-weight: 500;
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: white;
-    color: black;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 3vw;
-    padding: 12px 25px;
-  }
-`;
 
 const Container = styled.div`
   padding: 0 10vw;
