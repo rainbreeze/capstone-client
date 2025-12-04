@@ -33,8 +33,8 @@ const GameContainer = () => {
 
   useEffect(() => {
     if (!userId) {
-      console.log('userId 없음');
-      return;
+      alert("로그인 후 다시 시도해주세요.");
+      window.location.href = "/";
     } 
     const config = {
       type: Phaser.AUTO,
