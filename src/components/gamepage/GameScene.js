@@ -96,7 +96,7 @@ const randomQuestions = [{
 
 
 
-const storedUserId = localStorage.getItem("userId");
+
 
 //스코어에 따라서 추천 곡 수가 달라져야함 -> 이거 확인
 let score = 0;
@@ -158,7 +158,7 @@ export default class GameScene extends Phaser.Scene {
         this.stageIndex = data.stageIndex || 0;
         this.score = data.score || 0;
         this.lives = lives;
-        this.selectedYear = data.selectedYear || 2025;
+        this.userId = this.sys.game.config.sceneConfig.userId;
     }
 
     create(data) {
@@ -177,10 +177,6 @@ export default class GameScene extends Phaser.Scene {
         }
 
         // 로그인 해야지 이용 가능
-        if (!storedUserId) {
-            alert("로그인 후 다시 시도해주세요.");
-            window.location.href = "/";
-        }
 
         const mapKey = `map${this.stageIndex + 1}`;
         console.log(this.stageIndex + 1);
@@ -640,7 +636,7 @@ export default class GameScene extends Phaser.Scene {
         console.log(choice);
 
         const gameStats = {
-            userId: storedUserId,
+            userId: this.userId,
             answer: choice,
             score: score,
             steps: steps,
