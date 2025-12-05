@@ -33,7 +33,12 @@ const RegisterPage = () => {
         }
     };
 
-    const handleNext = () => {
+    const handleNext = (e) => {
+        // 버튼 클릭 시 form submit이 발생하지 않도록 막음
+        if (e) {
+            e.preventDefault();
+        }
+
         if (!isStepValid()) {
             alert('입력을 완료해주세요.');
             return;
@@ -46,15 +51,16 @@ const RegisterPage = () => {
     };
 
     const handleRegisterSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // 1. 폼 제출 기본 동작 막기 (가장 먼저)
 
-        // ▼▼▼ [수정] 마지막 단계(3단계)가 아니면 '다음' 단계로 이동만 하고 함수 종료 ▼▼▼
+        // 2. [중요] 마지막 단계(3단계)가 아니라면 다음 단계로 넘기고 함수를 여기서 '끝내야' 합니다.
         if (step < 3) {
             handleNext();
-            return;
+            return; // 여기서 함수가 종료되어야 아래 유효성 검사를 실행하지 않습니다.
         }
 
-        // 기존 유효성 검사 로직 (마지막 단계에서만 실행됨)
+        // 3. 마지막 단계(3단계) 유효성 검사
+        // 2단계에서는 password가 비어있으므로 이 코드가 실행되면 무조건 에러가 납니다.
         if (!userName || !userId || !email || !password || !confirmPassword) {
             alert('모든 항목을 입력해주세요.');
             return;
